@@ -5,4 +5,5 @@
     <dimen name="h3">26dp</dimen>
     <dimen name="label">16dp</dimen>
     <dimen name="editTextHeight">50dp</dimen>
+    <dimen name="bottomNavHeight">65dp</dimen>
 </resources>
