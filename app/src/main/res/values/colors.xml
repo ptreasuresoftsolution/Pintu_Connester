@@ -2,6 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="error">#dc3545</color>
+    <color name="success">#198754</color>
+    <color name="light">#f8f9fa</color>
+    <color name="info">#0dcaf0</color>
 
     <color name="primary">#B5333F</color>
     <color name="primary_2">#242331</color>

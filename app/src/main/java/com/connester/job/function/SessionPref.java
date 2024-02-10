@@ -2,6 +2,8 @@ package com.connester.job.function;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -81,11 +83,7 @@ public class SessionPref {
 
     public void setHashMapJson(String key, String assocJson) {
         prefEditor = appSharedPref.edit();
-        Gson gson = new Gson();
-        Type type = new TypeToken<HashMap<String,String>>() {
-        }.getType();
-        String json = gson.fromJson(assocJson, type);
-        prefEditor.putString(key, json);
+        prefEditor.putString(key, assocJson);
         prefEditor.commit();
     }
     public void setHashMapJson(String key, HashMap<String,String> value) {
@@ -163,11 +161,15 @@ public class SessionPref {
         return getString(UserEmail);
     }
 
-    public void setUserPassword(String userPassword){
+    public void setUserPassword(String userPassword){//encrypted store
         setString(UserPassword,userPassword);
     }
     public String getUserPassword() {
         return getString(UserPassword);
+    }
+    public String getTextUserPassword(){ //decrypt password base64_decode(base64_decode($val));
+        String encPass = getString(UserPassword);
+        return new String(Base64.decode(Base64.decode(encPass,Base64.DEFAULT),Base64.DEFAULT));
     }
 
     public void setUserProfilePic(String userProfilePic){
@@ -199,6 +201,7 @@ public class SessionPref {
     }
 
     public void setUserMasterRow(String assocJsonUserMasterRow){
+        Log.e(LogTag.TMP_LOG,"JSON: "+assocJsonUserMasterRow);
         setHashMapJson(UserMasterRow,assocJsonUserMasterRow);
     }
     public HashMap<String,String> getUserMasterRow(){

@@ -7,7 +7,7 @@ import java.io.File;
 
 public class Constant {
 
-    public static String DOMAIN = "";
+    public static String DOMAIN = "http://192.168.29.235";
 
     public static String getStorageDirectoryPath(Context context) {
         return Environment.getExternalStorageDirectory()
