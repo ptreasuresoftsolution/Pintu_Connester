@@ -3,6 +3,9 @@
     <dimen name="h1">34dp</dimen>
     <dimen name="h2">30dp</dimen>
     <dimen name="h3">26dp</dimen>
+    <dimen name="small_xs">10dp</dimen>
+    <dimen name="small_lg">12dp</dimen>
+    <dimen name="small">14dp</dimen>
     <dimen name="label">16dp</dimen>
     <dimen name="editTextHeight">50dp</dimen>
     <dimen name="bottomNavHeight">65dp</dimen>

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Connester</string>
+    <string name="sign_bullet">\u2022</string>
 </resources>
