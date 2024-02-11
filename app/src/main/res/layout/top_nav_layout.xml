@@ -28,6 +28,9 @@
         android:layout_weight="0.30"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:hint="Search"
+        app:queryHint="Search"
+        app:iconifiedByDefault="false"
         android:layout_width="match_parent"
         android:background="@drawable/rounded_bg"
         android:layout_height="wrap_content" />
