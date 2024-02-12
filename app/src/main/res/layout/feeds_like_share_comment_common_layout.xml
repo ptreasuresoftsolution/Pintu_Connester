@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="6dp"
     android:background="@drawable/feeds_bottom_bg">
 
     <LinearLayout
-        android:layout_gravity="center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical
+"
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_marginLeft="45dp"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                android:layout_marginLeft="35dp"
                 android:src="@drawable/like" />
 
             <TextView
@@ -27,19 +30,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:text="0"
-                android:textSize="@dimen/label" />
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/h6" />
 
             <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:layout_marginLeft="45dp"
-                android:src="@drawable/comment_feeds_bottom" />
+                android:layout_marginLeft="35dp"
+                android:src="@drawable/comment_feeds_bottom"
+                app:tint="@color/secondary_3" />
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_marginLeft="10dp"
                 android:layout_height="wrap_content"
-                android:text="0" />
+                android:layout_marginLeft="10dp"
+                android:text="0"
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/h6" />
         </LinearLayout>
     </LinearLayout>
 
@@ -47,6 +54,7 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_gravity="right|center_vertical"
-        android:layout_marginRight="45dp"
-        android:src="@drawable/forward_feeds_bottom" />
+        android:layout_marginRight="35dp"
+        android:src="@drawable/forward_feeds_bottom"
+        app:tint="@color/secondary_3" />
 </FrameLayout>
