@@ -3,12 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
     app:cardBackgroundColor="@color/secondary_6">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="12dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -77,6 +81,60 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/feed_save_blank" />
         </LinearLayout>
-    </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="INR 20K"
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/label"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/ Month"
+                android:textColor="@color/secondary_4"
+                android:textSize="@dimen/small" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="100dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="right"
+                    android:backgroundTint="@color/primary"
+                    android:padding="0dp"
+                    android:text="Apply"
+                    app:cornerRadius="8dp" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexWrap="wrap"
+            app:alignItems="stretch"
+            app:alignContent="stretch">
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                app:cornerRadius="10dp"
+                android:layout_height="40dp"
+                android:backgroundTint="@color/tags"
+                android:layout_marginRight="3dp"
+                android:padding="0dp"
+                android:textSize="@dimen/small_lg"
+                android:text="HTML"
+                android:textColor="@color/secondary_3" />
+        </com.google.android.flexbox.FlexboxLayout>
+    </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

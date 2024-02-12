@@ -201,7 +201,6 @@ public class SessionPref {
     }
 
     public void setUserMasterRow(String assocJsonUserMasterRow){
-        Log.e(LogTag.TMP_LOG,"JSON: "+assocJsonUserMasterRow);
         setHashMapJson(UserMasterRow,assocJsonUserMasterRow);
     }
     public HashMap<String,String> getUserMasterRow(){

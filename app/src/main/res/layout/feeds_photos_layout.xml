@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="fitStart"
-            android:src="@drawable/feeds_photos_default"
+            app:actualImageResource="@drawable/feeds_photos_default"
             app:roundedCornerRadius="6dp"
             app:roundingBorderColor="@color/secondary_4"
             app:roundingBorderWidth="1dp" />

@@ -59,6 +59,9 @@ dependencies {
     //for video load(server video)
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
 
+    //flex view
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
     // (Java only)
     implementation "androidx.work:work-runtime:2.9.0"
     // optional - RxJava2 support

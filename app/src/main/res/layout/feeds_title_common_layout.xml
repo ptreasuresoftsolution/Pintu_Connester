@@ -55,6 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2dp"
                 android:text="Full name"
+                android:id="@+id/fullname_txt"
                 android:textColor="@color/secondary_3"
                 android:textSize="@dimen/label"
                 android:textStyle="bold" />
