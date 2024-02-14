@@ -18,4 +18,12 @@ public class FeedsMasterResponse {
     @SerializedName("feedsRows")
     @Expose
     public List<FeedsRow> feedsRows;
+
+    @SerializedName("imgPath")
+    @Expose
+    public String imgPath;
+    @SerializedName("feedImgPath")
+    @Expose
+    public String feedImgPath;
+
 }
