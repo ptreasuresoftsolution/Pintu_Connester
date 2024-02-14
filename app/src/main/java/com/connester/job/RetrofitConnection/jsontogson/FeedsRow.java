@@ -54,10 +54,10 @@ public class FeedsRow {
     public String bio;
     @SerializedName("latitude_location")
     @Expose
-    public Object latitudeLocation;
+    public String latitudeLocation;
     @SerializedName("longitude_location")
     @Expose
-    public Object longitudeLocation;
+    public String longitudeLocation;
     @SerializedName("isLike")
     @Expose
     public String isLike;
@@ -115,7 +115,7 @@ public class FeedsRow {
         public String ptHashDesc;
         @SerializedName("pt_image")
         @Expose
-        public Object ptImage;
+        public String ptImage;
         @SerializedName("type")
         @Expose
         public String type;
@@ -151,7 +151,7 @@ public class FeedsRow {
         public String eventType;
         @SerializedName("company_name")
         @Expose
-        public Object companyName;
+        public String companyName;
         @SerializedName("address_json")
         @Expose
         public String addressJson;
@@ -163,13 +163,13 @@ public class FeedsRow {
         public String jobDescription;
         @SerializedName("job_requirements")
         @Expose
-        public Object jobRequirements;
+        public String jobRequirements;
         @SerializedName("job_skills")
         @Expose
-        public Object jobSkills;
+        public String jobSkills;
         @SerializedName("inquiry_email")
         @Expose
-        public Object inquiryEmail;
+        public String inquiryEmail;
         @SerializedName("create_date")
         @Expose
         public String createDate;
