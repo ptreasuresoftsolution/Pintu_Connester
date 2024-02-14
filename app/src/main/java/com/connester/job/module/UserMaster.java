@@ -1,16 +1,12 @@
 package com.connester.job.module;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
-import com.connester.job.activity.MainActivity;
-import com.connester.job.function.ApiAuth;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.SessionPref;
@@ -46,7 +42,7 @@ public class UserMaster {
             CommonFunction.PleaseWaitShow(context);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
-        hashMap.put("apiKey", ApiAuth.getEncrypted(sessionPref.getUserMasterId()));
+        hashMap.put("apiKey", sessionPref.getApiKey());
         apiInterface.GET_LOGIN_USER_ROW(hashMap).enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) {

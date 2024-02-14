@@ -1,7 +1,5 @@
 package com.connester.job.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -15,18 +13,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.UserLoginResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
-import com.connester.job.function.ApiAuth;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.UserMaster;
 import com.google.android.material.button.MaterialButton;
-import com.google.gson.Gson;
 
 import java.util.HashMap;
 
@@ -64,10 +62,10 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call call, Response response) {
                         CommonFunction.dismissDialog();
-                        if(response.isSuccessful()){
-                            if (response.body() != null){
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
                                 UserLoginResponse userLoginResponse = (UserLoginResponse) response.body();
-                                if (userLoginResponse.status){
+                                if (userLoginResponse.status) {
                                     sessionPref.setIsLogin(true);
                                     sessionPref.setUserMasterId(userLoginResponse.userMasterId);
                                     sessionPref.setUserEmail(userLoginResponse.email);
@@ -86,7 +84,7 @@ public class SignInActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
-                                }else {
+                                } else {
                                     Toast.makeText(context, userLoginResponse.msg, Toast.LENGTH_SHORT).show();
                                 }
                             }

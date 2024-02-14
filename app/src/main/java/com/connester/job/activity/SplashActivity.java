@@ -1,37 +1,23 @@
 package com.connester.job.activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.connester.job.R;
-import com.connester.job.RetrofitConnection.ApiClient;
-import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
-import com.connester.job.function.ApiAuth;
 import com.connester.job.function.CommonFunction;
-import com.connester.job.function.LogTag;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.UserMaster;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SplashActivity extends AppCompatActivity {
@@ -117,7 +103,7 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 }
             }
-        },false);
+        }, false);
     }
 
     private void openDisableProfileActivity() {

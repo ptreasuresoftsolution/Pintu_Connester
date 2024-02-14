@@ -3,7 +3,6 @@ package com.connester.job.function;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
-import android.util.Log;
 
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.google.gson.Gson;
@@ -139,6 +138,9 @@ public class SessionPref {
     }
     public String getUserMasterId() {
         return getString(UserMasterId);
+    }
+    public String getApiKey(){
+        return ApiAuth.getEncrypted(getUserMasterId());
     }
 
     public void setUserFullName(String userFullName) {

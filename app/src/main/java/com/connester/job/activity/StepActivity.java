@@ -1,12 +1,9 @@
 package com.connester.job.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -16,20 +13,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
-import com.connester.job.function.ApiAuth;
 import com.connester.job.function.CommonFunction;
-import com.connester.job.function.Constant;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.UserMaster;
 import com.google.android.material.button.MaterialButton;
 
-import java.net.ContentHandler;
 import java.util.HashMap;
 
 import retrofit2.Call;
@@ -60,7 +56,7 @@ public class StepActivity extends AppCompatActivity {
         HashMap hashMap = new HashMap();
         hashMap.put("email", sessionPref.getUserEmail());
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
-        hashMap.put("apiKey", ApiAuth.getEncrypted(sessionPref.getUserMasterId()));
+        hashMap.put("apiKey", sessionPref.getApiKey());
         apiInterface.GET_UNIQUE_USERNAME(hashMap).enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) {
@@ -106,7 +102,7 @@ public class StepActivity extends AppCompatActivity {
                 CommonFunction.PleaseWaitShow(context);
                 HashMap hashMap = new HashMap();
                 hashMap.put("user_master_id", sessionPref.getUserMasterId());
-                hashMap.put("apiKey", ApiAuth.getEncrypted(sessionPref.getUserMasterId()));
+                hashMap.put("apiKey", sessionPref.getApiKey());
                 hashMap.put("name", fullname_input.getText().toString());
                 hashMap.put("username", username_input.getText().toString());
                 if (isPasswordRequire_ll.getVisibility() == View.VISIBLE) {
@@ -116,10 +112,10 @@ public class StepActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call call, Response response) {
                         CommonFunction.dismissDialog();
-                        if (response.isSuccessful()){
-                            if (response.body() != null){
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
                                 NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                                if (normalCommonResponse.status){
+                                if (normalCommonResponse.status) {
                                     new UserMaster(context).getLoginUserData(new UserMaster.CallBack() {
                                         @Override
                                         public void DataCallBack(Response response) {
@@ -134,8 +130,8 @@ public class StepActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
-                                }else
-                                    Toast.makeText(context,normalCommonResponse.msg,Toast.LENGTH_SHORT).show();
+                                } else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -172,6 +168,7 @@ public class StepActivity extends AppCompatActivity {
         startActivity(new Intent(context, UserDisableAcActivity.class));
         activity.finish();
     }
+
     public void checkUserName(String userName) {
         HashMap hashMap = new HashMap();
         hashMap.put("user_name", username_input.getText().toString());

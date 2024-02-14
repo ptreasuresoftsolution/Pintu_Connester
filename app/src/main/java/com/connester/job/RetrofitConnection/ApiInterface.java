@@ -55,6 +55,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/StepOne")
     Call<NormalCommonResponse> STEP_1_SUBMIT(@FieldMap Map<String, String> params );
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/feedsLikeUnLink")
+    Call<NormalCommonResponse> CALL_LIKE_UNLIKE(@FieldMap Map<String, String> params );
 
 
 }

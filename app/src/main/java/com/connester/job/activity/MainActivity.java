@@ -1,12 +1,8 @@
 package com.connester.job.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -19,22 +15,17 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.function.Constant;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.SessionPref;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.PlayerControlView;
-import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.cache.Cache;
@@ -42,6 +33,8 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.io.File;
 
@@ -144,6 +137,12 @@ public class MainActivity extends AppCompatActivity {
         View find = feeds_mainList.getChildAt(6);
         TextView fullname_txt = find.findViewById(R.id.fullname_txt);
         fullname_txt.setText("Check Layout 6");
+        fullname_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDialogDemo();
+            }
+        });
         scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
@@ -160,6 +159,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    void openDialogDemo(){
+        // view set with fit content
+//        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+//        bottomSheetDialog.setContentView(R.layout.feeds_title_common_layout);
+//        bottomSheetDialog.show();
+
+        //view set with fit screen
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+        bottomSheetDialog.getBehavior().setFitToContents(false); // not add this line then fit to content(not show in full screen)
+        bottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+        bottomSheetDialog.setContentView(R.layout.feeds_photos_layout);
+        bottomSheetDialog.show();
     }
 
     public boolean videoVerticallyInView(View videoView, int scrollY) {
