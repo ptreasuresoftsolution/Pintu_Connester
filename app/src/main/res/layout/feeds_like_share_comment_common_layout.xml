@@ -20,8 +20,8 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_marginLeft="35dp"
                 android:src="@drawable/like" />
 
@@ -34,8 +34,8 @@
                 android:textSize="@dimen/h6" />
 
             <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_marginLeft="35dp"
                 android:src="@drawable/comment_feeds_bottom"
                 app:tint="@color/secondary_3" />
@@ -51,8 +51,8 @@
     </LinearLayout>
 
     <ImageView
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_gravity="right|center_vertical"
         android:layout_marginRight="35dp"
         android:src="@drawable/forward_feeds_bottom"

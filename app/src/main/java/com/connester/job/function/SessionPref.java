@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 
+import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -203,7 +204,14 @@ public class SessionPref {
     public void setUserMasterRow(String assocJsonUserMasterRow){
         setHashMapJson(UserMasterRow,assocJsonUserMasterRow);
     }
-    public HashMap<String,String> getUserMasterRow(){
+    public UserRowResponse.Dt getUserMasterRowInObject(){
+        Gson gson = new Gson();
+        String json = appSharedPref.getString(UserMasterRow, "");
+        Type type = new TypeToken<UserRowResponse.Dt>() {
+        }.getType();
+        return gson.fromJson(json,type);
+    }
+    public HashMap<String,String> getUserMasterRowInHashMap(){
         return getHashMapJson(UserMasterRow);
     }
     public void logOutPref() {
