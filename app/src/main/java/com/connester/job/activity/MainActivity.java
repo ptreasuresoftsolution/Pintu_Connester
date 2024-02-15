@@ -168,12 +168,11 @@ public class MainActivity extends AppCompatActivity {
 
         //view set with fit screen
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
-        bottomSheetDialog.getBehavior().setFitToContents(false); // not add this line then fit to content(not show in full screen)
+       // bottomSheetDialog.getBehavior().setFitToContents(false); // not add this line then fit to content(not show in full screen)
         bottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
-        bottomSheetDialog.setContentView(R.layout.feeds_photos_layout);
+        bottomSheetDialog.setContentView(R.layout.feeds_comment_list_dialog_layout);
         bottomSheetDialog.show();
     }
-
     public boolean videoVerticallyInView(View videoView, int scrollY) {
         int maintainPix = 30;
         int displayHeight = getScreenResolution(context)[1];
