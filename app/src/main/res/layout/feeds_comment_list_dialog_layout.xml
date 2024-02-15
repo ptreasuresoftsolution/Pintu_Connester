@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <LinearLayout
@@ -31,28 +32,52 @@
             android:paddingBottom="10dp"
             android:src="@drawable/bottom_dialog_line" />
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
+            android:scrollbars="vertical"
+            android:scrollbarSize="4dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="50dp"
-            android:fillViewport="true"
-            android:paddingBottom="20dp">
+            android:layout_marginBottom="60dp"
+            android:fillViewport="true">
 
             <LinearLayout
+                android:paddingBottom="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
+                <include layout="@layout/feeds_comment_list_item" />
 
                 <include layout="@layout/feeds_comment_list_item" />
             </LinearLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
     </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_gravity="bottom"
         android:layout_marginTop="2dp"
         app:cardBackgroundColor="@color/secondary_7"
@@ -61,7 +86,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
             android:orientation="horizontal">
@@ -87,6 +112,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:id="@+id/comment_input"
                 android:backgroundTint="@android:color/transparent"
                 android:hint="Write a comment" />
 
