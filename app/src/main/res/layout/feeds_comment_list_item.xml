@@ -6,8 +6,8 @@
     android:layout_marginTop="4dp"
     android:gravity="center"
     android:orientation="horizontal"
-    android:paddingLeft="14dp"
-    android:paddingRight="6dp">
+    android:paddingStart="14dp"
+    android:paddingEnd="6dp">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="40dp"
@@ -16,6 +16,7 @@
         app:strokeColor="@color/secondary_2">
 
         <ImageView
+            android:id="@+id/user_pic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -41,6 +42,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/userFullName_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="8dp"
@@ -56,6 +58,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/time_comment_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="X Days ago"
@@ -64,6 +67,7 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/comment_txt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="helllo"

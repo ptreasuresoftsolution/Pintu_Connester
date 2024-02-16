@@ -1,5 +1,6 @@
 package com.connester.job.RetrofitConnection;
 
+import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.SignUpOtpResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserLoginResponse;
@@ -58,6 +59,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedsLikeUnLink")
     Call<NormalCommonResponse> CALL_LIKE_UNLIKE(@FieldMap Map<String, String> params );
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/feedCommentsJson")
+    Call<FeedsCommentListResponse> GET_FEED_COMMENT(@FieldMap Map<String, String> params );
 
 
 }

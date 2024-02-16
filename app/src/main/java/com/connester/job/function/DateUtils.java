@@ -141,4 +141,67 @@ public class DateUtils {
         long oneMinute =  60 * 1000;
         return new Date(date.getTime() + minute * oneMinute);
     }
+    // date diff
+    public static long dateDiff(String interval, String join_date_YMDHMS, String leave_date_YMDHMS) {
+        /*
+         * $interval can be:
+         * Y - Number of full years
+         * q - Number of full quarters
+         * m - Number of full months
+         * d - Number of full days
+         * w - Number of full weeks
+         * h - Number of full hours
+         * n - Number of full minutes
+         * s - Number of full seconds
+         */
+
+        // Create an instance of the SimpleDateFormat class
+        SimpleDateFormat obj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        // In the try block, we will try to find the difference
+        try {
+            // Use parse method to get date object of both dates
+            Date date1 = obj.parse(join_date_YMDHMS);
+            Date date2 = obj.parse(leave_date_YMDHMS);
+            // Calucalte time difference in milliseconds
+            long time_difference = date2.getTime() - date1.getTime();
+
+            if (interval.equals("Y")) {
+                // Calucalte time difference in years
+                return (time_difference / (1000l * 60 * 60 * 24 * 365));
+            }
+            if (interval.equals("q")) {
+                // Calucalte time difference in quarters
+                return (time_difference / (1000l * 60 * 60 * 24 * 93));
+            }
+            if (interval.equals("m")) {
+                // Calucalte time difference in months
+                return (time_difference / (1000l * 60 * 60 * 24 * 31));
+            }
+            if (interval.equals("d")) {
+                // Calucalte time difference in days
+                return (time_difference / (1000 * 60 * 60 * 24));
+            }
+            if (interval.equals("w")) {
+                // Calucalte time difference in weeks
+                return (time_difference / (1000 * 60 * 60 * 24 * 7));
+            }
+            if (interval.equals("h")) {
+                // Calucalte time difference in hours
+                return (time_difference / (1000 * 60 * 60));
+            }
+            if (interval.equals("n")) {
+                // Calucalte time difference in minutes
+                return (time_difference / (1000 * 60));
+            }
+            if (interval.equals("s")) {
+                // Calucalte time difference in seconds
+                return (time_difference / (1000));
+            }
+        }
+        // Catch parse exception
+        catch (ParseException excep) {
+            excep.printStackTrace();
+        }
+        return 0;
+    }
 }

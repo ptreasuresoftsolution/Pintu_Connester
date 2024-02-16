@@ -9,11 +9,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -170,21 +167,21 @@ public class MainActivity extends AppCompatActivity {
 //        bottomSheetDialog.setContentView(R.layout.feeds_title_common_layout);
 //        bottomSheetDialog.show();
 
-        activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        //view set with fit screen
+//        activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        //view set with fit screen set comment dialog
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
 //        bottomSheetDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE| WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         // bottomSheetDialog.getBehavior().setFitToContents(false); // not add this line then fit to content(not show in full screen)
         bottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
 //        bottomSheetDialog.getBehavior().setPeekHeight(getScreenResolution(context)[1]);
         View view = LayoutInflater.from(context).inflate(R.layout.feeds_comment_list_dialog_layout, null);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getScreenResolution(context)[1]);
-        view.setLayoutParams(layoutParams);
+//        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getScreenResolution(context)[1]);
+//        view.setLayoutParams(layoutParams);
 
-        EditText comment_input = view.findViewById(R.id.comment_input);
-        InputMethodManager inputMethodManager = (InputMethodManager) context
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.showSoftInput(comment_input, 0);
+//        EditText comment_input = view.findViewById(R.id.comment_input);
+//        InputMethodManager inputMethodManager = (InputMethodManager) context
+//                .getSystemService(Context.INPUT_METHOD_SERVICE);
+//        inputMethodManager.showSoftInput(comment_input, 0);
 
         bottomSheetDialog.setContentView(view);
         bottomSheetDialog.show();
