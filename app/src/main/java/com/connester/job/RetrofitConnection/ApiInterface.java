@@ -62,6 +62,12 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedCommentsJson")
     Call<FeedsCommentListResponse> GET_FEED_COMMENT(@FieldMap Map<String, String> params );
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/feedOnComment")
+    Call<NormalCommonResponse> SUBMIT_COMMENT_ON_FEEDS(@FieldMap Map<String, String> params );
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/feedsForward")
+    Call<NormalCommonResponse> FEEDS_SHARE_FORWARD(@FieldMap Map<String, String> params );
 
 
 }

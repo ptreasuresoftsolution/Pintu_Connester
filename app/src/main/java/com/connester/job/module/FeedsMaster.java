@@ -3,13 +3,19 @@ package com.connester.job.module;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -23,6 +29,7 @@ import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.DateUtils;
 import com.connester.job.function.LogTag;
+import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.MyListRowSet;
 import com.connester.job.function.SessionPref;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -47,14 +54,22 @@ public class FeedsMaster {
     String imgPath = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/upload/images/auto/"; //overwrite on api call
     String feedImgPath = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/upload/images/feeds/"; //overwrite on api call
 
+    String feedFor = "USER";//USER/COMMUNITY/BUSINESS
+    String feedForId = "0";
 
     public void setNeedCloseBtn(boolean needCloseBtn) {
         isNeedCloseBtn = needCloseBtn;
     }
 
     public FeedsMaster(Context context, Activity activity) {
+        this(context, activity, "USER", "0");
+    }
+
+    public FeedsMaster(Context context, Activity activity, String feedFor, String feedForId) {
         this.context = context;
         this.activity = activity;
+        this.feedFor = feedFor;
+        this.feedForId = feedForId;
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
         sessionPref = new SessionPref(context);
         loginUserRow = sessionPref.getUserMasterRowInObject();
@@ -138,9 +153,40 @@ public class FeedsMaster {
                 bottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
                 View view = LayoutInflater.from(context).inflate(R.layout.feeds_comment_list_dialog_layout, null);
                 LinearLayout comment_ll = view.findViewById(R.id.comment_ll);
-                loadCommentList(comment_ll, loginUserRow, feedsRow);
+                NestedScrollView nestedScrollView_commentList = view.findViewById(R.id.nestedScrollView_commentList);
+                loadCommentList(nestedScrollView_commentList, comment_ll, loginUserRow, feedsRow);
                 //comment place submit
-
+                ImageView loginUser_pic = view.findViewById(R.id.loginUser_pic);
+                Glide.with(context).load(imgPath + loginUserRow.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(loginUser_pic);
+                EditText comment_input = view.findViewById(R.id.comment_input);
+                ImageView comment_submit_iv = view.findViewById(R.id.comment_submit_iv);
+                comment_submit_iv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CommonFunction.PleaseWaitShow(context);
+                        HashMap hashMap = new HashMap();
+                        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                        hashMap.put("apiKey", sessionPref.getApiKey());
+                        hashMap.put("feed_master_id", feedsRow.feedMasterId);
+                        hashMap.put("commentText", comment_input.getText().toString());
+                        apiInterface.SUBMIT_COMMENT_ON_FEEDS(hashMap).enqueue(new MyApiCallback() {
+                            @Override
+                            public void onResponse(Call call, Response response) {
+                                super.onResponse(call, response);
+                                if (response.isSuccessful()) {
+                                    if (response.body() != null) {
+                                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                        if (normalCommonResponse.status) {
+                                            loadCommentList(nestedScrollView_commentList, comment_ll, loginUserRow, feedsRow);
+                                        } else {
+                                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
                 bottomSheetDialog.setContentView(view);
                 bottomSheetDialog.show();
             }
@@ -151,11 +197,46 @@ public class FeedsMaster {
             @Override
             public void onClick(View v) {
                 //open confirm box and forward and push top of list
+                AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                alertDialog.setMessage("Are you sure share this post on your post timeline?");
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        CommonFunction.PleaseWaitShow(context);
+                        HashMap hashMap = new HashMap();
+                        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                        hashMap.put("apiKey", sessionPref.getApiKey());
+                        hashMap.put("feed_master_id", feedsRow.feedMasterId);
+                        hashMap.put("feed_for", feedFor);
+                        hashMap.put("feed_for_id", feedForId);
+                        apiInterface.FEEDS_SHARE_FORWARD(hashMap).enqueue(new MyApiCallback(){
+                            @Override
+                            public void onResponse(Call call, Response response) {
+                                super.onResponse(call, response);
+                                if (response.isSuccessful()){
+                                    if (response.body() != null){
+                                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                        if (normalCommonResponse.status){
+                                            //reload activity page OR add forwarded feed on top of the list
+                                        }else
+                                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                alertDialog.show();
             }
         });
     }
 
-    private void loadCommentList(LinearLayout commentLl, UserRowResponse.Dt loginUserRow, FeedsRow feedsRow) {
+    private void loadCommentList(NestedScrollView nestedScrollView_commentList, LinearLayout commentLl, UserRowResponse.Dt loginUserRow, FeedsRow feedsRow) {
         commentLl.removeAllViews();
         CommonFunction.PleaseWaitShow(context);
         HashMap hashMap = new HashMap();
@@ -192,6 +273,13 @@ public class FeedsMaster {
                                     return view;
                                 }
                             }.createView();
+
+                            nestedScrollView_commentList.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    nestedScrollView_commentList.fullScroll(ScrollView.FOCUS_DOWN);
+                                }
+                            });
                         } else
                             Toast.makeText(context, feedsCommentListResponse.msg, Toast.LENGTH_SHORT).show();
                     }
