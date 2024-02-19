@@ -68,6 +68,15 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedsForward")
     Call<NormalCommonResponse> FEEDS_SHARE_FORWARD(@FieldMap Map<String, String> params );
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/feedClosed")
+    Call<NormalCommonResponse> FEEDS_OPTION_CLOSE(@FieldMap Map<String, String> params );
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/feedsSaveUnsave")
+    Call<NormalCommonResponse> FEEDS_OPTION_SAVE_UNSAVE(@FieldMap Map<String, String> params );
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/unFollowProfile")
+    Call<NormalCommonResponse> FEEDS_OPTION_UNFOLLOW_PROFILE(@FieldMap Map<String, String> params );
 
 
 }

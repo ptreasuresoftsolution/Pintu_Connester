@@ -1,8 +1,12 @@
 package com.connester.job.function;
 
+import static android.content.Context.CLIPBOARD_SERVICE;
+
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -190,6 +194,19 @@ public class CommonFunction {
             cnt_size = size_kb + " KB";
         }
         return cnt_size;
+    }
+
+    public static void copyToClipBoard(Context context, String txt) {
+        copyToClipBoard(context, txt, "label");
+    }
+
+    public static void copyToClipBoard(Context context, String txt, String label) {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(label, txt);
+        if (clipboard == null || clip == null)
+            return;
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(context, "Text copied!", Toast.LENGTH_SHORT).show();
     }
 
     public static String convertSeconds(int seconds) {
@@ -452,7 +469,7 @@ public class CommonFunction {
     }
 
 
-    public static String getMimietype(Context context,Uri uri) {
+    public static String getMimietype(Context context, Uri uri) {
         ContentResolver resolver = context.getContentResolver();
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
         return MimeTypeMap.getFileExtensionFromUrl(resolver.getType(uri));
@@ -477,6 +494,7 @@ public class CommonFunction {
 //        return BuildConfig.VERSION_NAME;
         return null;
     }
+
     public static String findAgeRange(String birthDate) {
         if (birthDate.equals("0000-00-00")) {
             return "-";

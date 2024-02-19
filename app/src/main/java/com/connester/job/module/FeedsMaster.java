@@ -81,10 +81,11 @@ public class FeedsMaster {
         layoutInflater = LayoutInflater.from(context);
     }
 
-    ArrayList<View> feedsViews = new ArrayList<>();
+    ArrayList<FeedStorage> feedsViews = new ArrayList<>();
 
     public View getFeedsPhotoView(FeedsRow feedsRow) {
         View view = layoutInflater.inflate(R.layout.feeds_photos_layout, null);
+        view.setTag(feedsRow.feedMasterId);
         setFeedsTitleCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
         setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
         TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
@@ -411,6 +412,7 @@ public class FeedsMaster {
         feeds_title_img.setOnClickListener(openTitleProfile);
         fullname_txt.setOnClickListener(openTitleProfile);
         boolean finalUnFollowShow = unFollowShow;
+        String finalFeedsRowOptionalId = feedsRowOptionalId;
         feeds_option_iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -421,19 +423,70 @@ public class FeedsMaster {
                 feed_close.setVisibility(View.GONE);
                 if (isNeedCloseBtn) {
                     feed_close.setVisibility(View.VISIBLE);
-                    //call close api and remove feeds in list (use feedMasterId)
+                    feed_close.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //call close api and remove feeds in list (use feedMasterId)
+                            CommonFunction.PleaseWaitShow(context);
+                            HashMap hashMap = new HashMap();
+                            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                            hashMap.put("apiKey", sessionPref.getApiKey());
+                            hashMap.put("feed_master_id", feedsRow.feedMasterId);
+                            apiInterface.FEEDS_OPTION_CLOSE(hashMap).enqueue(new MyApiCallback() {
+                                @Override
+                                public void onResponse(Call call, Response response) {
+                                    super.onResponse(call, response);
+                                    if (response.isSuccessful()) {
+                                        if (response.body() != null) {
+                                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                            if (normalCommonResponse.status) {
+                                                removeFeedsInList(view);
+                                            } else
+                                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
                 }
 
                 LinearLayout feed_save_unsave = feedsOptionDialog.findViewById(R.id.feed_save_unsave);
                 ImageView feed_save_unsave_icon = feedsOptionDialog.findViewById(R.id.feed_save_unsave_icon);
-                boolean isSave = Integer.parseInt(feedsRow.isSave) > 0;
-                if (isSave) {
+                final boolean[] isSave = {Integer.parseInt(feedsRow.isSave) > 0};
+                if (isSave[0]) {
                     feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
                 }
                 feed_save_unsave.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //call feeds save unsave api and set related icon (use feedMasterId / isSave)
+                        CommonFunction.PleaseWaitShow(context);
+                        HashMap hashMap = new HashMap();
+                        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                        hashMap.put("apiKey", sessionPref.getApiKey());
+                        hashMap.put("feed_master_id", feedsRow.feedMasterId);
+                        hashMap.put("isSave", isSave[0] ? 1 : 0);
+                        apiInterface.FEEDS_OPTION_SAVE_UNSAVE(hashMap).enqueue(new MyApiCallback() {
+                            @Override
+                            public void onResponse(Call call, Response response) {
+                                super.onResponse(call, response);
+                                if (response.isSuccessful()){
+                                    if (response.body() != null){
+                                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                        if (normalCommonResponse.status){
+                                            isSave[0] = normalCommonResponse.feedSave;
+                                            if (isSave[0]) {
+                                                feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
+                                            }else{
+                                                feed_save_unsave_icon.setImageResource(R.drawable.feed_save_blank);
+                                            }
+                                        }else
+                                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        });
                     }
                 });
 
@@ -443,6 +496,7 @@ public class FeedsMaster {
                     public void onClick(View v) {
                         //link copy set (use link)
                         String link = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/feeds/" + feedsRow.feedLink;
+                        CommonFunction.copyToClipBoard(context, link);
                     }
                 });
 
@@ -456,6 +510,27 @@ public class FeedsMaster {
                         @Override
                         public void onClick(View v) {
                             //call unfollow profile and remove item in feed list(use feedsRowOptionalId/feedsRow.feedFor)
+                            CommonFunction.PleaseWaitShow(context);
+                            HashMap hashMap = new HashMap();
+                            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                            hashMap.put("apiKey", sessionPref.getApiKey());
+                            hashMap.put("profile_id", finalFeedsRowOptionalId);
+                            hashMap.put("profile_type", feedsRow.feedFor);
+                            apiInterface.FEEDS_OPTION_UNFOLLOW_PROFILE(hashMap).enqueue(new MyApiCallback(){
+                                @Override
+                                public void onResponse(Call call, Response response) {
+                                    super.onResponse(call, response);
+                                    if (response.isSuccessful()){
+                                        if (response.body() != null){
+                                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                            if (normalCommonResponse.status){
+                                                removeFeedsInList(view);
+                                            }else
+                                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+                            });
                         }
                     });
                 }
@@ -487,6 +562,14 @@ public class FeedsMaster {
         }
     }
 
+    private void removeFeedsInList(FeedsRow feedsRow) {
+
+    }
+
+    private void removeFeedsInList(View mainLayoutView) {
+
+    }
+
     String feedTimeCount(String createDate) {
         return feedTimeCount(createDate, DateUtils.TODAYDATETIMEforDB());
     }
@@ -509,6 +592,18 @@ public class FeedsMaster {
             return minute + " Minute ago";
         } else {
             return " Now";
+        }
+    }
+
+    class FeedStorage {
+        View view; // getTag to given is feedMasterId
+        int viewIndex;
+        FeedsRow feedsRow;
+
+        public FeedStorage(View view, int viewIndex, FeedsRow feedsRow) {
+            this.view = view;
+            this.viewIndex = viewIndex;
+            this.feedsRow = feedsRow;
         }
     }
 }
