@@ -410,10 +410,63 @@ public class FeedsMaster {
         };
         feeds_title_img.setOnClickListener(openTitleProfile);
         fullname_txt.setOnClickListener(openTitleProfile);
+        boolean finalUnFollowShow = unFollowShow;
         feeds_option_iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //feeds option open in bottom sheet dialog
+                BottomSheetDialog feedsOptionDialog = new BottomSheetDialog(context);
+                feedsOptionDialog.setContentView(R.layout.feeds_option_dialog_layout);
+                LinearLayout feed_close = feedsOptionDialog.findViewById(R.id.feed_close);
+                feed_close.setVisibility(View.GONE);
+                if (isNeedCloseBtn) {
+                    feed_close.setVisibility(View.VISIBLE);
+                    //call close api and remove feeds in list (use feedMasterId)
+                }
+
+                LinearLayout feed_save_unsave = feedsOptionDialog.findViewById(R.id.feed_save_unsave);
+                ImageView feed_save_unsave_icon = feedsOptionDialog.findViewById(R.id.feed_save_unsave_icon);
+                boolean isSave = Integer.parseInt(feedsRow.isSave) > 0;
+                if (isSave) {
+                    feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
+                }
+                feed_save_unsave.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //call feeds save unsave api and set related icon (use feedMasterId / isSave)
+                    }
+                });
+
+                LinearLayout feed_link_copy = feedsOptionDialog.findViewById(R.id.feed_link_copy);
+                feed_link_copy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //link copy set (use link)
+                        String link = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/feeds/" + feedsRow.feedLink;
+                    }
+                });
+
+                LinearLayout feed_unfollow = feedsOptionDialog.findViewById(R.id.feed_unfollow);
+                TextView feed_unfollow_name = feedsOptionDialog.findViewById(R.id.feed_unfollow_name);
+                feed_unfollow.setVisibility(View.GONE);
+                if (finalUnFollowShow) {
+                    feed_unfollow.setVisibility(View.VISIBLE);
+                    feed_unfollow_name.setText("Unfollow " + unFollowName);
+                    feed_unfollow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //call unfollow profile and remove item in feed list(use feedsRowOptionalId/feedsRow.feedFor)
+                        }
+                    });
+                }
+
+                LinearLayout feed_report = feedsOptionDialog.findViewById(R.id.feed_report);
+                feed_report.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //send report data
+                    }
+                });
             }
         });
     }
