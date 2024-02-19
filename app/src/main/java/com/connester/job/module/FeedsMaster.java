@@ -34,6 +34,7 @@ import com.connester.job.function.MyListRowSet;
 import com.connester.job.function.SessionPref;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -209,16 +210,17 @@ public class FeedsMaster {
                         hashMap.put("feed_master_id", feedsRow.feedMasterId);
                         hashMap.put("feed_for", feedFor);
                         hashMap.put("feed_for_id", feedForId);
-                        apiInterface.FEEDS_SHARE_FORWARD(hashMap).enqueue(new MyApiCallback(){
+                        apiInterface.FEEDS_SHARE_FORWARD(hashMap).enqueue(new MyApiCallback() {
                             @Override
                             public void onResponse(Call call, Response response) {
                                 super.onResponse(call, response);
-                                if (response.isSuccessful()){
-                                    if (response.body() != null){
+                                if (response.isSuccessful()) {
+                                    if (response.body() != null) {
                                         NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                                        if (normalCommonResponse.status){
+                                        if (normalCommonResponse.status) {
                                             //reload activity page OR add forwarded feed on top of the list
-                                        }else
+                                            reloadOrAddTopFeeds();
+                                        } else
                                             Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -295,12 +297,58 @@ public class FeedsMaster {
     }
 
     private void setFeedsTitleCommon(View view, UserRowResponse.Dt loginUserRow, FeedsRow feedsRow, boolean isNeedCloseBtn) {
+//        share by user elements
+        MaterialCardView feeds_fwd_shareBy_user_view = view.findViewById(R.id.feeds_fwd_shareBy_user_view);
+        ImageView feeds_shareBy_User_pic = view.findViewById(R.id.feeds_shareBy_User_pic);
+        TextView feeds_shareBy_User_name = view.findViewById(R.id.feeds_shareBy_User_name);
+//        group icon userpic elements
+        MaterialCardView title_gMember_view = view.findViewById(R.id.title_gMember_view);
+        ImageView title_gMember_pic = view.findViewById(R.id.title_gMember_pic);
+//        main elements
+        ImageView feeds_title_img = view.findViewById(R.id.feeds_title_img);
+        TextView fullname_txt = view.findViewById(R.id.fullname_txt);
+        TextView time_ago_txt = view.findViewById(R.id.time_ago_txt);
+        ImageView feeds_option_iv = view.findViewById(R.id.feeds_option_iv);
 
+        //set data on elements
+        if (feedsRow.shareFrwdPost != null && !feedsRow.shareFrwdPost.equalsIgnoreCase("0")) {
+            feeds_fwd_shareBy_user_view.setVisibility(View.VISIBLE);
+            if (feedsRow.feedFor.equalsIgnoreCase("COMMUNITY")) {
+                Glide.with(context).load(imgPath + feedsRow.tblCommunityMaster.logo).centerCrop().placeholder(R.drawable.default_user_pic).into(feeds_shareBy_User_pic);
+            } else if (feedsRow.feedFor.equalsIgnoreCase("BUSINESS")) {
+//                Glide.with(context).load(imgPath + commentsRow.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(user_pic);
+            } else { //user compulsory
+//                Glide.with(context).load(imgPath + commentsRow.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(user_pic);
+            }
+
+        } else {
+
+        }
+
+        feeds_option_iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //feeds option open in bottom sheet dialog
+            }
+        });
     }
 
     /**
      * common function for feeds
      **/
+    private void reloadOrAddTopFeeds() {
+        reloadOrAddTopFeeds(null);
+    }
+
+    /*** programing remain **/
+    private void reloadOrAddTopFeeds(FeedsRow feedsRow) {
+        if (feedsRow == null) {
+            //compulsory reload
+        } else {
+            //optional add feeds on top
+        }
+    }
+
     String feedTimeCount(String createDate) {
         return feedTimeCount(createDate, DateUtils.TODAYDATETIMEforDB());
     }

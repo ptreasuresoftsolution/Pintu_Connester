@@ -134,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
             }
             feeds_mainList.addView(vv[i], i);
         }
+        View vx = layoutInflater.inflate(R.layout.feeds_content_layout, null);
+        feeds_mainList.addView(vx, -1);
         View find = feeds_mainList.getChildAt(6);
         TextView fullname_txt = find.findViewById(R.id.fullname_txt);
         fullname_txt.setText("Check Layout 6");
