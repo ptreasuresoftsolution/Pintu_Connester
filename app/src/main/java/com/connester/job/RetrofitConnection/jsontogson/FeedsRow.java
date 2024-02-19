@@ -253,24 +253,44 @@ public class FeedsRow {
         @SerializedName("feedProLink")
         @Expose
         public String feedProLink;
+        @SerializedName("feed_for")
+        @Expose
+        public String feedFor;
         @SerializedName("exDt")
         @Expose
         public ExDt exDt;
-
         public class ExDt {
-            @SerializedName("user_master_id")
+
+            @SerializedName("community_master_id")
             @Expose
-            public String userMasterId;
+            public String communityMasterId;
+            @SerializedName("logo")
+            @Expose
+            public String logo;
             @SerializedName("name")
             @Expose
             public String name;
+            @SerializedName("community_link")
+            @Expose
+            public String communityLink;
+            @SerializedName("business_page_id")
+            @Expose
+            public String businessPageId;
+            @SerializedName("bus_name")
+            @Expose
+            public String busName;
+            @SerializedName("cus_link")
+            @Expose
+            public String cusLink;
+            @SerializedName("user_master_id")
+            @Expose
+            public String userMasterId;
             @SerializedName("profile_pic")
             @Expose
             public String profilePic;
             @SerializedName("profile_link")
             @Expose
             public String profileLink;
-
         }
     }
 

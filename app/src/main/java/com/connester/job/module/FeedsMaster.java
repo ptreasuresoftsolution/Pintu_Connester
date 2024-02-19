@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,9 @@ import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsRow;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
+import com.connester.job.activity.BusinessActivity;
+import com.connester.job.activity.CommunityActivity;
+import com.connester.job.activity.ProfileActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.DateUtils;
@@ -311,20 +315,101 @@ public class FeedsMaster {
         ImageView feeds_option_iv = view.findViewById(R.id.feeds_option_iv);
 
         //set data on elements
-        if (feedsRow.shareFrwdPost != null && !feedsRow.shareFrwdPost.equalsIgnoreCase("0")) {
-            feeds_fwd_shareBy_user_view.setVisibility(View.VISIBLE);
-            if (feedsRow.feedFor.equalsIgnoreCase("COMMUNITY")) {
-                Glide.with(context).load(imgPath + feedsRow.tblCommunityMaster.logo).centerCrop().placeholder(R.drawable.default_user_pic).into(feeds_shareBy_User_pic);
-            } else if (feedsRow.feedFor.equalsIgnoreCase("BUSINESS")) {
-//                Glide.with(context).load(imgPath + commentsRow.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(user_pic);
-            } else { //user compulsory
-//                Glide.with(context).load(imgPath + commentsRow.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(user_pic);
-            }
 
-        } else {
-
+        Intent clickPicNm = null;
+        String feedsRowOptionalId = feedsRow.optionalId;
+        if (!(feedsRow.optionalId != null && !feedsRow.optionalId.equalsIgnoreCase("0"))) {
+            feedsRowOptionalId = feedsRow.userMasterId;
         }
 
+        int defaultPic = R.drawable.default_user_pic;
+        String feedsProPic = feedsRow.profilePic;
+        String feedsProName = feedsRow.name;
+        clickPicNm = new Intent(context, ProfileActivity.class);
+        clickPicNm.putExtra("user_master_id", feedsRow.userMasterId);
+
+        if (feedsRow.feedFor.equalsIgnoreCase("COMMUNITY")) {
+            defaultPic = R.drawable.default_groups_pic;
+            feedsProPic = feedsRow.tblCommunityMaster.logo;
+            feedsProName = feedsRow.tblCommunityMaster.name;
+            clickPicNm = new Intent(context, CommunityActivity.class);
+            clickPicNm.putExtra("community_master_id", feedsRow.tblCommunityMaster.communityMasterId);
+        } else if (feedsRow.feedFor.equalsIgnoreCase("BUSINESS")) {
+            defaultPic = R.drawable.default_business_pic;
+            feedsProPic = feedsRow.tblBusinessPage.logo;
+            feedsProName = feedsRow.tblBusinessPage.busName;
+            clickPicNm = new Intent(context, BusinessActivity.class);
+            clickPicNm.putExtra("business_page_id", feedsRow.tblBusinessPage.businessPageId);
+        }
+
+        boolean unFollowShow = true;
+        if (feedsRow.userMasterId == loginUserRow.userMasterId && feedsRow.feedFor.equalsIgnoreCase("USER")) {
+            unFollowShow = false;
+        }
+        String unFollowName = feedsProName;
+
+        feeds_fwd_shareBy_user_view.setVisibility(View.GONE);
+        if (feedsRow.shareFrwdPost != null && !feedsRow.shareFrwdPost.equalsIgnoreCase("0")) {
+            //share by elements set if(is share feeds)
+            feeds_fwd_shareBy_user_view.setVisibility(View.VISIBLE);
+
+            Glide.with(context).load(imgPath + feedsProPic).centerCrop().placeholder(defaultPic).into(feeds_shareBy_User_pic);
+            feeds_shareBy_User_name.setText(feedsProName);
+            Intent finalIntent = clickPicNm;
+            feeds_fwd_shareBy_user_view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (finalIntent != null) {
+                        context.startActivity(finalIntent);
+                    }
+                }
+            });
+
+            //overwrite main feeds user details with end user
+            defaultPic = R.drawable.default_user_pic;
+            feedsProPic = feedsRow.feedsEndUser.feedProPic;
+            feedsProName = feedsRow.feedsEndUser.feedProName;
+            clickPicNm = new Intent(context, ProfileActivity.class);
+            clickPicNm.putExtra("user_master_id", feedsRow.feedsEndUser.exDt.userMasterId);
+            if (feedsRow.feedsEndUser.feedFor.equalsIgnoreCase("COMMUNITY")) {
+                defaultPic = R.drawable.default_groups_pic;
+                clickPicNm = new Intent(context, CommunityActivity.class);
+                clickPicNm.putExtra("community_master_id", feedsRow.feedsEndUser.exDt.communityMasterId);
+            } else if (feedsRow.feedsEndUser.feedFor.equalsIgnoreCase("BUSINESS")) {
+                defaultPic = R.drawable.default_business_pic;
+                clickPicNm = new Intent(context, BusinessActivity.class);
+                clickPicNm.putExtra("business_page_id", feedsRow.feedsEndUser.exDt.businessPageId);
+            }
+        }
+
+        //group feeds set group extra elements
+        title_gMember_view.setVisibility(View.GONE);
+        if (feedsRow.feedFor.equalsIgnoreCase("COMMUNITY")) {
+            title_gMember_view.setVisibility(View.VISIBLE);
+            Glide.with(context).load(imgPath + feedsRow.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(title_gMember_pic);
+            title_gMember_view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(context, ProfileActivity.class);
+                    i.putExtra("user_master_id", feedsRow.userMasterId);
+                    context.startActivity(i);
+                }
+            });
+        }
+
+        Glide.with(context).load(imgPath + feedsProPic).centerCrop().placeholder(defaultPic).into(feeds_title_img);
+        fullname_txt.setText(feedsProName);
+        time_ago_txt.setText(feedTimeCount(feedsRow.createDate));
+        Intent finalClickPicNm = clickPicNm;
+        View.OnClickListener openTitleProfile = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (finalClickPicNm != null)
+                    context.startActivity(finalClickPicNm);
+            }
+        };
+        feeds_title_img.setOnClickListener(openTitleProfile);
+        fullname_txt.setOnClickListener(openTitleProfile);
         feeds_option_iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

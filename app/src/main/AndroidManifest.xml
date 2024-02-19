@@ -39,6 +39,15 @@
         tools:ignore="HardcodedDebugMode"
         tools:targetApi="s">
         <activity
+            android:name=".activity.BusinessActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CommunityActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.EditProfileActivity"
             android:exported="false" />
         <activity
@@ -81,7 +90,7 @@
         <activity
             android:name=".activity.MainActivity"
             android:exported="false"
-            android:screenOrientation="portrait"  />
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
