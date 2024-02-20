@@ -236,6 +236,9 @@ public class FeedsRow {
         @Expose
         public String postExpire;
 
+        @SerializedName("isApplide")
+        @Expose
+        public String isApplide;
     }
 
 

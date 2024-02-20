@@ -33,6 +33,7 @@ import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.connester.job.activity.BusinessActivity;
 import com.connester.job.activity.CommunityActivity;
+import com.connester.job.activity.FeedFullViewActivity;
 import com.connester.job.activity.ProfileActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
@@ -54,8 +55,10 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -324,6 +327,18 @@ public class FeedsMaster {
         event_img.setImageURI(uri);
         TextView event_nm = view.findViewById(R.id.event_nm);
         event_nm.setText(feedsRow.tblJobEvent.title);
+
+        View.OnClickListener fullViewFeeds = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, FeedFullViewActivity.class);
+                intent.putExtra("feed_master_id", feedsRow.feedMasterId);
+                context.startActivity(intent);
+            }
+        };
+        event_img.setOnClickListener(fullViewFeeds);
+        event_nm.setOnClickListener(fullViewFeeds);
+
         LinearLayout event_finish_ll = view.findViewById(R.id.event_finish_ll);
         event_finish_ll.setVisibility(View.GONE);
         Date currDate = new Date();
@@ -415,6 +430,33 @@ public class FeedsMaster {
                 });
             }
         });
+        return view;
+    }
+
+    public View getFeedsJobsView(FeedsRow feedsRow) {
+        View view = layoutInflater.inflate(R.layout.feeds_jobs_layout, null);
+        view.setTag(feedsRow.feedMasterId);
+        View.OnClickListener fullViewFeeds = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, FeedFullViewActivity.class);
+                intent.putExtra("feed_master_id", feedsRow.feedMasterId);
+                context.startActivity(intent);
+            }
+        };
+        SimpleDraweeView job_business_iv = view.findViewById(R.id.job_business_iv);
+        Uri uri = Uri.parse(feedImgPath + feedsRow.tblBusinessPage.logo);
+        job_business_iv.setImageURI(uri);
+        TextView job_title = view.findViewById(R.id.job_title);
+        job_title.setText(feedsRow.tblJobPost.titlePost);
+        TextView job_business_page_nm_txt = view.findViewById(R.id.job_business_page_nm_txt);
+        TextView job_location = view.findViewById(R.id.job_location);
+        ImageView feed_save_unsave_icon = view.findViewById(R.id.feed_save_unsave_icon);
+        ImageView feed_close_icon = view.findViewById(R.id.feed_close_icon);
+        TextView job_salary = view.findViewById(R.id.job_salary);
+        TextView job_salary_payroll = view.findViewById(R.id.job_salary_payroll);
+        MaterialButton job_apply_btn = view.findViewById(R.id.job_apply_btn);
+        FlexboxLayout job_skill_tag_fbl = view.findViewById(R.id.job_skill_tag_fbl);
         return view;
     }
 

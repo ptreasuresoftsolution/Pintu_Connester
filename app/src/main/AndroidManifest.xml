@@ -39,6 +39,9 @@
         tools:ignore="HardcodedDebugMode"
         tools:targetApi="s">
         <activity
+            android:name=".activity.FeedFullViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.BusinessActivity"
             android:exported="false" />
         <activity
