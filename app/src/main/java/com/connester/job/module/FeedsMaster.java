@@ -520,17 +520,17 @@ public class FeedsMaster {
         TextView job_salary = view.findViewById(R.id.job_salary);
         job_salary.setText(feedsRow.tblJobPost.salaryCurrency + " " + CommonFunction.convertAmountUnitForm(Double.parseDouble(feedsRow.tblJobPost.salary)));
         TextView job_salary_payroll = view.findViewById(R.id.job_salary_payroll);
-        job_salary_payroll.setText("/ "+feedsRow.tblJobPost.salaryPayroll);
+        job_salary_payroll.setText("/ " + feedsRow.tblJobPost.salaryPayroll);
         MaterialButton job_apply_btn = view.findViewById(R.id.job_apply_btn);
         Date currDate = new Date();
         Date endDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", feedsRow.tblJobPost.postExpire);
         if (currDate.getTime() > endDate.getTime()) {//is expire
             job_apply_btn.setEnabled(false);
             job_apply_btn.setText("Job is expire");
-        }else if(Integer.parseInt(feedsRow.tblJobPost.isApplide) > 0){//is already applied
+        } else if (Integer.parseInt(feedsRow.tblJobPost.isApplide) > 0) {//is already applied
             job_apply_btn.setEnabled(false);
             job_apply_btn.setText("Applied");
-        }else{
+        } else {
             job_apply_btn.setEnabled(true);
             job_apply_btn.setText("Apply");
             job_apply_btn.setOnClickListener(new View.OnClickListener() {
@@ -538,10 +538,36 @@ public class FeedsMaster {
                 public void onClick(View v) {
                     CommonFunction.PleaseWaitShow(context);
                     HashMap hashMap = new HashMap();
+                    hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                    hashMap.put("apiKey", sessionPref.getApiKey());
+                    hashMap.put("job_post_id", feedsRow.tblJobPost.jobPostId);
+                    apiInterface.JOB_APPLY(hashMap).enqueue(new MyApiCallback() {
+                        @Override
+                        public void onResponse(Call call, Response response) {
+                            super.onResponse(call, response);
+                            if (response.isSuccessful()) {
+                                if (response.body() != null) {
+                                    NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                    if (normalCommonResponse.status) {
+                                        job_apply_btn.setEnabled(false);
+                                        job_apply_btn.setText("Applied");
+                                    } else
+                                        Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    });
                 }
             });
         }
         FlexboxLayout job_skill_tag_fbl = view.findViewById(R.id.job_skill_tag_fbl);
+        String skills[] = feedsRow.tblJobPost.skills.split(",");
+        for (String skill : skills) {
+            View skillLayout = layoutInflater.inflate(R.layout.skill_tag_item,null);
+            MaterialButton skill_item = skillLayout.findViewById(R.id.skill_item);
+            skill_item.setText(skill);
+            job_skill_tag_fbl.addView(skillLayout);
+        }
         return view;
     }
 
