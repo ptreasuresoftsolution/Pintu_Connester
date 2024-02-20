@@ -450,12 +450,97 @@ public class FeedsMaster {
         TextView job_title = view.findViewById(R.id.job_title);
         job_title.setText(feedsRow.tblJobPost.titlePost);
         TextView job_business_page_nm_txt = view.findViewById(R.id.job_business_page_nm_txt);
+        job_business_page_nm_txt.setText(feedsRow.tblBusinessPage.busName);
         TextView job_location = view.findViewById(R.id.job_location);
+        job_location.setText(feedsRow.tblJobPost.jobLocation);
         ImageView feed_save_unsave_icon = view.findViewById(R.id.feed_save_unsave_icon);
+        final boolean[] isSave = {Integer.parseInt(feedsRow.isSave) > 0};
+        if (isSave[0]) {
+            feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
+        }
+        feed_save_unsave_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //call feeds save unsave api and set related icon (use feedMasterId / isSave)
+                CommonFunction.PleaseWaitShow(context);
+                HashMap hashMap = new HashMap();
+                hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                hashMap.put("apiKey", sessionPref.getApiKey());
+                hashMap.put("feed_master_id", feedsRow.feedMasterId);
+                hashMap.put("isSave", isSave[0] ? 1 : 0);
+                apiInterface.FEEDS_OPTION_SAVE_UNSAVE(hashMap).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status) {
+                                    isSave[0] = normalCommonResponse.feedSave;
+                                    if (isSave[0]) {
+                                        feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
+                                    } else {
+                                        feed_save_unsave_icon.setImageResource(R.drawable.feed_save_blank);
+                                    }
+                                } else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+            }
+        });
         ImageView feed_close_icon = view.findViewById(R.id.feed_close_icon);
+        feed_close_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //call close api and remove feeds in list (use feedMasterId)
+                CommonFunction.PleaseWaitShow(context);
+                HashMap hashMap = new HashMap();
+                hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                hashMap.put("apiKey", sessionPref.getApiKey());
+                hashMap.put("feed_master_id", feedsRow.feedMasterId);
+                apiInterface.FEEDS_OPTION_CLOSE(hashMap).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status) {
+                                    removeFeedsInList(view);
+                                } else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+            }
+        });
         TextView job_salary = view.findViewById(R.id.job_salary);
+        job_salary.setText(feedsRow.tblJobPost.salaryCurrency + " " + CommonFunction.convertAmountUnitForm(Double.parseDouble(feedsRow.tblJobPost.salary)));
         TextView job_salary_payroll = view.findViewById(R.id.job_salary_payroll);
+        job_salary_payroll.setText("/ "+feedsRow.tblJobPost.salaryPayroll);
         MaterialButton job_apply_btn = view.findViewById(R.id.job_apply_btn);
+        Date currDate = new Date();
+        Date endDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", feedsRow.tblJobPost.postExpire);
+        if (currDate.getTime() > endDate.getTime()) {//is expire
+            job_apply_btn.setEnabled(false);
+            job_apply_btn.setText("Job is expire");
+        }else if(Integer.parseInt(feedsRow.tblJobPost.isApplide) > 0){//is already applied
+            job_apply_btn.setEnabled(false);
+            job_apply_btn.setText("Applied");
+        }else{
+            job_apply_btn.setEnabled(true);
+            job_apply_btn.setText("Apply");
+            job_apply_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CommonFunction.PleaseWaitShow(context);
+                    HashMap hashMap = new HashMap();
+                }
+            });
+        }
         FlexboxLayout job_skill_tag_fbl = view.findViewById(R.id.job_skill_tag_fbl);
         return view;
     }

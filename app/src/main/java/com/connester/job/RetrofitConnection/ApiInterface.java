@@ -77,6 +77,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/unFollowProfile")
     Call<NormalCommonResponse> FEEDS_OPTION_UNFOLLOW_PROFILE(@FieldMap Map<String, String> params );
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/applyJob")
+    Call<NormalCommonResponse> JOB_APPLY(@FieldMap Map<String, String> params );
 
 
 }
