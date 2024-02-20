@@ -5,18 +5,23 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
+import androidx.viewpager.widget.PagerAdapter;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -31,18 +36,37 @@ import com.connester.job.activity.CommunityActivity;
 import com.connester.job.activity.ProfileActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
+import com.connester.job.function.CustomPager;
 import com.connester.job.function.DateUtils;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.MyListRowSet;
 import com.connester.job.function.SessionPref;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.cache.Cache;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
+import com.google.android.exoplayer2.upstream.cache.SimpleCache;
+import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.card.MaterialCardView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
+import me.relex.circleindicator.CircleIndicator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -90,8 +114,307 @@ public class FeedsMaster {
         setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
         TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
         feeds_content_txt.setText(feedsRow.tblMediaPost.ptTitle);
-        ImageView feeds_photo = view.findViewById(R.id.feeds_photo);
-        Glide.with(context).load(feedImgPath + feedsRow.tblMediaPost.mediaFiles).centerCrop().placeholder(R.drawable.feeds_photos_default).into(feeds_photo);
+        SimpleDraweeView feeds_photo = view.findViewById(R.id.feeds_photo);
+//        Glide.with(context).load(feedImgPath + feedsRow.tblMediaPost.mediaFiles).placeholder(R.drawable.feeds_photos_default).into(feeds_photo);
+        Uri uri = Uri.parse(feedImgPath + feedsRow.tblMediaPost.mediaFiles);
+        feeds_photo.setImageURI(uri);
+        return view;
+    }
+
+    public View getFeedsMultiplePhotosView(FeedsRow feedsRow) {
+        View view = layoutInflater.inflate(R.layout.feeds_multi_photos_layout, null);
+        view.setTag(feedsRow.feedMasterId);
+        setFeedsTitleCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
+        feeds_content_txt.setText(feedsRow.tblMediaPost.ptTitle);
+        //set multiple images
+        String imgs[] = feedsRow.tblMediaPost.mediaFiles.split(",");
+        CustomPager feeds_view_pager = view.findViewById(R.id.feeds_view_pager);
+        CircleIndicator feeds_circleIndicator_view = view.findViewById(R.id.feeds_circleIndicator_view);
+        feeds_view_pager.setAdapter(new PagerAdapter() {
+            @Override
+            public int getCount() {
+                return imgs.length;
+            }
+
+            int mCurrentPosition = -1;
+
+            @Override
+            public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+                return view == object;
+            }
+
+            @Override
+            public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+                super.setPrimaryItem(container, position, object);
+                if (position != mCurrentPosition) {
+                    FrameLayout fragment = (FrameLayout) object;
+                    CustomPager pager = (CustomPager) container;
+                    if (fragment != null) {
+                        mCurrentPosition = position;
+                        pager.measureCurrentView(fragment);
+                    }
+                }
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object) {
+                container.removeView((View) object);
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                View view = layoutInflater.inflate(R.layout.view_pager_img_item, container, false);
+                SimpleDraweeView imageView = view.findViewById(R.id.img_view);
+//                Glide.with(context)
+//                        .load(feedImgPath + imgs[position])
+//                        .into(imageView);
+                Uri uri = Uri.parse(feedImgPath + imgs[position]);
+                imageView.setImageURI(uri);
+                container.addView(view);
+                return view;
+            }
+        });
+        feeds_view_pager.getParent().requestDisallowInterceptTouchEvent(true);
+        feeds_circleIndicator_view.setViewPager(feeds_view_pager);
+        return view;
+    }
+
+    HashMap<String, ExoPlayer> playerHashMap = new HashMap<>();
+    HashMap<String, Cache> cacheHashMap = new HashMap<>();
+
+    public View getFeedsVideoView(FeedsRow feedsRow) {
+        View view = layoutInflater.inflate(R.layout.feeds_video_layout, null);
+        view.setTag(feedsRow.feedMasterId);
+        setFeedsTitleCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
+        feeds_content_txt.setText(feedsRow.tblMediaPost.ptTitle);
+        //set player
+        StyledPlayerView feed_video = view.findViewById(R.id.feed_video);
+        ExoPlayer player = new ExoPlayer.Builder(context).build();
+        Cache cache = new SimpleCache(new File(context.getCacheDir(), "random" + feedsRow.tblMediaPost.mediaFiles), new LeastRecentlyUsedCacheEvictor(1024 * 1024 * 50));
+        DefaultHttpDataSource.Factory factory = new DefaultHttpDataSource.Factory();
+        factory.setUserAgent(Util.getUserAgent(context, context.getPackageName()));
+
+        CacheDataSource.Factory factoryCache = new CacheDataSource.Factory();
+        factoryCache.setCache(cache);
+        factoryCache.setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE | CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
+        factoryCache.setUpstreamDataSourceFactory(factory);
+
+        MediaItem mediaItem = MediaItem.fromUri(feedImgPath + feedsRow.tblMediaPost.mediaFiles);
+        MediaSource mediaSource = new ProgressiveMediaSource.Factory(factoryCache).createMediaSource(mediaItem);
+
+        player.addMediaSource(mediaSource);
+        player.prepare();
+        feed_video.setPlayer(player);
+
+        playerHashMap.put(feedsRow.feedMasterId, player);
+        cacheHashMap.put(feedsRow.feedMasterId, cache);
+        return view;
+    }
+
+    public View getFeedsContentView(FeedsRow feedsRow) {
+        View view = layoutInflater.inflate(R.layout.feeds_content_layout, null);
+        view.setTag(feedsRow.feedMasterId);
+        setFeedsTitleCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
+        feeds_content_txt.setText(feedsRow.tblTextPost.ptTitle);
+        return view;
+    }
+
+    public View getFeedsContentLinkView(FeedsRow feedsRow) {
+        View view = layoutInflater.inflate(R.layout.feeds_content_link_layout, null);
+        view.setTag(feedsRow.feedMasterId);
+        setFeedsTitleCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
+        feeds_content_txt.setText(feedsRow.tblTextPost.ptTitle);
+
+        String linkMetaArr = feedsRow.tblTextPost.ptHashDesc;
+//        String linkMetaArr = "{\"link\":\"https://getbootstrap.com/\",
+//        \"dataSrc\":\"https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-social.png\",
+//        \"linkTitle\":\"Bootstrap · The most popular HTML, CSS, and JS library in the world.\"}";
+        Type type = new TypeToken<HashMap<String, String>>() {
+        }.getType();
+        HashMap<String, String> hashMap = new Gson().fromJson(linkMetaArr, type);
+
+        MaterialCardView link_details_cv = view.findViewById(R.id.link_details_cv);
+        link_details_cv.setVisibility(View.GONE);
+        if (hashMap.get("link") != null && !hashMap.get("link").equalsIgnoreCase("")) {
+            link_details_cv.setVisibility(View.VISIBLE);
+            link_details_cv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CommonFunction._OpenLink(context, hashMap.get("link"));
+                }
+            });
+            SimpleDraweeView link_img = view.findViewById(R.id.link_img);
+            link_img.setVisibility(View.GONE);
+            if (hashMap.get("dataSrc") != null && !hashMap.get("dataSrc").equalsIgnoreCase("")) {
+                link_img.setVisibility(View.VISIBLE);
+                Uri uri = Uri.parse(hashMap.get("dataSrc"));
+                link_img.setImageURI(uri);
+            }
+
+            TextView link_title = view.findViewById(R.id.link_title);
+            link_title.setVisibility(View.GONE);
+            if (hashMap.get("linkTitle") != null && !hashMap.get("linkTitle").equalsIgnoreCase("")) {
+                link_title.setVisibility(View.VISIBLE);
+                link_title.setText(hashMap.get("linkTitle"));
+            }
+            TextView link_url = view.findViewById(R.id.link_url);
+            link_url.setText(hashMap.get("link"));
+        }
+        return view;
+    }
+
+    public View getFeedsLinkView(FeedsRow feedsRow) {
+        View view = layoutInflater.inflate(R.layout.feeds_link_layout, null);
+        view.setTag(feedsRow.feedMasterId);
+        setFeedsTitleCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+
+        String linkMetaArr = feedsRow.tblTextPost.ptHashDesc;
+//        String linkMetaArr = "{\"link\":\"https://getbootstrap.com/\",
+//        \"dataSrc\":\"https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-social.png\",
+//        \"linkTitle\":\"Bootstrap · The most popular HTML, CSS, and JS library in the world.\"}";
+        Type type = new TypeToken<HashMap<String, String>>() {
+        }.getType();
+        HashMap<String, String> hashMap = new Gson().fromJson(linkMetaArr, type);
+
+        MaterialCardView link_details_cv = view.findViewById(R.id.link_details_cv);
+        link_details_cv.setVisibility(View.GONE);
+        if (hashMap.get("link") != null && !hashMap.get("link").equalsIgnoreCase("")) {
+            link_details_cv.setVisibility(View.VISIBLE);
+            link_details_cv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CommonFunction._OpenLink(context, hashMap.get("link"));
+                }
+            });
+            SimpleDraweeView link_img = view.findViewById(R.id.link_img);
+            link_img.setVisibility(View.GONE);
+            if (hashMap.get("dataSrc") != null && !hashMap.get("dataSrc").equalsIgnoreCase("")) {
+                link_img.setVisibility(View.VISIBLE);
+                Uri uri = Uri.parse(hashMap.get("dataSrc"));
+                link_img.setImageURI(uri);
+            }
+
+            TextView link_title = view.findViewById(R.id.link_title);
+            link_title.setVisibility(View.GONE);
+            if (hashMap.get("linkTitle") != null && !hashMap.get("linkTitle").equalsIgnoreCase("")) {
+                link_title.setVisibility(View.VISIBLE);
+                link_title.setText(hashMap.get("linkTitle"));
+            }
+            TextView link_url = view.findViewById(R.id.link_url);
+            link_url.setText(hashMap.get("link"));
+        }
+        return view;
+    }
+
+    public View getFeedsEventView(FeedsRow feedsRow) {
+        View view = layoutInflater.inflate(R.layout.feeds_event_layout, null);
+        view.setTag(feedsRow.feedMasterId);
+
+        SimpleDraweeView event_img = view.findViewById(R.id.event_img);
+        Uri uri = Uri.parse(feedImgPath + feedsRow.tblJobEvent.eventImg);
+        event_img.setImageURI(uri);
+        TextView event_nm = view.findViewById(R.id.event_nm);
+        event_nm.setText(feedsRow.tblJobEvent.title);
+        LinearLayout event_finish_ll = view.findViewById(R.id.event_finish_ll);
+        event_finish_ll.setVisibility(View.GONE);
+        Date currDate = new Date();
+        Date endDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", feedsRow.tblJobEvent.endDate);
+        if (currDate.getTime() > endDate.getTime()) {
+            event_finish_ll.setVisibility(View.VISIBLE);
+        }
+        TextView event_time = view.findViewById(R.id.event_time);
+        String startTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "EE, MMM dd, hh:mma", feedsRow.tblJobEvent.startDate);
+        String endTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "EE, MMM dd, hh:mma", feedsRow.tblJobEvent.endDate);
+        event_time.setText(startTime + " - " + endTime);
+        ImageView event_online_offline_iv = view.findViewById(R.id.event_online_offline_iv);
+        TextView event_online_offline_txt = view.findViewById(R.id.event_online_offline_txt);
+        if (feedsRow.tblJobEvent.eventType.equalsIgnoreCase("ONLINE")) {
+            event_online_offline_iv.setImageResource(R.drawable.camera_video);
+            event_online_offline_txt.setText("Online");
+        }
+        TextView event_business_page_name_txt = view.findViewById(R.id.event_business_page_name_txt);
+        event_business_page_name_txt.setText("By " + feedsRow.tblBusinessPage.busName);
+        TextView event_desc = view.findViewById(R.id.event_desc);
+        event_desc.setText(feedsRow.tblJobEvent.jobDescription);
+        ImageView feeds_event_option_iv = view.findViewById(R.id.feeds_event_option_iv);
+        feeds_event_option_iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //feeds option open in bottom sheet dialog
+                BottomSheetDialog feedsOptionDialog = new BottomSheetDialog(context);
+                feedsOptionDialog.setContentView(R.layout.feeds_option_dialog_layout);
+                LinearLayout feed_close = feedsOptionDialog.findViewById(R.id.feed_close);
+                feed_close.setVisibility(View.GONE);
+                LinearLayout feed_unfollow = feedsOptionDialog.findViewById(R.id.feed_close);
+                feed_unfollow.setVisibility(View.GONE);
+
+                LinearLayout feed_save_unsave = feedsOptionDialog.findViewById(R.id.feed_save_unsave);
+                ImageView feed_save_unsave_icon = feedsOptionDialog.findViewById(R.id.feed_save_unsave_icon);
+                final boolean[] isSave = {Integer.parseInt(feedsRow.isSave) > 0};
+                if (isSave[0]) {
+                    feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
+                }
+                feed_save_unsave.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //call feeds save unsave api and set related icon (use feedMasterId / isSave)
+                        CommonFunction.PleaseWaitShow(context);
+                        HashMap hashMap = new HashMap();
+                        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                        hashMap.put("apiKey", sessionPref.getApiKey());
+                        hashMap.put("feed_master_id", feedsRow.feedMasterId);
+                        hashMap.put("isSave", isSave[0] ? 1 : 0);
+                        apiInterface.FEEDS_OPTION_SAVE_UNSAVE(hashMap).enqueue(new MyApiCallback() {
+                            @Override
+                            public void onResponse(Call call, Response response) {
+                                super.onResponse(call, response);
+                                if (response.isSuccessful()) {
+                                    if (response.body() != null) {
+                                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                        if (normalCommonResponse.status) {
+                                            isSave[0] = normalCommonResponse.feedSave;
+                                            if (isSave[0]) {
+                                                feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
+                                            } else {
+                                                feed_save_unsave_icon.setImageResource(R.drawable.feed_save_blank);
+                                            }
+                                        } else
+                                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+
+                LinearLayout feed_link_copy = feedsOptionDialog.findViewById(R.id.feed_link_copy);
+                feed_link_copy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //link copy set (use link)
+                        String link = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/feeds/" + feedsRow.feedLink;
+                        CommonFunction.copyToClipBoard(context, link);
+                    }
+                });
+
+                LinearLayout feed_report = feedsOptionDialog.findViewById(R.id.feed_report);
+                feed_report.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //send report data
+                    }
+                });
+            }
+        });
         return view;
     }
 
@@ -471,17 +794,17 @@ public class FeedsMaster {
                             @Override
                             public void onResponse(Call call, Response response) {
                                 super.onResponse(call, response);
-                                if (response.isSuccessful()){
-                                    if (response.body() != null){
+                                if (response.isSuccessful()) {
+                                    if (response.body() != null) {
                                         NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                                        if (normalCommonResponse.status){
+                                        if (normalCommonResponse.status) {
                                             isSave[0] = normalCommonResponse.feedSave;
                                             if (isSave[0]) {
                                                 feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
-                                            }else{
+                                            } else {
                                                 feed_save_unsave_icon.setImageResource(R.drawable.feed_save_blank);
                                             }
-                                        }else
+                                        } else
                                             Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -516,16 +839,16 @@ public class FeedsMaster {
                             hashMap.put("apiKey", sessionPref.getApiKey());
                             hashMap.put("profile_id", finalFeedsRowOptionalId);
                             hashMap.put("profile_type", feedsRow.feedFor);
-                            apiInterface.FEEDS_OPTION_UNFOLLOW_PROFILE(hashMap).enqueue(new MyApiCallback(){
+                            apiInterface.FEEDS_OPTION_UNFOLLOW_PROFILE(hashMap).enqueue(new MyApiCallback() {
                                 @Override
                                 public void onResponse(Call call, Response response) {
                                     super.onResponse(call, response);
-                                    if (response.isSuccessful()){
-                                        if (response.body() != null){
+                                    if (response.isSuccessful()) {
+                                        if (response.body() != null) {
                                             NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                                            if (normalCommonResponse.status){
+                                            if (normalCommonResponse.status) {
                                                 removeFeedsInList(view);
-                                            }else
+                                            } else
                                                 Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                                         }
                                     }
@@ -599,11 +922,18 @@ public class FeedsMaster {
         View view; // getTag to given is feedMasterId
         int viewIndex;
         FeedsRow feedsRow;
+        ExoPlayer player;
+        Cache cache;
 
         public FeedStorage(View view, int viewIndex, FeedsRow feedsRow) {
             this.view = view;
             this.viewIndex = viewIndex;
             this.feedsRow = feedsRow;
+        }
+
+        public void setVideoResource(ExoPlayer player, Cache cache) {
+            this.player = player;
+            this.cache = cache;
         }
     }
 }
