@@ -114,7 +114,7 @@ public class FeedsMaster {
     ArrayList<FeedStorage> feedsViews = new ArrayList<>();
     LinearLayout mainLinearLayout;
     ScrollView scrollView;
-    int start = 10, pageLimit = 10;
+    int start = 0, pageLimit = 10;
     long totalRow = 0;
 
     public void loadHomeFeeds(LinearLayout mainLinearLayout, ScrollView scrollView) {
