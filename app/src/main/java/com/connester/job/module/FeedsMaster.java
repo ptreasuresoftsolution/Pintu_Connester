@@ -5,11 +5,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -54,6 +54,8 @@ import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
+import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -63,6 +65,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
@@ -111,7 +114,7 @@ public class FeedsMaster {
     ArrayList<FeedStorage> feedsViews = new ArrayList<>();
     LinearLayout mainLinearLayout;
     ScrollView scrollView;
-    int start = 0, pageLimit = 10;
+    int start = 10, pageLimit = 10;
     long totalRow = 0;
 
     public void loadHomeFeeds(LinearLayout mainLinearLayout, ScrollView scrollView) {
@@ -121,9 +124,32 @@ public class FeedsMaster {
         this.scrollView = CommonFunction.OnScrollSetBottomListener(scrollView, new ScrollBottomListener() {
             @Override
             public void onScrollBottom() {
-                if (mainLinearLayout.getChildCount() > 0){
-                    if (start < totalRow){
+                if (mainLinearLayout.getChildCount() > 0) {
+                    if (start < totalRow) {
                         callHomeFeeds();
+                    }
+                }
+            }
+        });
+        this.scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                for (FeedStorage feedStorage : feedsViews) {
+                    if (feedStorage.isVideoFeeds) {
+                        if (feedStorage.styledPlayerView.getTag().equals("play")) {
+                            if (CommonFunction.verticallyTopBottomShowInView(mainLinearLayout.getChildAt(feedStorage.viewIndex), scrollView.getScrollY(), context)) {
+                                Log.e(LogTag.TMP_LOG, "PLAY " + feedStorage.feedsRow.feedMasterId);
+                                if (!feedStorage.player.isPlaying() && !feedStorage.player.isLoading()) {
+                                    feedStorage.player.play();
+                                    feedStorage.styledPlayerView.hideController();
+                                }
+                            } else {
+                                Log.e(LogTag.TMP_LOG, "PAUSE " + feedStorage.feedsRow.feedMasterId);
+                                if (feedStorage.player != null && feedStorage.player.isPlaying()) {
+                                    feedStorage.player.pause();
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -162,16 +188,17 @@ public class FeedsMaster {
     }
 
     int viewIndex = 0;
+
     private void listToView(List<FeedsRow> feedsRows) {
         for (FeedsRow feedsRow : feedsRows) {
             ExoPlayer player = null;
-            Cache cache = null;
+            StyledPlayerView styledPlayerView = null;
             View view;
             if (feedsRow.tblName.equalsIgnoreCase("MEDIA")) {
                 if (feedsRow.tblMediaPost.type.equalsIgnoreCase("VIDEO")) {
                     view = getFeedsVideoView(feedsRow);
                     player = playerHashMap.get(feedsRow.feedMasterId);
-                    cache = cacheHashMap.get(feedsRow.feedMasterId);
+                    styledPlayerView = styledPlayerViewHashMap.get(feedsRow.feedMasterId);
                 } else if (feedsRow.tblMediaPost.type.equalsIgnoreCase("M-IMAGE")) {
                     view = getFeedsMultiplePhotosView(feedsRow);
                 } else {//IMAGE
@@ -191,9 +218,9 @@ public class FeedsMaster {
                 view = getFeedsJobsView(feedsRow);
             }
             FeedStorage feedStorage = new FeedStorage(view, viewIndex, feedsRow);
-            if (player != null && cache != null)
-                feedStorage.setVideoResource(player, cache);
-            feedsViews.add(feedStorage);
+            if (player != null && styledPlayerView != null)
+                feedStorage.setVideoResource(player, styledPlayerView);
+            feedsViews.add(viewIndex, feedStorage);
             mainLinearLayout.addView(view, viewIndex);
             viewIndex++;
         }
@@ -261,11 +288,11 @@ public class FeedsMaster {
             public Object instantiateItem(ViewGroup container, int position) {
                 View view = layoutInflater.inflate(R.layout.view_pager_img_item, container, false);
                 SimpleDraweeView imageView = view.findViewById(R.id.img_view);
-//                Glide.with(context)
-//                        .load(feedImgPath + imgs[position])
-//                        .into(imageView);
-                Uri uri = Uri.parse(feedImgPath + imgs[position]);
-                imageView.setImageURI(uri);
+                Glide.with(context)
+                        .load(feedImgPath + imgs[position])
+                        .into(imageView);
+//                Uri uri = Uri.parse(feedImgPath + imgs[position]);
+//                imageView.setImageURI(uri);
                 container.addView(view);
                 return view;
             }
@@ -276,7 +303,8 @@ public class FeedsMaster {
     }
 
     HashMap<String, ExoPlayer> playerHashMap = new HashMap<>();
-    HashMap<String, Cache> cacheHashMap = new HashMap<>();
+    HashMap<String, StyledPlayerView> styledPlayerViewHashMap = new HashMap<>();
+    private static Cache cache = null;
 
     public View getFeedsVideoView(FeedsRow feedsRow) {
         View view = layoutInflater.inflate(R.layout.feeds_video_layout, null);
@@ -286,27 +314,39 @@ public class FeedsMaster {
         TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
         feeds_content_txt.setText(feedsRow.tblMediaPost.ptTitle);
         //set player
+        ImageView play_btn = view.findViewById(R.id.play_btn);
         StyledPlayerView feed_video = view.findViewById(R.id.feed_video);
+        feed_video.setTag("stop");
         ExoPlayer player = new ExoPlayer.Builder(context).build();
-        Cache cache=null;
+
+        if (cache == null)
+            cache = new SimpleCache(new File(context.getCacheDir(), "randomFeeds"), new LeastRecentlyUsedCacheEvictor(1024 * 1024 * 50));
 //        Cache cache = new SimpleCache(new File(context.getCacheDir(), "random" + feedsRow.tblMediaPost.mediaFiles), new LeastRecentlyUsedCacheEvictor(1024 * 1024 * 50));
         DefaultHttpDataSource.Factory factory = new DefaultHttpDataSource.Factory();
         factory.setUserAgent(Util.getUserAgent(context, context.getPackageName()));
 
         CacheDataSource.Factory factoryCache = new CacheDataSource.Factory();
-//        factoryCache.setCache(cache);
+        factoryCache.setCache(cache);
         factoryCache.setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE | CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
         factoryCache.setUpstreamDataSourceFactory(factory);
 
         MediaItem mediaItem = MediaItem.fromUri(feedImgPath + feedsRow.tblMediaPost.mediaFiles);
         MediaSource mediaSource = new ProgressiveMediaSource.Factory(factoryCache).createMediaSource(mediaItem);
-
         player.addMediaSource(mediaSource);
         player.prepare();
         feed_video.setPlayer(player);
+        play_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                play_btn.setVisibility(View.GONE);
+                player.play();
+                feed_video.setUseController(true);
+                feed_video.setTag("play");
+            }
+        });
 
         playerHashMap.put(feedsRow.feedMasterId, player);
-        cacheHashMap.put(feedsRow.feedMasterId, cache);
+        styledPlayerViewHashMap.put(feedsRow.feedMasterId, feed_video);
         return view;
     }
 
@@ -350,8 +390,9 @@ public class FeedsMaster {
             link_img.setVisibility(View.GONE);
             if (hashMap.get("dataSrc") != null && !hashMap.get("dataSrc").equalsIgnoreCase("")) {
                 link_img.setVisibility(View.VISIBLE);
-                Uri uri = Uri.parse(hashMap.get("dataSrc"));
-                link_img.setImageURI(uri);
+                Glide.with(context).load(hashMap.get("dataSrc")).into(link_img);
+//                Uri uri = Uri.parse(hashMap.get("dataSrc"));
+//                link_img.setImageURI(uri);
             }
 
             TextView link_title = view.findViewById(R.id.link_title);
@@ -394,8 +435,9 @@ public class FeedsMaster {
             link_img.setVisibility(View.GONE);
             if (hashMap.get("dataSrc") != null && !hashMap.get("dataSrc").equalsIgnoreCase("")) {
                 link_img.setVisibility(View.VISIBLE);
-                Uri uri = Uri.parse(hashMap.get("dataSrc"));
-                link_img.setImageURI(uri);
+                Glide.with(context).load(hashMap.get("dataSrc")).into(link_img);
+//                Uri uri = Uri.parse(hashMap.get("dataSrc"));
+//                link_img.setImageURI(uri);
             }
 
             TextView link_title = view.findViewById(R.id.link_title);
@@ -415,8 +457,9 @@ public class FeedsMaster {
         view.setTag(feedsRow.feedMasterId);
 
         SimpleDraweeView event_img = view.findViewById(R.id.event_img);
-        Uri uri = Uri.parse(feedImgPath + feedsRow.tblJobEvent.eventImg);
-        event_img.setImageURI(uri);
+        Glide.with(context).load(feedImgPath + feedsRow.tblJobEvent.eventImg).into(event_img);
+//        Uri uri = Uri.parse(feedImgPath + feedsRow.tblJobEvent.eventImg);
+//        event_img.setImageURI(uri);
         TextView event_nm = view.findViewById(R.id.event_nm);
         event_nm.setText(feedsRow.tblJobEvent.title);
 
@@ -537,8 +580,9 @@ public class FeedsMaster {
             }
         };
         SimpleDraweeView job_business_iv = view.findViewById(R.id.job_business_iv);
-        Uri uri = Uri.parse(feedImgPath + feedsRow.tblBusinessPage.logo);
-        job_business_iv.setImageURI(uri);
+        Glide.with(context).load(feedImgPath + feedsRow.tblBusinessPage.logo).into(job_business_iv);
+//        Uri uri = Uri.parse(feedImgPath + feedsRow.tblBusinessPage.logo);
+//        job_business_iv.setImageURI(uri);
         TextView job_title = view.findViewById(R.id.job_title);
         job_title.setText(feedsRow.tblJobPost.titlePost);
         TextView job_business_page_nm_txt = view.findViewById(R.id.job_business_page_nm_txt);
@@ -1163,12 +1207,14 @@ public class FeedsMaster {
         }
     }
 
-    class FeedStorage {
-        View view; // getTag to given is feedMasterId
-        int viewIndex;
-        FeedsRow feedsRow;
-        ExoPlayer player;
-        Cache cache;
+    public class FeedStorage {
+        public View view; // getTag to given is feedMasterId
+        public int viewIndex;
+        public FeedsRow feedsRow;
+        public ExoPlayer player;
+        public StyledPlayerView styledPlayerView;
+
+        public boolean isVideoFeeds = false;
 
         public FeedStorage(View view, int viewIndex, FeedsRow feedsRow) {
             this.view = view;
@@ -1176,9 +1222,14 @@ public class FeedsMaster {
             this.feedsRow = feedsRow;
         }
 
-        public void setVideoResource(ExoPlayer player, Cache cache) {
+        public void setVideoResource(ExoPlayer player, StyledPlayerView styledPlayerView) {
             this.player = player;
-            this.cache = cache;
+            this.styledPlayerView = styledPlayerView;
+            isVideoFeeds = true;
         }
+    }
+
+    public ArrayList<FeedStorage> getFeedsViews() {
+        return feedsViews;
     }
 }

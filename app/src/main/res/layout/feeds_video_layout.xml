@@ -29,12 +29,33 @@
             android:textColor="@color/secondary_4"
             android:textSize="@dimen/small_lg" />
 
-        <com.google.android.exoplayer2.ui.StyledPlayerView
-            android:id="@+id/feed_video"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            app:show_buffering="when_playing"
-            app:show_shuffle_button="true" />
+            android:layout_height="wrap_content"
+            app:strokeWidth="0dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.exoplayer2.ui.StyledPlayerView
+                    android:id="@+id/feed_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:resize_mode="fixed_width"
+                    app:show_buffering="when_playing"
+                    app:show_shuffle_button="true"
+                    app:use_controller="false" />
+
+                <ImageView
+                    android:id="@+id/play_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/circle_play"
+                    app:tint="@color/secondary_4" />
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
     <include layout="@layout/feeds_like_share_comment_common_layout" />

@@ -24,10 +24,13 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -391,6 +394,39 @@ public class CommonFunction {
         return scrollView;
     }
 
+    public static boolean verticallyTopBottomShowInView(View videoView, int scrollY, Context context) {
+        int maintainPix = 30;
+        int displayHeight = getScreenResolution(context)[1];
+//        int location[] = new int[2];
+//        videoView.getLocationOnScreen(location);
+//        int viewX = location[0];
+//        int viewY = location[1];
+        int viewHeight = videoView.getHeight();
+        float positionOnPage = videoView.getY();
+        boolean topIn = false;
+        boolean bottomIn = false;
+//        Log.e(LogTag.TMP_LOG, "ScrollY:" + scrollY + " & location Y:" + viewY + " & View ON Y:" + positionOnPage + " & height:" + viewHeight + " & D-height:" + displayHeight);
+        if ((scrollY - maintainPix) > (positionOnPage - displayHeight) && scrollY < (positionOnPage - maintainPix)) {
+//            Log.e(LogTag.TMP_LOG, "VIEW TOP INNN....");
+            topIn = true;
+        }
+        if ((scrollY - maintainPix) > (positionOnPage - displayHeight + viewHeight) && scrollY < (positionOnPage - maintainPix + viewHeight)) {
+//            Log.e(LogTag.TMP_LOG, "VIEW BOTTOM INNN....");
+            bottomIn = true;
+        }
+        return topIn && bottomIn;
+    }
+
+    public static int[] getScreenResolution(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+
+        return new int[]{width, height};
+    }
 
     public static String convertAmountUnitForm(double value) {
         int power;
