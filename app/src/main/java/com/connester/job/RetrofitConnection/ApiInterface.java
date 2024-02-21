@@ -1,6 +1,7 @@
 package com.connester.job.RetrofitConnection;
 
 import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.SignUpOtpResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserLoginResponse;
@@ -77,6 +78,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/unFollowProfile")
     Call<NormalCommonResponse> FEEDS_OPTION_UNFOLLOW_PROFILE(@FieldMap Map<String, String> params );
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/homeFeedsJson")
+    Call<FeedsMasterResponse> HOME_FEEDS_LIST(@FieldMap Map<String, String> params );
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/applyJob")
     Call<NormalCommonResponse> JOB_APPLY(@FieldMap Map<String, String> params );

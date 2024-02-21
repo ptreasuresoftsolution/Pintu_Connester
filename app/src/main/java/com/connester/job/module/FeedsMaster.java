@@ -28,6 +28,7 @@ import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsRow;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
@@ -42,6 +43,7 @@ import com.connester.job.function.DateUtils;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.MyListRowSet;
+import com.connester.job.function.ScrollBottomListener;
 import com.connester.job.function.SessionPref;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -52,8 +54,6 @@ import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -63,11 +63,11 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import me.relex.circleindicator.CircleIndicator;
 import retrofit2.Call;
@@ -109,6 +109,95 @@ public class FeedsMaster {
     }
 
     ArrayList<FeedStorage> feedsViews = new ArrayList<>();
+    LinearLayout mainLinearLayout;
+    ScrollView scrollView;
+    int start = 0, pageLimit = 10;
+    long totalRow = 0;
+
+    public void loadHomeFeeds(LinearLayout mainLinearLayout, ScrollView scrollView) {
+        mainLinearLayout.removeAllViews();
+        this.mainLinearLayout = mainLinearLayout;
+        this.scrollView = scrollView;
+        this.scrollView = CommonFunction.OnScrollSetBottomListener(scrollView, new ScrollBottomListener() {
+            @Override
+            public void onScrollBottom() {
+                if (mainLinearLayout.getChildCount() > 0){
+                    if (start < totalRow){
+                        callHomeFeeds();
+                    }
+                }
+            }
+        });
+        callHomeFeeds();
+    }
+
+    private void callHomeFeeds() {
+        CommonFunction.PleaseWaitShow(context);
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+        hashMap.put("apiKey", sessionPref.getApiKey());
+        hashMap.put("tbl_name", "MEDIA,POST");
+        hashMap.put("isChkClose", isNeedCloseBtn);
+        hashMap.put("type", "home");
+        hashMap.put("start", start);
+        apiInterface.HOME_FEEDS_LIST(hashMap).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        FeedsMasterResponse feedsMasterResponse = (FeedsMasterResponse) response.body();
+                        if (feedsMasterResponse.status) {
+                            imgPath = feedsMasterResponse.imgPath;
+                            feedImgPath = feedsMasterResponse.feedImgPath;
+                            totalRow = Long.parseLong(feedsMasterResponse.totalRow);
+                            start += pageLimit;
+                            listToView(feedsMasterResponse.feedsRows);
+                        } else
+                            Toast.makeText(context, feedsMasterResponse.msg, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+    }
+
+    int viewIndex = 0;
+    private void listToView(List<FeedsRow> feedsRows) {
+        for (FeedsRow feedsRow : feedsRows) {
+            ExoPlayer player = null;
+            Cache cache = null;
+            View view;
+            if (feedsRow.tblName.equalsIgnoreCase("MEDIA")) {
+                if (feedsRow.tblMediaPost.type.equalsIgnoreCase("VIDEO")) {
+                    view = getFeedsVideoView(feedsRow);
+                    player = playerHashMap.get(feedsRow.feedMasterId);
+                    cache = cacheHashMap.get(feedsRow.feedMasterId);
+                } else if (feedsRow.tblMediaPost.type.equalsIgnoreCase("M-IMAGE")) {
+                    view = getFeedsMultiplePhotosView(feedsRow);
+                } else {//IMAGE
+                    view = getFeedsPhotoView(feedsRow);
+                }
+            } else if (feedsRow.tblName.equalsIgnoreCase("POST")) {
+                if (feedsRow.tblTextPost.type.equalsIgnoreCase("LINK")) {
+                    view = getFeedsLinkView(feedsRow);
+                } else if (feedsRow.tblTextPost.type.equalsIgnoreCase("TEXT-LINK")) {
+                    view = getFeedsContentLinkView(feedsRow);
+                } else {//TEXT
+                    view = getFeedsContentView(feedsRow);
+                }
+            } else if (feedsRow.tblName.equalsIgnoreCase("EVENT")) {
+                view = getFeedsEventView(feedsRow);
+            } else {//JOB
+                view = getFeedsJobsView(feedsRow);
+            }
+            FeedStorage feedStorage = new FeedStorage(view, viewIndex, feedsRow);
+            if (player != null && cache != null)
+                feedStorage.setVideoResource(player, cache);
+            feedsViews.add(feedStorage);
+            mainLinearLayout.addView(view, viewIndex);
+            viewIndex++;
+        }
+    }
 
     public View getFeedsPhotoView(FeedsRow feedsRow) {
         View view = layoutInflater.inflate(R.layout.feeds_photos_layout, null);
@@ -117,10 +206,12 @@ public class FeedsMaster {
         setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
         TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
         feeds_content_txt.setText(feedsRow.tblMediaPost.ptTitle);
+
+//        ImageView feeds_photo = view.findViewById(R.id.feeds_photo);
         SimpleDraweeView feeds_photo = view.findViewById(R.id.feeds_photo);
-//        Glide.with(context).load(feedImgPath + feedsRow.tblMediaPost.mediaFiles).placeholder(R.drawable.feeds_photos_default).into(feeds_photo);
-        Uri uri = Uri.parse(feedImgPath + feedsRow.tblMediaPost.mediaFiles);
-        feeds_photo.setImageURI(uri);
+        Glide.with(context).load(feedImgPath + feedsRow.tblMediaPost.mediaFiles).placeholder(R.drawable.feeds_photos_default).into(feeds_photo);
+//        Uri uri = Uri.parse(feedImgPath + feedsRow.tblMediaPost.mediaFiles);
+//        feeds_photo.setImageURI(uri);
         return view;
     }
 
@@ -197,12 +288,13 @@ public class FeedsMaster {
         //set player
         StyledPlayerView feed_video = view.findViewById(R.id.feed_video);
         ExoPlayer player = new ExoPlayer.Builder(context).build();
-        Cache cache = new SimpleCache(new File(context.getCacheDir(), "random" + feedsRow.tblMediaPost.mediaFiles), new LeastRecentlyUsedCacheEvictor(1024 * 1024 * 50));
+        Cache cache=null;
+//        Cache cache = new SimpleCache(new File(context.getCacheDir(), "random" + feedsRow.tblMediaPost.mediaFiles), new LeastRecentlyUsedCacheEvictor(1024 * 1024 * 50));
         DefaultHttpDataSource.Factory factory = new DefaultHttpDataSource.Factory();
         factory.setUserAgent(Util.getUserAgent(context, context.getPackageName()));
 
         CacheDataSource.Factory factoryCache = new CacheDataSource.Factory();
-        factoryCache.setCache(cache);
+//        factoryCache.setCache(cache);
         factoryCache.setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE | CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
         factoryCache.setUpstreamDataSourceFactory(factory);
 
@@ -563,7 +655,7 @@ public class FeedsMaster {
         FlexboxLayout job_skill_tag_fbl = view.findViewById(R.id.job_skill_tag_fbl);
         String skills[] = feedsRow.tblJobPost.skills.split(",");
         for (String skill : skills) {
-            View skillLayout = layoutInflater.inflate(R.layout.skill_tag_item,null);
+            View skillLayout = layoutInflater.inflate(R.layout.skill_tag_item, null);
             MaterialButton skill_item = skillLayout.findViewById(R.id.skill_item);
             skill_item.setText(skill);
             job_skill_tag_fbl.addView(skillLayout);

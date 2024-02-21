@@ -22,6 +22,7 @@ import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.function.Constant;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.SessionPref;
+import com.connester.job.module.FeedsMaster;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -52,28 +53,33 @@ public class MainActivity extends AppCompatActivity {
         sessionPref = new SessionPref(context);
         redirectSettings();
 
-        check();
+        LinearLayout feeds_mainList = findViewById(R.id.feeds_mainList);
+        ScrollView scrollView = findViewById(R.id.scrollView);
+        FeedsMaster feedsMaster = new FeedsMaster(context,activity);
+        feedsMaster.setNeedCloseBtn(true);
+        feedsMaster.loadHomeFeeds(feeds_mainList,scrollView);
+//        check();
     }
 
     LinearLayout feeds_mainList;
     ScrollView scrollView;
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (player != null) {
-            player.release();
-            cache.release();
-//            player = null;
-        }
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        initializePlayer(6);
-    }
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        if (player != null) {
+//            player.release();
+//            cache.release();
+////            player = null;
+//        }
+//    }
+//
+//
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        initializePlayer(6);
+//    }
 
     ExoPlayer player;
     Cache cache;
