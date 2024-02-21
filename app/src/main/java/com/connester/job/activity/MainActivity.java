@@ -35,7 +35,17 @@ public class MainActivity extends AppCompatActivity {
         feedsMaster = new FeedsMaster(context, activity);
         feedsMaster.setNeedCloseBtn(true);
         feedsMaster.loadHomeFeeds(feeds_mainList, scrollView);
-//        check();
+
+        setTopBar();
+        setBottomNavBar();
+    }
+
+    private void setBottomNavBar() {
+
+    }
+
+    private void setTopBar() {
+
     }
 
     @Override
