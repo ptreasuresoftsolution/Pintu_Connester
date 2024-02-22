@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     FeedsMaster feedsMaster;
     LinearLayout feeds_mainList;
     ScrollView scrollView;
+    FrameLayout progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +41,12 @@ public class MainActivity extends AppCompatActivity {
 
         feeds_mainList = findViewById(R.id.feeds_mainList);
         scrollView = findViewById(R.id.scrollView);
+        progressBar = findViewById(R.id.progressBar);
 
 
         feedsMaster = new FeedsMaster(context, activity);
         feedsMaster.setNeedCloseBtn(true);
+        feedsMaster.setProgressBar(progressBar);
         feedsMaster.loadHomeFeeds(feeds_mainList, scrollView);
 
         setTopBar();

@@ -117,9 +117,15 @@ public class FeedsMaster {
     LinearLayout mainLinearLayout;
     ScrollView scrollView;
     String feedListBy = "common";
-    int start = 0, pageLimit = 10;
+    int start = 0, pageLimit = 5;
     long totalRow = 0;
     int viewIndex = 0;
+    boolean isLoading = false;
+    View progressBar;
+
+    public void setProgressBar(View progressBar) {
+        this.progressBar = progressBar;
+    }
 
     private void resetList() {
         this.mainLinearLayout.removeAllViews();
@@ -174,6 +180,11 @@ public class FeedsMaster {
     }
 
     private void callHomeFeeds() {
+        if (isLoading)
+            return;
+        isLoading = true;
+        if (progressBar != null)
+            progressBar.setVisibility(View.VISIBLE);
         CommonFunction.PleaseWaitShow(context);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
@@ -187,6 +198,7 @@ public class FeedsMaster {
             @Override
             public void onResponse(Call call, Response response) {
                 super.onResponse(call, response);
+                isLoading = false;
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         FeedsMasterResponse feedsMasterResponse = (FeedsMasterResponse) response.body();
@@ -212,6 +224,8 @@ public class FeedsMaster {
             setSingleFeeds(feedsRow, viewIndex);
             viewIndex++;
         }
+        if (progressBar != null)
+            progressBar.setVisibility(View.GONE);
     }
 
     private void setSingleFeeds(FeedsRow feedsRow, int vIndex) {
@@ -1237,7 +1251,7 @@ public class FeedsMaster {
 
     private void removeIdInList(String feedMasterId) {
         for (FeedStorage feedStorage : feedsViews) {
-            if (feedStorage.feedsRow.feedMasterId.equalsIgnoreCase(feedMasterId)){
+            if (feedStorage.feedsRow.feedMasterId.equalsIgnoreCase(feedMasterId)) {
                 if (mainLinearLayout.getChildAt(feedStorage.viewIndex) != null) {
                     mainLinearLayout.removeViewAt(feedStorage.viewIndex);
                     feedsViews.remove(feedStorage.viewIndex);
