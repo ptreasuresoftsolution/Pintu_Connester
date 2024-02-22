@@ -112,13 +112,25 @@ public class FeedsMaster {
     }
 
     ArrayList<FeedStorage> feedsViews = new ArrayList<>();
+    HashMap<String, ExoPlayer> playerHashMap = new HashMap<>();
+    HashMap<String, StyledPlayerView> styledPlayerViewHashMap = new HashMap<>();
     LinearLayout mainLinearLayout;
     ScrollView scrollView;
     int start = 0, pageLimit = 10;
     long totalRow = 0;
+    int viewIndex = 0;
+
+    private void resetList() {
+        this.mainLinearLayout.removeAllViews();
+        feedsViews.clear();
+        playerHashMap.clear();
+        styledPlayerViewHashMap.clear();
+        start = 0;
+        viewIndex = 0;
+        totalRow = 0;
+    }
 
     public void loadHomeFeeds(LinearLayout mainLinearLayout, ScrollView scrollView) {
-        mainLinearLayout.removeAllViews();
         this.mainLinearLayout = mainLinearLayout;
         this.scrollView = scrollView;
         this.scrollView = CommonFunction.OnScrollSetBottomListener(scrollView, new ScrollBottomListener() {
@@ -154,6 +166,7 @@ public class FeedsMaster {
                 }
             }
         });
+        resetList();
         callHomeFeeds();
     }
 
@@ -186,8 +199,6 @@ public class FeedsMaster {
             }
         });
     }
-
-    int viewIndex = 0;
 
     private void listToView(List<FeedsRow> feedsRows) {
         for (FeedsRow feedsRow : feedsRows) {
@@ -302,8 +313,6 @@ public class FeedsMaster {
         return view;
     }
 
-    HashMap<String, ExoPlayer> playerHashMap = new HashMap<>();
-    HashMap<String, StyledPlayerView> styledPlayerViewHashMap = new HashMap<>();
     private static Cache cache = null;
 
     public View getFeedsVideoView(FeedsRow feedsRow) {
