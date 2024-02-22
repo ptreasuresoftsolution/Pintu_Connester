@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     Context context;
     Activity activity;
     FeedsMaster feedsMaster;
+    LinearLayout feeds_mainList;
+    ScrollView scrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +35,11 @@ public class MainActivity extends AppCompatActivity {
         sessionPref = new SessionPref(context);
         redirectSettings();
 
-        LinearLayout feeds_mainList = findViewById(R.id.feeds_mainList);
-        ScrollView scrollView = findViewById(R.id.scrollView);
+
+        feeds_mainList = findViewById(R.id.feeds_mainList);
+        scrollView = findViewById(R.id.scrollView);
+
+
         feedsMaster = new FeedsMaster(context, activity);
         feedsMaster.setNeedCloseBtn(true);
         feedsMaster.loadHomeFeeds(feeds_mainList, scrollView);
@@ -46,6 +54,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void setTopBar() {
 
+    }
+
+    public void check() {
+
+        for (int i = 0; i < 7; i++) {
+            View view = LayoutInflater.from(context).inflate(R.layout.feeds_photos_layout, null);
+            TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
+            feeds_content_txt.setText("index " + i);
+            feeds_mainList.addView(view, i);
+        }
+
+        //remove item in middle
+        feeds_mainList.removeViewAt(3);
+
+        if (feeds_mainList.getChildAt(4) != null) {
+            View view = feeds_mainList.getChildAt(4);
+            TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
+            feeds_content_txt.setText("index CHECK");
+        }
     }
 
     @Override

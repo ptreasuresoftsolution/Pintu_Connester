@@ -116,6 +116,7 @@ public class FeedsMaster {
     HashMap<String, StyledPlayerView> styledPlayerViewHashMap = new HashMap<>();
     LinearLayout mainLinearLayout;
     ScrollView scrollView;
+    String feedListBy = "common";
     int start = 0, pageLimit = 10;
     long totalRow = 0;
     int viewIndex = 0;
@@ -133,10 +134,12 @@ public class FeedsMaster {
     public void loadHomeFeeds(LinearLayout mainLinearLayout, ScrollView scrollView) {
         this.mainLinearLayout = mainLinearLayout;
         this.scrollView = scrollView;
+        feedListBy = "home";
         this.scrollView = CommonFunction.OnScrollSetBottomListener(scrollView, new ScrollBottomListener() {
             @Override
             public void onScrollBottom() {
                 if (mainLinearLayout.getChildCount() > 0) {
+                    //set loading check
                     if (start < totalRow) {
                         callHomeFeeds();
                     }
@@ -178,6 +181,7 @@ public class FeedsMaster {
         hashMap.put("tbl_name", "MEDIA,POST");
         hashMap.put("isChkClose", isNeedCloseBtn);
         hashMap.put("type", "home");
+        hashMap.put("limitGap", pageLimit);
         hashMap.put("start", start);
         apiInterface.HOME_FEEDS_LIST(hashMap).enqueue(new MyApiCallback() {
             @Override
@@ -200,41 +204,48 @@ public class FeedsMaster {
         });
     }
 
+    public void callCommonFeeds() {
+    }
+
     private void listToView(List<FeedsRow> feedsRows) {
         for (FeedsRow feedsRow : feedsRows) {
-            ExoPlayer player = null;
-            StyledPlayerView styledPlayerView = null;
-            View view;
-            if (feedsRow.tblName.equalsIgnoreCase("MEDIA")) {
-                if (feedsRow.tblMediaPost.type.equalsIgnoreCase("VIDEO")) {
-                    view = getFeedsVideoView(feedsRow);
-                    player = playerHashMap.get(feedsRow.feedMasterId);
-                    styledPlayerView = styledPlayerViewHashMap.get(feedsRow.feedMasterId);
-                } else if (feedsRow.tblMediaPost.type.equalsIgnoreCase("M-IMAGE")) {
-                    view = getFeedsMultiplePhotosView(feedsRow);
-                } else {//IMAGE
-                    view = getFeedsPhotoView(feedsRow);
-                }
-            } else if (feedsRow.tblName.equalsIgnoreCase("POST")) {
-                if (feedsRow.tblTextPost.type.equalsIgnoreCase("LINK")) {
-                    view = getFeedsLinkView(feedsRow);
-                } else if (feedsRow.tblTextPost.type.equalsIgnoreCase("TEXT-LINK")) {
-                    view = getFeedsContentLinkView(feedsRow);
-                } else {//TEXT
-                    view = getFeedsContentView(feedsRow);
-                }
-            } else if (feedsRow.tblName.equalsIgnoreCase("EVENT")) {
-                view = getFeedsEventView(feedsRow);
-            } else {//JOB
-                view = getFeedsJobsView(feedsRow);
-            }
-            FeedStorage feedStorage = new FeedStorage(view, viewIndex, feedsRow);
-            if (player != null && styledPlayerView != null)
-                feedStorage.setVideoResource(player, styledPlayerView);
-            feedsViews.add(viewIndex, feedStorage);
-            mainLinearLayout.addView(view, viewIndex);
+            setSingleFeeds(feedsRow, viewIndex);
             viewIndex++;
         }
+    }
+
+    private void setSingleFeeds(FeedsRow feedsRow, int vIndex) {
+        ExoPlayer player = null;
+        StyledPlayerView styledPlayerView = null;
+        View view;
+        if (feedsRow.tblName.equalsIgnoreCase("MEDIA")) {
+            if (feedsRow.tblMediaPost.type.equalsIgnoreCase("VIDEO")) {
+                view = getFeedsVideoView(feedsRow);
+                player = playerHashMap.get(feedsRow.feedMasterId);
+                styledPlayerView = styledPlayerViewHashMap.get(feedsRow.feedMasterId);
+            } else if (feedsRow.tblMediaPost.type.equalsIgnoreCase("M-IMAGE")) {
+                view = getFeedsMultiplePhotosView(feedsRow);
+            } else {//IMAGE
+                view = getFeedsPhotoView(feedsRow);
+            }
+        } else if (feedsRow.tblName.equalsIgnoreCase("POST")) {
+            if (feedsRow.tblTextPost.type.equalsIgnoreCase("LINK")) {
+                view = getFeedsLinkView(feedsRow);
+            } else if (feedsRow.tblTextPost.type.equalsIgnoreCase("TEXT-LINK")) {
+                view = getFeedsContentLinkView(feedsRow);
+            } else {//TEXT
+                view = getFeedsContentView(feedsRow);
+            }
+        } else if (feedsRow.tblName.equalsIgnoreCase("EVENT")) {
+            view = getFeedsEventView(feedsRow);
+        } else {//JOB
+            view = getFeedsJobsView(feedsRow);
+        }
+        FeedStorage feedStorage = new FeedStorage(view, vIndex, feedsRow);
+        if (player != null && styledPlayerView != null)
+            feedStorage.setVideoResource(player, styledPlayerView);
+        feedsViews.add(vIndex, feedStorage);
+        mainLinearLayout.addView(view, vIndex);
     }
 
     public View getFeedsPhotoView(FeedsRow feedsRow) {
@@ -1062,6 +1073,7 @@ public class FeedsMaster {
                                             NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                             if (normalCommonResponse.status) {
                                                 removeFeedsInList(view);
+                                                feedsOptionDialog.dismiss();
                                             } else
                                                 Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                                         }
@@ -1102,6 +1114,7 @@ public class FeedsMaster {
                                             } else {
                                                 feed_save_unsave_icon.setImageResource(R.drawable.feed_save_blank);
                                             }
+                                            feedsOptionDialog.dismiss();
                                         } else
                                             Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                                     }
@@ -1118,6 +1131,7 @@ public class FeedsMaster {
                         //link copy set (use link)
                         String link = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/feeds/" + feedsRow.feedLink;
                         CommonFunction.copyToClipBoard(context, link);
+                        feedsOptionDialog.dismiss();
                     }
                 });
 
@@ -1146,6 +1160,7 @@ public class FeedsMaster {
                                             NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                             if (normalCommonResponse.status) {
                                                 removeFeedsInList(view);
+                                                feedsOptionDialog.dismiss();
                                             } else
                                                 Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                                         }
@@ -1161,8 +1176,10 @@ public class FeedsMaster {
                     @Override
                     public void onClick(View v) {
                         //send report data
+                        feedsOptionDialog.dismiss();
                     }
                 });
+                feedsOptionDialog.show();
             }
         });
     }
@@ -1178,17 +1195,57 @@ public class FeedsMaster {
     private void reloadOrAddTopFeeds(FeedsRow feedsRow) {
         if (feedsRow == null) {
             //compulsory reload
+            resetList();
+            if (feedListBy.equalsIgnoreCase("home")) {
+                callHomeFeeds();
+            } else {
+                callCommonFeeds();
+            }
         } else {
             //optional add feeds on top
+            setSingleFeeds(feedsRow, 0);
+            updateViewIndexInFeedStorage();
         }
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(ScrollView.FOCUS_UP);
+            }
+        });
     }
 
-    private void removeFeedsInList(FeedsRow feedsRow) {
+    private void updateViewIndexInFeedStorage() {
+        for (FeedStorage feedStorage : feedsViews) {
+            if (feedsViews.contains(feedStorage)) {
+                int vIndex = feedsViews.indexOf(feedStorage);
+                feedStorage.viewIndex = vIndex;
+            }
+        }
+        viewIndex = feedsViews.size();
+    }
 
+
+    private void removeFeedsInList(FeedsRow feedsRow) {
+        String feedMasterId = feedsRow.feedMasterId;
+        removeIdInList(feedMasterId);
     }
 
     private void removeFeedsInList(View mainLayoutView) {
+        String feedMasterId = mainLayoutView.getTag().toString();
+        removeIdInList(feedMasterId);
+    }
 
+    private void removeIdInList(String feedMasterId) {
+        for (FeedStorage feedStorage : feedsViews) {
+            if (feedStorage.feedsRow.feedMasterId.equalsIgnoreCase(feedMasterId)){
+                if (mainLinearLayout.getChildAt(feedStorage.viewIndex) != null) {
+                    mainLinearLayout.removeViewAt(feedStorage.viewIndex);
+                    feedsViews.remove(feedStorage.viewIndex);
+                    updateViewIndexInFeedStorage();
+                }
+                break;
+            }
+        }
     }
 
     String feedTimeCount(String createDate) {
