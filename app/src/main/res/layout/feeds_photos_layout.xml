@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_ll"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/feedsPaddingLeft"
+        android:paddingRight="@dimen/feedsPaddingRight">
+
+        <include
+            layout="@layout/feeds_title_common_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp" />
+
+        <TextView
+            android:id="@+id/feeds_content_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="7dp"
+            android:text="dsfsd"
+            android:textColor="@color/secondary_4"
+            android:textSize="@dimen/small_lg" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:strokeWidth="0dp">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/feeds_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                app:actualImageResource="@drawable/feeds_photos_default" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+
+    <include layout="@layout/feeds_like_share_comment_common_layout" />
+</LinearLayout>

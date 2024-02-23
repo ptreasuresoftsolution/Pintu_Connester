@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/feeds_fwd_shareBy_user_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="2dp"
+        android:visibility="gone"
+        app:strokeColor="@color/secondary_6">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="4dp"
+            android:paddingTop="3dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="3dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="6dp"
+                app:strokeColor="@color/secondary_6">
+
+                <ImageView
+                    android:id="@+id/feeds_shareBy_User_pic"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/default_user_pic" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/feeds_shareBy_User_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="4dp"
+                android:text="Full Name"
+                android:textColor="@color/secondary_3" />
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:rotationY="180"
+                android:src="@drawable/forward_feeds_bottom"
+                app:tint="@color/secondary_3" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginRight="10dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="6dp"
+                app:strokeColor="@color/secondary_7">
+
+                <ImageView
+                    android:id="@+id/feeds_title_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/default_user_pic" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/title_gMember_view"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="bottom|right"
+                android:visibility="gone"
+                app:cardCornerRadius="3dp"
+                app:strokeColor="@color/secondary_7">
+
+                <ImageView
+                    android:id="@+id/title_gMember_pic"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/default_user_pic" />
+            </com.google.android.material.card.MaterialCardView>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.22"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/fullname_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:text="Full name"
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/label"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/feeds_time" />
+
+                <TextView
+                    android:id="@+id/time_ago_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:text="x days ago"
+                    android:textColor="@color/secondary_4" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/feeds_option_iv"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_weight="1"
+            android:src="@drawable/feed_option" />
+    </LinearLayout>
+
+
+</LinearLayout>
