@@ -39,6 +39,21 @@
         tools:ignore="HardcodedDebugMode"
         tools:targetApi="s">
         <activity
+            android:name=".activity.JobsAndEventsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AddFeedsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.MyNetworkActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.MessageActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.FeedFullViewActivity"
             android:exported="false" />
         <activity
