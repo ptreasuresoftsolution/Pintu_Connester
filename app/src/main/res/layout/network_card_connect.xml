@@ -6,6 +6,7 @@
     android:layout_margin="2dp"
     app:cardBackgroundColor="@color/secondary_6"
     app:cardCornerRadius="14dp"
+    android:layout_weight="1"
     app:strokeWidth="0dp">
 
     <LinearLayout

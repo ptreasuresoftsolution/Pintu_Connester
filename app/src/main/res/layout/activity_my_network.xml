@@ -36,8 +36,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="My Network"
                     android:layout_marginLeft="12dp"
+                    android:text="My Network"
                     android:textColor="@color/primary"
                     android:textSize="@dimen/h6"
                     android:textStyle="bold" />
@@ -59,6 +59,33 @@
                     app:iconPadding="20dp" />
             </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:useDefaultMargins="true">
+
+            <include
+                layout="@layout/network_card_connect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill_horizontal"/>
+
+            <include
+                layout="@layout/network_card_connect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill_horizontal" />
+            <include
+                layout="@layout/network_card_connect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill_horizontal" />
+        </GridLayout>
     </LinearLayout>
 
     <include
