@@ -13,6 +13,7 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         app:cardCornerRadius="35dp"
+        app:strokeWidth="0.5dp"
         app:strokeColor="@color/secondary_2">
 
         <ImageView

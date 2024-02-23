@@ -2,6 +2,7 @@ package com.connester.job.RetrofitConnection;
 
 import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
+import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.SignUpOtpResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserLoginResponse;
@@ -84,6 +85,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/applyJob")
     Call<NormalCommonResponse> JOB_APPLY(@FieldMap Map<String, String> params );
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Network/networkDefaultData")
+    Call<NetworkSuggestedListResponse> NETWORK_SUGGESTED_LIST(@FieldMap Map<String, String> params );
 
 
 }
