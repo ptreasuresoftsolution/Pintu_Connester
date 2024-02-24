@@ -48,6 +48,9 @@ public class NetworkSuggestedListResponse {
                 @SerializedName("bio")
                 @Expose
                 public String bio;
+                @SerializedName("position")
+                @Expose
+                public String position;
 
             }
             @SerializedName("myDt")
@@ -96,6 +99,9 @@ public class NetworkSuggestedListResponse {
                 @SerializedName("bio")
                 @Expose
                 public String bio;
+                @SerializedName("position")
+                @Expose
+                public String position;
 
             }
             @SerializedName("myDt")
@@ -159,6 +165,9 @@ public class NetworkSuggestedListResponse {
                 @SerializedName("bio")
                 @Expose
                 public String bio;
+                @SerializedName("position")
+                @Expose
+                public String position;
 
             }
             @SerializedName("myDt")

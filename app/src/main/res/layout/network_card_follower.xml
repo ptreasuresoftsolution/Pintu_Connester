@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingTop="25dp"
-        android:paddingBottom="25dp">
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -26,6 +26,17 @@
             android:text="Member name"
             android:textSize="@dimen/label"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/member_pos_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:text="Position"
+            android:textSize="@dimen/small_lg" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="wrap_content"

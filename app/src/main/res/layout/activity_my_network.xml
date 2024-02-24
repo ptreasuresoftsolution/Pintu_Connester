@@ -4,10 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/secondary_7"
     android:orientation="vertical"
     tools:context=".activity.MyNetworkActivity">
 
-    <include layout="@layout/top_nav_layout" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <include layout="@layout/top_nav_layout" />
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,7 +46,7 @@
                     android:layout_marginLeft="12dp"
                     android:text="My Network"
                     android:textColor="@color/primary"
-                    android:textSize="@dimen/h6"
+                    android:textSize="@dimen/label"
                     android:textStyle="bold" />
 
                 <com.google.android.material.button.MaterialButton
@@ -60,32 +67,38 @@
             </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <GridLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:useDefaultMargins="true">
+            android:layout_height="match_parent">
 
-            <include
-                layout="@layout/network_card_connect"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_gravity="fill_horizontal"/>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
 
-            <include
-                layout="@layout/network_card_connect"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_gravity="fill_horizontal" />
-            <include
-                layout="@layout/network_card_connect"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_gravity="fill_horizontal" />
-        </GridLayout>
+                <LinearLayout
+                    android:id="@+id/main_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/network_grid_st" />
+                </LinearLayout>
+            </ScrollView>
+
+            <FrameLayout
+                android:id="@+id/progressBar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#5CFFFFFF"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+        </FrameLayout>
     </LinearLayout>
 
     <include

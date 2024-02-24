@@ -12,7 +12,12 @@ import com.connester.job.function.LogTag;
 import com.connester.job.function.SessionPref;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -72,5 +77,17 @@ public class UserMaster {
                 Log.d(LogTag.API_EXCEPTION, "UserMaster GET_LOGIN_USER_ROW Fail", t);
             }
         });
+    }
+
+    public static List<String> findMutualIds(String ids1,String ids2){
+        //split and filter (remove blank)
+        List<String> idA1 = Stream.of(ids1.split(",")).filter(item -> item!= null && !item.isEmpty() && !item.trim().equals("")).collect(Collectors.toList());
+        //unique item
+        idA1 = new ArrayList<>(new HashSet<>(idA1));
+        List<String> idA2 = Stream.of(ids2.split(",")).filter(item -> item!= null && !item.isEmpty() && !item.trim().equals("")).collect(Collectors.toList());
+        idA2 = new ArrayList<>(new HashSet<>(idA2));
+        //same item in both array
+        idA1.retainAll(idA2);
+        return idA1;
     }
 }
