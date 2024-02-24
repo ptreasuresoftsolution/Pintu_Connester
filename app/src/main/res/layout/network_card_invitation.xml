@@ -80,8 +80,9 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/req_decline_mbtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="60dp"
+                        android:layout_height="34dp"
+                        android:padding="0dp"
                         android:layout_marginRight="6dp"
                         android:text="Decline"
                         android:textColor="@color/secondary"
@@ -89,9 +90,11 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/req_accept_mbtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="60dp"
+                        android:layout_height="34dp"
+                        android:padding="0dp"
                         android:text="Accept"
+                        android:textSize="@dimen/small_xs"
                         app:backgroundTint="@color/primary" />
                 </LinearLayout>
             </LinearLayout>

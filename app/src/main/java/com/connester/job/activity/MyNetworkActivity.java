@@ -54,7 +54,8 @@ public class MyNetworkActivity extends AppCompatActivity {
         layoutInflater = LayoutInflater.from(context);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
-        main_ll = findViewById(R.id.main_ll);main_ll.removeAllViews();
+        main_ll = findViewById(R.id.main_ll);
+        main_ll.removeAllViews();
         progressBar = findViewById(R.id.progressBar);
 
         MaterialButton manage_nt_btn = findViewById(R.id.manage_nt_btn);
@@ -161,14 +162,18 @@ public class MyNetworkActivity extends AppCompatActivity {
                                     }
                                 });
                                 String imgPath = networkSuggestedListResponse.jsonDt.connReq.imgPath;
+                                networkSuggestedListResponse.jsonDt.connReq.dt.add(networkSuggestedListResponse.jsonDt.connReq.dt.get(0));
+                                networkSuggestedListResponse.jsonDt.connReq.dt.add(networkSuggestedListResponse.jsonDt.connReq.dt.get(0));
+                                networkSuggestedListResponse.jsonDt.connReq.dt.add(networkSuggestedListResponse.jsonDt.connReq.dt.get(0));
                                 GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
 //                                GridLayout grid_lt = blankGridSt.findViewById(R.id.grid_lt);
 //                                grid_lt.setColumnCount(2);
 //                                grid_lt.removeAllViews();
-                                BaseAdapter baseAdapter =new BaseAdapter() {
+                                BaseAdapter baseAdapter = new BaseAdapter() {
+                                    BaseAdapter baseAdapter = this;
                                     @Override
                                     public int getCount() {
-                                        return networkSuggestedListResponse.jsonDt.connReq.dt.size() + 2;
+                                        return networkSuggestedListResponse.jsonDt.connReq.dt.size();
                                     }
 
                                     @Override
@@ -186,7 +191,7 @@ public class MyNetworkActivity extends AppCompatActivity {
                                         if (inv_rq_view == null)
                                             inv_rq_view = LayoutInflater.from(context).inflate(R.layout.network_card_invitation, parent, false);
 
-                                        NetworkSuggestedListResponse.JsonDt.ConnReq.Dt row = getItem(0);
+                                        NetworkSuggestedListResponse.JsonDt.ConnReq.Dt row = getItem(position);
                                         ImageView req_decline_iv = inv_rq_view.findViewById(R.id.req_decline_iv);
                                         MaterialButton req_decline_mbtn = inv_rq_view.findViewById(R.id.req_decline_mbtn);
                                         View finalInv_rq_view1 = inv_rq_view;
@@ -194,7 +199,7 @@ public class MyNetworkActivity extends AppCompatActivity {
                                             @Override
                                             public void onClick(View v) {
                                                 //call req_decline api and remove from gridlayout
-                                                invitationReqDecline(grid_lt, finalInv_rq_view1, row.userMasterId);
+                                                invitationReqDecline(grid_lt, finalInv_rq_view1, row.userMasterId, position);
                                             }
                                         };
                                         req_decline_iv.setOnClickListener(req_decline);
@@ -214,10 +219,16 @@ public class MyNetworkActivity extends AppCompatActivity {
                                             @Override
                                             public void onClick(View v) {
                                                 //call req_accept api and remove view from gridlayout
-                                                invitationReqAccept(grid_lt, finalInv_rq_view, row.userMasterId);
+                                                invitationReqAccept(grid_lt,baseAdapter , row.userMasterId, position);
+                                                removeItem(position);
                                             }
                                         });
                                         return inv_rq_view;
+                                    }
+
+                                    private void removeItem(int position){
+                                        networkSuggestedListResponse.jsonDt.connReq.dt.remove(position);
+                                        notifyDataSetChanged();
                                     }
                                 };
                                 grid_lt.setAdapter(baseAdapter);
@@ -287,11 +298,11 @@ public class MyNetworkActivity extends AppCompatActivity {
 
     }
 
-    private void invitationReqAccept(GridView gridLt, View invRqView, String userMasterId) {
+    private void invitationReqAccept(GridView gridLt, BaseAdapter invRqView, String userMasterId, int position) {
 
     }
 
-    private void invitationReqDecline(GridView gridLt, View invRqView, String userMasterId) {
+    private void invitationReqDecline(GridView gridLt, View invRqView, String userMasterId, int position) {
     }
 
     private void loadAllInvitationRequest() {
