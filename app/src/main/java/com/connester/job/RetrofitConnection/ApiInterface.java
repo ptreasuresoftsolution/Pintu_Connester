@@ -26,68 +26,84 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getLoginUserRow")
-    Call<UserRowResponse> GET_LOGIN_USER_ROW(@FieldMap Map<String, String> params );
+    Call<UserRowResponse> GET_LOGIN_USER_ROW(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/Login")
-    Call<UserLoginResponse> CALL_LOGIN(@FieldMap Map<String, String> params );
+    Call<UserLoginResponse> CALL_LOGIN(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/addSingUpDetails")
-    Call<SignUpOtpResponse> SIGNUP_SUBMIT_FOR_OTP(@FieldMap Map<String, String> params );
+    Call<SignUpOtpResponse> SIGNUP_SUBMIT_FOR_OTP(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/otpEmailSendMail/signUp")
-    Call<SignUpOtpResponse> SIGNUP_OTP_RESEND(@FieldMap Map<String, String> params );
+    Call<SignUpOtpResponse> SIGNUP_OTP_RESEND(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/isAuth/email")
-    Call<UserLoginResponse> SIGNUP_SUBMIT_WITH_OTP(@FieldMap Map<String, String> params );
+    Call<UserLoginResponse> SIGNUP_SUBMIT_WITH_OTP(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/ForgotPassword")
-    Call<NormalCommonResponse> CALL_FORGOT_PASS(@FieldMap Map<String, String> params );
+    Call<NormalCommonResponse> CALL_FORGOT_PASS(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getUniqueUserName")
-    Call<NormalCommonResponse> GET_UNIQUE_USERNAME(@FieldMap Map<String, String> params );
+    Call<NormalCommonResponse> GET_UNIQUE_USERNAME(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/CheckUsername")
-    Call<NormalCommonResponse> CHECK_USERNAME(@FieldMap Map<String, String> params );
+    Call<NormalCommonResponse> CHECK_USERNAME(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/StepOne")
-    Call<NormalCommonResponse> STEP_1_SUBMIT(@FieldMap Map<String, String> params );
+    Call<NormalCommonResponse> STEP_1_SUBMIT(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedsLikeUnLink")
-    Call<NormalCommonResponse> CALL_LIKE_UNLIKE(@FieldMap Map<String, String> params );
+    Call<NormalCommonResponse> CALL_LIKE_UNLIKE(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedCommentsJson")
-    Call<FeedsCommentListResponse> GET_FEED_COMMENT(@FieldMap Map<String, String> params );
+    Call<FeedsCommentListResponse> GET_FEED_COMMENT(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedOnComment")
-    Call<NormalCommonResponse> SUBMIT_COMMENT_ON_FEEDS(@FieldMap Map<String, String> params );
+    Call<NormalCommonResponse> SUBMIT_COMMENT_ON_FEEDS(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedsForward")
-    Call<NormalCommonResponse> FEEDS_SHARE_FORWARD(@FieldMap Map<String, String> params );
+    Call<NormalCommonResponse> FEEDS_SHARE_FORWARD(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedClosed")
-    Call<NormalCommonResponse> FEEDS_OPTION_CLOSE(@FieldMap Map<String, String> params );
+    Call<NormalCommonResponse> FEEDS_OPTION_CLOSE(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedsSaveUnsave")
-    Call<NormalCommonResponse> FEEDS_OPTION_SAVE_UNSAVE(@FieldMap Map<String, String> params );
+    Call<NormalCommonResponse> FEEDS_OPTION_SAVE_UNSAVE(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/unFollowProfile")
-    Call<NormalCommonResponse> FEEDS_OPTION_UNFOLLOW_PROFILE(@FieldMap Map<String, String> params );
+    Call<NormalCommonResponse> FEEDS_OPTION_UNFOLLOW_PROFILE(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/homeFeedsJson")
-    Call<FeedsMasterResponse> HOME_FEEDS_LIST(@FieldMap Map<String, String> params );
+    Call<FeedsMasterResponse> HOME_FEEDS_LIST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/applyJob")
-    Call<NormalCommonResponse> JOB_APPLY(@FieldMap Map<String, String> params );
+    Call<NormalCommonResponse> JOB_APPLY(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Network/networkDefaultData")
-    Call<NetworkSuggestedListResponse> NETWORK_SUGGESTED_LIST(@FieldMap Map<String, String> params );
+    Call<NetworkSuggestedListResponse> NETWORK_SUGGESTED_LIST(@FieldMap Map<String, String> params);
+
+    //InvReqAccept / InvReqDecline / SendInvReq / RemoveConnection / RemoveFollower / UnFollowFollowing / ReqFollow / FollowReqAccept / FollowReqReject
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/mangeUserNetwork")
+    Call<NormalCommonResponse> NETWORK_ACTION_MANGE(@FieldMap Map<String, String> params);
 
 
 }

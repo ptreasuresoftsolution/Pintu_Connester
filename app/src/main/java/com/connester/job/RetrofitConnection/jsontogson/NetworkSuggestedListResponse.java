@@ -20,6 +20,7 @@ public class NetworkSuggestedListResponse {
     public JsonDt jsonDt;
     public class JsonDt {
 
+        //also use in seell & list option
         @SerializedName("ConnReq")
         @Expose
         public ConnReq connReq;
