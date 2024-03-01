@@ -56,7 +56,6 @@ public class MyNetworkActivity extends AppCompatActivity {
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         main_ll = findViewById(R.id.main_ll);
-        main_ll.removeAllViews();
         progressBar = findViewById(R.id.progressBar);
 
         MaterialButton manage_nt_btn = findViewById(R.id.manage_nt_btn);
@@ -137,6 +136,7 @@ public class MyNetworkActivity extends AppCompatActivity {
 
 
     private void loadDefaultView() {
+        main_ll.removeAllViews();
         progressBar.setVisibility(View.VISIBLE);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
@@ -162,11 +162,7 @@ public class MyNetworkActivity extends AppCompatActivity {
                                         loadAllInvitationRequest();
                                     }
                                 });
-                                networkSuggestedListResponse.jsonDt.connReq.dt.add(networkSuggestedListResponse.jsonDt.connReq.dt.get(0));
-                                networkSuggestedListResponse.jsonDt.connReq.dt.add(networkSuggestedListResponse.jsonDt.connReq.dt.get(0));
-                                networkSuggestedListResponse.jsonDt.connReq.dt.add(networkSuggestedListResponse.jsonDt.connReq.dt.get(0));
                                 GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-
                                 grid_lt.setAdapter(getInvitationReqAdapter(networkSuggestedListResponse.jsonDt.connReq));
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                                 main_ll.addView(blankGridSt);
@@ -178,9 +174,14 @@ public class MyNetworkActivity extends AppCompatActivity {
                 }
             }
         });
-
-
     }
+
+
+
+
+
+
+
 
     BaseAdapter getInvitationReqAdapter(NetworkSuggestedListResponse.JsonDt.ConnReq connReq) {
         String imgPath = connReq.imgPath;
@@ -212,8 +213,15 @@ public class MyNetworkActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         //call req_decline api and remove from gridlayout
-                        invitationReqDecline(row.userMasterId);
-                        removeItem(position);
+                        networkActionMange(new NetworkActionCallback() {
+                            @Override
+                            public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                if (normalCommonResponse.status)
+                                    removeItem(position);
+                                else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }, "InvReqDecline", row.userMasterId);
                     }
                 };
                 req_decline_iv.setOnClickListener(req_decline);
@@ -232,8 +240,15 @@ public class MyNetworkActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         //call req_accept api and remove view from gridlayout
-                        invitationReqAccept(row.userMasterId);
-                        removeItem(position);
+                        networkActionMange(new NetworkActionCallback() {
+                            @Override
+                            public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                if (normalCommonResponse.status)
+                                    removeItem(position);
+                                else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }, "InvReqAccept", row.userMasterId);
                     }
                 });
                 return inv_rq_view;
@@ -247,26 +262,51 @@ public class MyNetworkActivity extends AppCompatActivity {
         return baseAdapter;
     }
 
-    private void loadAllInvitationRequest() {
+    void loadAllInvitationRequest() {
+        main_ll.removeAllViews();
+        networkSeeAllList(new NetworkSeeAllCallback() {
+            @Override
+            public void apiCallBack(Object responseBody) {
+                NetworkSuggestedListResponse.JsonDt.ConnReq connReq = (NetworkSuggestedListResponse.JsonDt.ConnReq) responseBody;
+                if (connReq.status) {
+                    View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                    TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                    nt_list_title.setText("Invitation Request");
+                    MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                    nt_list_seeall.setVisibility(View.GONE);
+                    GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                    grid_lt.setAdapter(getInvitationReqAdapter(connReq));
+                    CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                    main_ll.addView(blankGridSt);
+                } else Toast.makeText(context, connReq.msg, Toast.LENGTH_SHORT).show();
+            }
+        }, "connectReqUsersMaster");
     }
 
-
-    private void invitationReqAccept(String userMasterId) {
-        networkActionMange(new NetworkActionCallback() {
-            @Override
-            public void apiCallBack(NormalCommonResponse normalCommonResponse) {
-
-            }
-        }, "InvReqAccept", userMasterId);
+    interface NetworkSeeAllCallback {
+        void apiCallBack(Object responseBody);
     }
 
-    private void invitationReqDecline(String userMasterId) {
-        networkActionMange(new NetworkActionCallback() {
+    private void networkSeeAllList(NetworkSeeAllCallback networkSeeAllCallback, String fnName) {
+        progressBar.setVisibility(View.VISIBLE);
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+        hashMap.put("apiKey", sessionPref.getApiKey());
+        hashMap.put("device", "ANDROID");
+        //connectReqUsersMaster / connectUsers / followReqUsers / followerUsers / followingUsers / userCommunitys / userBusinessPages / userEvents / suggestedCityUser / suggestedIndustryUser / suggestedGroup / suggestedBusPages
+        hashMap.put("fnName", fnName);
+        apiInterface.NETWORK_SEE_ALL_LIST(hashMap).enqueue(new MyApiCallback(progressBar) {
             @Override
-            public void apiCallBack(NormalCommonResponse normalCommonResponse) {
-
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        networkSeeAllCallback.apiCallBack(response.body());
+                        progressBar.setVisibility(View.GONE);
+                    }
+                }
             }
-        }, "InvReqDecline", userMasterId);
+        });
     }
 
     interface NetworkActionCallback {
@@ -289,6 +329,7 @@ public class MyNetworkActivity extends AppCompatActivity {
                     if (response.body() != null) {
                         NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                         networkActionCallback.apiCallBack(normalCommonResponse);
+                        progressBar.setVisibility(View.GONE);
                     }
                 }
             }

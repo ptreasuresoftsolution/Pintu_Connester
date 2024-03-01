@@ -104,6 +104,10 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/mangeUserNetwork")
     Call<NormalCommonResponse> NETWORK_ACTION_MANGE(@FieldMap Map<String, String> params);
+    //connectReqUsersMaster / connectUsers / followReqUsers / followerUsers / followingUsers / userCommunitys / userBusinessPages / userEvents / suggestedCityUser / suggestedIndustryUser / suggestedGroup / suggestedBusPages
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Network/seeAll")
+    Call<?> NETWORK_SEE_ALL_LIST(@FieldMap Map<String, String> params);
 
 
 }
