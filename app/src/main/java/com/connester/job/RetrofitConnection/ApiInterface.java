@@ -2,6 +2,7 @@ package com.connester.job.RetrofitConnection;
 
 import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
+import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.SignUpOtpResponse;
@@ -100,6 +101,10 @@ public interface ApiInterface {
     @POST(PRE_FIX + "Network/networkDefaultData")
     Call<NetworkSuggestedListResponse> NETWORK_SUGGESTED_LIST(@FieldMap Map<String, String> params);
 
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Network/networkSideCounter")
+    Call<NetworkMenuListCounter> NETWORK_SIDE_COUNTER(@FieldMap Map<String, String> params);
+
     //InvReqAccept / InvReqDecline / SendInvReq / RemoveConnection / RemoveFollower / UnFollowFollowing / ReqFollow / FollowReqAccept / FollowReqReject
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/mangeUserNetwork")
@@ -113,6 +118,7 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/userCommunityJoinRequest")
     Call<NormalCommonResponse> GROUP_JOIN_REQUEST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/followBusinessPage")
     Call<NormalCommonResponse> PAGE_FOLLOW_REQUEST(@FieldMap Map<String, String> params);

@@ -27,6 +27,8 @@ import com.bumptech.glide.Glide;
 import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
+import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
+import com.connester.job.RetrofitConnection.jsontogson.NetworkSeeAllCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.function.CommonFunction;
@@ -40,6 +42,9 @@ import java.util.HashMap;
 import retrofit2.Call;
 import retrofit2.Response;
 
+/****
+ * Notes : member profile open click / group profile open click / business profile open click is remain********
+ */
 public class MyNetworkActivity extends AppCompatActivity {
     SessionPref sessionPref;
     Context context;
@@ -593,6 +598,7 @@ public class MyNetworkActivity extends AppCompatActivity {
     //list option dialog open full screen
 
     private void openNetworkListMenu() {
+        CommonFunction.PleaseWaitShow(context);
         Dialog dialog = new Dialog(activity, android.R.style.Theme_Translucent_NoTitleBar);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.network_list_menu_dialog);
@@ -602,10 +608,338 @@ public class MyNetworkActivity extends AppCompatActivity {
         wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
         window.setAttributes(wlp);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+        hashMap.put("apiKey", sessionPref.getApiKey());
 
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
+        LinearLayout see_all_connection_ll = dialog.findViewById(R.id.see_all_connection_ll);
+        see_all_connection_ll.setOnClickListener(v -> {
+            main_ll.removeAllViews();
+            networkSeeAllList(new NetworkSeeAllCallback() {
+                @Override
+                public void apiCallBack(Object responseBody) {
+                    NetworkSeeAllCommonResponse.ConnectionListResponse connectionListResponse = (NetworkSeeAllCommonResponse.ConnectionListResponse) responseBody;
+                    if (connectionListResponse.status) {
+                        View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                        TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                        nt_list_title.setText("My Connection");
+                        MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                        nt_list_seeall.setVisibility(View.GONE);
+                        GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                        grid_lt.setAdapter(getConnectionAdapter(connectionListResponse));
+                        CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                        main_ll.addView(blankGridSt);
+                    } else
+                        Toast.makeText(context, connectionListResponse.msg, Toast.LENGTH_SHORT).show();
+                }
+            }, SeeAllFnName.connectUsers);
+        });
+        TextView connection_count_tv = dialog.findViewById(R.id.connection_count_tv);
+
+        LinearLayout see_all_inv_req_ll = dialog.findViewById(R.id.see_all_inv_req_ll);
+        see_all_inv_req_ll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadAllInvitationRequest();
+            }
+        });
+        TextView inv_rq_count_tv = dialog.findViewById(R.id.inv_rq_count_tv);
+
+        LinearLayout see_all_follow_rq_ll = dialog.findViewById(R.id.see_all_follow_rq_ll);
+        see_all_follow_rq_ll.setOnClickListener(v -> {
+            main_ll.removeAllViews();
+            networkSeeAllList(new NetworkSeeAllCallback() {
+                @Override
+                public void apiCallBack(Object responseBody) {
+                    NetworkSeeAllCommonResponse.FollowReqListResponse followReqListResponse = (NetworkSeeAllCommonResponse.FollowReqListResponse) responseBody;
+                    if (followReqListResponse.status) {
+                        View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                        TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                        nt_list_title.setText("Follow Request");
+                        MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                        nt_list_seeall.setVisibility(View.GONE);
+                        GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                        grid_lt.setAdapter(getFollowReqAdapter(followReqListResponse));
+                        CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                        main_ll.addView(blankGridSt);
+                    } else
+                        Toast.makeText(context, followReqListResponse.msg, Toast.LENGTH_SHORT).show();
+                }
+            }, SeeAllFnName.followReqUsers);
+        });
+        TextView follow_rq_count_tv = dialog.findViewById(R.id.follow_rq_count_tv);
+
+        LinearLayout see_all_followers_ll = dialog.findViewById(R.id.see_all_followers_ll);
+        see_all_followers_ll.setOnClickListener(v -> {
+            main_ll.removeAllViews();
+            networkSeeAllList(new NetworkSeeAllCallback() {
+                @Override
+                public void apiCallBack(Object responseBody) {
+                    NetworkSeeAllCommonResponse.FollowerListResponse followerListResponse = (NetworkSeeAllCommonResponse.FollowerListResponse) responseBody;
+                    if (followerListResponse.status) {
+                        View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                        TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                        nt_list_title.setText("My Followers");
+                        MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                        nt_list_seeall.setVisibility(View.GONE);
+                        GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                        grid_lt.setAdapter(getFollowerAdapter(followerListResponse));
+                        CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                        main_ll.addView(blankGridSt);
+                    } else
+                        Toast.makeText(context, followerListResponse.msg, Toast.LENGTH_SHORT).show();
+                }
+            }, SeeAllFnName.followerUsers);
+        });
+        TextView followers_count_tv = dialog.findViewById(R.id.followers_count_tv);
+
+        LinearLayout see_all_following_ll = dialog.findViewById(R.id.see_all_following_ll);
+        see_all_following_ll.setOnClickListener(v -> {
+            main_ll.removeAllViews();
+            networkSeeAllList(new NetworkSeeAllCallback() {
+                @Override
+                public void apiCallBack(Object responseBody) {
+                    NetworkSeeAllCommonResponse.FollowingsListResponse followingsListResponse = (NetworkSeeAllCommonResponse.FollowingsListResponse) responseBody;
+                    if (followingsListResponse.status) {
+                        View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                        TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                        nt_list_title.setText("My Followings");
+                        MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                        nt_list_seeall.setVisibility(View.GONE);
+                        GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                        grid_lt.setAdapter(getFollowingsAdapter(followingsListResponse));
+                        CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                        main_ll.addView(blankGridSt);
+                    } else
+                        Toast.makeText(context, followingsListResponse.msg, Toast.LENGTH_SHORT).show();
+                }
+            }, SeeAllFnName.followingUsers);
+        });
+        TextView following_count_tv = dialog.findViewById(R.id.following_count_tv);
+
+        LinearLayout see_all_group_ll = dialog.findViewById(R.id.see_all_group_ll);
+        see_all_group_ll.setOnClickListener(v -> {
+            main_ll.removeAllViews();
+            networkSeeAllList(new NetworkSeeAllCallback() {
+                @Override
+                public void apiCallBack(Object responseBody) {
+                    NetworkSeeAllCommonResponse.CommunitysListResponse communitysListResponse = (NetworkSeeAllCommonResponse.CommunitysListResponse) responseBody;
+                    if (communitysListResponse.status) {
+                        View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                        TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                        nt_list_title.setText("My Community/Group");
+                        MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                        nt_list_seeall.setVisibility(View.GONE);
+                        GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                        grid_lt.setAdapter(getCommunityGroupAdapter(communitysListResponse));
+                        CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                        main_ll.addView(blankGridSt);
+                    } else
+                        Toast.makeText(context, communitysListResponse.msg, Toast.LENGTH_SHORT).show();
+                }
+            }, SeeAllFnName.userCommunitys);
+        });
+        TextView group_count_tv = dialog.findViewById(R.id.group_count_tv);
+
+        LinearLayout see_all_business_page_ll = dialog.findViewById(R.id.see_all_business_page_ll);
+        see_all_business_page_ll.setOnClickListener(v -> {
+            main_ll.removeAllViews();
+            networkSeeAllList(new NetworkSeeAllCallback() {
+                @Override
+                public void apiCallBack(Object responseBody) {
+                    NetworkSeeAllCommonResponse.BusinessPagesListResponse businessPagesListResponse = (NetworkSeeAllCommonResponse.BusinessPagesListResponse) responseBody;
+                    if (businessPagesListResponse.status) {
+                        View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                        TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                        nt_list_title.setText("Business Pages");
+                        MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                        nt_list_seeall.setVisibility(View.GONE);
+                        GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                        grid_lt.setAdapter(getBusPageAdapter(businessPagesListResponse));
+                        CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                        main_ll.addView(blankGridSt);
+                    } else
+                        Toast.makeText(context, businessPagesListResponse.msg, Toast.LENGTH_SHORT).show();
+                }
+            }, SeeAllFnName.userBusinessPages);
+        });
+        TextView business_page_count_tv = dialog.findViewById(R.id.business_page_count_tv);
+        apiInterface.NETWORK_SIDE_COUNTER(hashMap).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        NetworkMenuListCounter networkMenuListCounter = (NetworkMenuListCounter) response.body();
+                        if (networkMenuListCounter.status) {
+                            connection_count_tv.setText(networkMenuListCounter.dt.totalConnection);
+                            inv_rq_count_tv.setText(networkMenuListCounter.dt.totalInvatation);
+                            follow_rq_count_tv.setText(networkMenuListCounter.dt.totalFollowReq);
+                            followers_count_tv.setText(networkMenuListCounter.dt.totalFollowers);
+                            following_count_tv.setText(networkMenuListCounter.dt.totalFollowing);
+                            group_count_tv.setText(networkMenuListCounter.dt.totalGroups);
+                            business_page_count_tv.setText(networkMenuListCounter.dt.totalPages);
+                        } else
+                            Toast.makeText(context, networkMenuListCounter.msg, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
 
         dialog.show();
+    }
+
+    private BaseAdapter getBusPageAdapter(NetworkSeeAllCommonResponse.BusinessPagesListResponse businessPagesListResponse) {
+        return null;
+    }
+
+    private BaseAdapter getCommunityGroupAdapter(NetworkSeeAllCommonResponse.CommunitysListResponse communitysListResponse) {
+        return null;
+    }
+
+    private BaseAdapter getFollowingsAdapter(NetworkSeeAllCommonResponse.FollowingsListResponse followingsListResponse) {
+        return null;
+    }
+
+    private BaseAdapter getFollowerAdapter(NetworkSeeAllCommonResponse.FollowerListResponse followerListResponse) {
+        return null;
+    }
+
+    private BaseAdapter getFollowReqAdapter(NetworkSeeAllCommonResponse.FollowReqListResponse followReqListResponse) {
+        String imgPath = followReqListResponse.imgPath;
+        BaseAdapter baseAdapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return followReqListResponse.dt.size();
+            }
+
+            @Override
+            public NetworkSeeAllCommonResponse.FollowReqListResponse.Dt getItem(int position) {
+                return followReqListResponse.dt.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View view, ViewGroup parent) {
+                if (view == null)
+                    view = LayoutInflater.from(context).inflate(R.layout.network_card_follow_rq, parent, false);
+
+                NetworkSeeAllCommonResponse.FollowReqListResponse.Dt row = getItem(position);
+
+                ImageView member_profile_pic = view.findViewById(R.id.member_profile_pic);
+                Glide.with(context).load(imgPath + row.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+                TextView member_tv = view.findViewById(R.id.member_tv);
+                member_tv.setText(row.name);
+                TextView member_pos_tv = view.findViewById(R.id.member_pos_tv);
+                member_pos_tv.setText(row.position);
+
+                TextView member_mutual_conn_tv = view.findViewById(R.id.member_mutual_conn_tv);
+                member_mutual_conn_tv.setText(UserMaster.findMutualIds(row.connectUser, followReqListResponse.myDt.connectUser).size() + " Mutual Connections");
+                MaterialButton req_accept_mbtn = view.findViewById(R.id.req_accept_mbtn);
+                req_accept_mbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //call req_accept api and remove view from gridlayout
+                        networkActionMange(new NetworkActionCallback() {
+                            @Override
+                            public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                if (normalCommonResponse.status) removeItem(position);
+                                else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }, ActionName.FollowReqAccept, row.userMasterId);
+                    }
+                });
+                MaterialButton req_reject_mbtn = view.findViewById(R.id.req_reject_mbtn);
+                req_reject_mbtn.setOnClickListener(v -> {
+                    networkActionMange(new NetworkActionCallback() {
+                        @Override
+                        public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                            if (normalCommonResponse.status) removeItem(position);
+                            else
+                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }, ActionName.FollowReqReject, row.userMasterId);
+                });
+                return view;
+            }
+
+            private void removeItem(int position) {
+                followReqListResponse.dt.remove(position);
+                notifyDataSetChanged();
+            }
+        };
+        return baseAdapter;
+    }
+
+    private BaseAdapter getConnectionAdapter(NetworkSeeAllCommonResponse.ConnectionListResponse connectionListResponse) {
+        String imgPath = connectionListResponse.imgPath;
+        BaseAdapter baseAdapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return connectionListResponse.dt.size();
+            }
+
+            @Override
+            public NetworkSeeAllCommonResponse.ConnectionListResponse.Dt getItem(int position) {
+                return connectionListResponse.dt.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View view, ViewGroup parent) {
+                if (view == null)
+                    view = LayoutInflater.from(context).inflate(R.layout.network_card_connection, parent, false);
+
+                NetworkSeeAllCommonResponse.ConnectionListResponse.Dt row = getItem(position);
+                ImageView member_profile_pic = view.findViewById(R.id.member_profile_pic);
+                Glide.with(context).load(imgPath + row.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+                TextView member_tv = view.findViewById(R.id.member_tv);
+                member_tv.setText(row.name);
+                TextView member_pos_tv = view.findViewById(R.id.member_pos_tv);
+                member_pos_tv.setText(row.position);
+
+                ImageView members_start_chat_iv = view.findViewById(R.id.members_start_chat_iv);
+                members_start_chat_iv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //start chat with this user (**)
+                    }
+                });
+
+                ImageView connection_option = view.findViewById(R.id.connection_option);
+                connection_option.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //remove option show in bottom sheet menu (**)
+                        removeItem(position);
+                    }
+                });
+                return view;
+            }
+
+            private void removeItem(int position) {
+                connectionListResponse.dt.remove(position);
+                notifyDataSetChanged();
+            }
+        };
+        return baseAdapter;
     }
 
     BaseAdapter getInvitationReqAdapter(NetworkSuggestedListResponse.JsonDt.ConnReq connReq) {

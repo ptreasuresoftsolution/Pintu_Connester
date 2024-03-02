@@ -9,14 +9,15 @@
     android:paddingRight="14dp">
 
     <LinearLayout
-        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal"
         android:paddingTop="8dp"
         android:paddingBottom="8dp">
 
         <ImageView
+            android:id="@+id/back_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/arrow_back"
@@ -34,6 +35,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/see_all_connection_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -50,6 +52,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/connection_count_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
@@ -59,13 +62,14 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/see_all_inv_req_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:gravity="center"
+        android:orientation="horizontal"
         android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:orientation="horizontal">
+        android:paddingBottom="4dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -78,11 +82,12 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
-            android:textSize="@dimen/h6"
             android:text="Invitations Request"
-            android:textColor="@color/secondary_4" />
+            android:textColor="@color/secondary_4"
+            android:textSize="@dimen/h6" />
 
         <TextView
+            android:id="@+id/inv_rq_count_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
@@ -90,14 +95,16 @@
             android:textSize="@dimen/h6"
             android:textStyle="bold" />
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/see_all_follow_rq_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:gravity="center"
+        android:orientation="horizontal"
         android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:orientation="horizontal">
+        android:paddingBottom="4dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -110,11 +117,12 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
-            android:textSize="@dimen/h6"
             android:text="Follow Request"
-            android:textColor="@color/secondary_4" />
+            android:textColor="@color/secondary_4"
+            android:textSize="@dimen/h6" />
 
         <TextView
+            android:id="@+id/follow_rq_count_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
@@ -122,14 +130,16 @@
             android:textSize="@dimen/h6"
             android:textStyle="bold" />
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/see_all_followers_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:gravity="center"
+        android:orientation="horizontal"
         android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:orientation="horizontal">
+        android:paddingBottom="4dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -142,11 +152,12 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
-            android:textSize="@dimen/h6"
             android:text="Followers"
-            android:textColor="@color/secondary_4" />
+            android:textColor="@color/secondary_4"
+            android:textSize="@dimen/h6" />
 
         <TextView
+            android:id="@+id/followers_count_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
@@ -154,14 +165,16 @@
             android:textSize="@dimen/h6"
             android:textStyle="bold" />
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/see_all_following_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:gravity="center"
+        android:orientation="horizontal"
         android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:orientation="horizontal">
+        android:paddingBottom="4dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -174,11 +187,12 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
-            android:textSize="@dimen/h6"
             android:text="Following"
-            android:textColor="@color/secondary_4" />
+            android:textColor="@color/secondary_4"
+            android:textSize="@dimen/h6" />
 
         <TextView
+            android:id="@+id/following_count_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
@@ -186,14 +200,16 @@
             android:textSize="@dimen/h6"
             android:textStyle="bold" />
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/see_all_group_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:gravity="center"
+        android:orientation="horizontal"
         android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:orientation="horizontal">
+        android:paddingBottom="4dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -206,11 +222,12 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
-            android:textSize="@dimen/h6"
             android:text="Groups"
-            android:textColor="@color/secondary_4" />
+            android:textColor="@color/secondary_4"
+            android:textSize="@dimen/h6" />
 
         <TextView
+            android:id="@+id/group_count_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
@@ -218,14 +235,16 @@
             android:textSize="@dimen/h6"
             android:textStyle="bold" />
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/see_all_business_page_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:gravity="center"
+        android:orientation="horizontal"
         android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:orientation="horizontal">
+        android:paddingBottom="4dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -238,11 +257,12 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
-            android:textSize="@dimen/h6"
             android:text="Business Page"
-            android:textColor="@color/secondary_4" />
+            android:textColor="@color/secondary_4"
+            android:textSize="@dimen/h6" />
 
         <TextView
+            android:id="@+id/business_page_count_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
