@@ -18,12 +18,14 @@ public class NetworkSuggestedListResponse {
     @SerializedName("jsonDt")
     @Expose
     public JsonDt jsonDt;
+
     public class JsonDt {
 
         //also use in seell & list option
         @SerializedName("ConnReq")
         @Expose
         public ConnReq connReq;
+
         public class ConnReq {
             @SerializedName("status")
             @Expose
@@ -34,6 +36,7 @@ public class NetworkSuggestedListResponse {
             @SerializedName("dt")
             @Expose
             public List<Dt> dt;
+
             public class Dt {
 
                 @SerializedName("user_master_id")
@@ -59,9 +62,11 @@ public class NetworkSuggestedListResponse {
                 public String position;
 
             }
+
             @SerializedName("myDt")
             @Expose
             public MyDt myDt;
+
             public class MyDt {
 
                 @SerializedName("user_master_id")
@@ -72,14 +77,17 @@ public class NetworkSuggestedListResponse {
                 public String connectUser;
 
             }
+
             @SerializedName("imgPath")
             @Expose
             public String imgPath;
 
         }
+
         @SerializedName("SugUserCity")
         @Expose
         public SugUserCity sugUserCity;
+
         public class SugUserCity {
             @SerializedName("status")
             @Expose
@@ -90,6 +98,7 @@ public class NetworkSuggestedListResponse {
             @SerializedName("dt")
             @Expose
             public List<Dt> dt;
+
             public class Dt {
 
                 @SerializedName("user_master_id")
@@ -115,9 +124,11 @@ public class NetworkSuggestedListResponse {
                 public String position;
 
             }
+
             @SerializedName("myDt")
             @Expose
             public MyDt myDt;
+
             public class MyDt {
 
                 @SerializedName("user_master_id")
@@ -143,14 +154,17 @@ public class NetworkSuggestedListResponse {
                 public String blockedUser;
 
             }
+
             @SerializedName("imgPath")
             @Expose
             public String imgPath;
 
         }
+
         @SerializedName("SugUserIndustry")
         @Expose
         public SugUserIndustry sugUserIndustry;
+
         public class SugUserIndustry {
             @SerializedName("status")
             @Expose
@@ -161,6 +175,7 @@ public class NetworkSuggestedListResponse {
             @SerializedName("dt")
             @Expose
             public List<Dt> dt;
+
             public class Dt {
 
                 @SerializedName("user_master_id")
@@ -186,9 +201,11 @@ public class NetworkSuggestedListResponse {
                 public String position;
 
             }
+
             @SerializedName("myDt")
             @Expose
             public MyDt myDt;
+
             public class MyDt {
 
                 @SerializedName("user_master_id")
@@ -211,19 +228,28 @@ public class NetworkSuggestedListResponse {
                 public String blockedUser;
 
             }
+
             @SerializedName("imgPath")
             @Expose
             public String imgPath;
 
         }
+
         @SerializedName("SugGroup")
         @Expose
         public SugGroup sugGroup;
-        public class SugGroup {
 
+        public class SugGroup {
+            @SerializedName("status")
+            @Expose
+            public Boolean status;
+            @SerializedName("msg")
+            @Expose
+            public String msg;
             @SerializedName("dt")
             @Expose
             public List<Dt> dt;
+
             public class Dt {
 
                 @SerializedName("community_master_id")
@@ -252,9 +278,11 @@ public class NetworkSuggestedListResponse {
                 public String bio;
 
             }
+
             @SerializedName("myDt")
             @Expose
             public MyDt myDt;
+
             public class MyDt {
 
                 @SerializedName("user_master_id")
@@ -265,19 +293,23 @@ public class NetworkSuggestedListResponse {
                 public String connectUser;
 
             }
+
             @SerializedName("imgPath")
             @Expose
             public String imgPath;
 
         }
+
         @SerializedName("SugBusPages")
         @Expose
         public SugBusPages sugBusPages;
+
         public class SugBusPages {
 
             @SerializedName("dt")
             @Expose
             public List<Dt> dt;
+
             public class Dt {
 
                 @SerializedName("business_page_id")
@@ -303,9 +335,11 @@ public class NetworkSuggestedListResponse {
                 public String bio;
 
             }
+
             @SerializedName("myDt")
             @Expose
             public MyDt myDt;
+
             public class MyDt {
 
                 @SerializedName("user_master_id")
@@ -316,6 +350,7 @@ public class NetworkSuggestedListResponse {
                 public String connectUser;
 
             }
+
             @SerializedName("imgPath")
             @Expose
             public String imgPath;

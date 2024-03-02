@@ -198,6 +198,24 @@ public class MyNetworkActivity extends AppCompatActivity {
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                                 main_ll.addView(blankGridSt);
                             }
+                            if (networkSuggestedListResponse.jsonDt.sugGroup.dt.size() > 0) {
+                                View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                                TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                                nt_list_title.setText("Groups you may be interested in");
+                                MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                                nt_list_seeall.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        //load all invitation request
+                                        loadAllSuggestedGroup();
+                                    }
+                                });
+                                GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                                grid_lt.setAdapter(getSuggestedGroupAdapter(networkSuggestedListResponse.jsonDt.sugGroup));
+                                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                                main_ll.addView(blankGridSt);
+                            }
+
 
                             progressBar.setVisibility(View.GONE);
                         } else
@@ -206,6 +224,96 @@ public class MyNetworkActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    BaseAdapter getSuggestedGroupAdapter(NetworkSuggestedListResponse.JsonDt.SugGroup sugGroup) {
+        String imgPath = sugGroup.imgPath;
+        BaseAdapter baseAdapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return sugGroup.dt.size();
+            }
+
+            @Override
+            public NetworkSuggestedListResponse.JsonDt.SugGroup.Dt getItem(int position) {
+                return sugGroup.dt.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View view, ViewGroup parent) {
+                if (view == null)
+                    view = LayoutInflater.from(context).inflate(R.layout.network_card_group, parent, false);
+
+                NetworkSuggestedListResponse.JsonDt.SugGroup.Dt row = getItem(position);
+                ImageView group_logo_iv = view.findViewById(R.id.group_logo_iv);
+                Glide.with(context).load(imgPath + row.logo).placeholder(R.drawable.default_groups_pic).into(group_logo_iv);
+                TextView group_name_tv = view.findViewById(R.id.group_name_tv);
+                group_name_tv.setText(row.name);
+                TextView group_members = view.findViewById(R.id.group_members);
+                group_members.setText(row.members + " members");
+
+                MaterialButton join_btn = view.findViewById(R.id.join_btn);
+                join_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // call join group request api
+                        progressBar.setVisibility(View.VISIBLE);
+                        HashMap hashMap = new HashMap();
+                        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                        hashMap.put("apiKey", sessionPref.getApiKey());
+                        hashMap.put("community_master_id", row.communityMasterId);
+                        apiInterface.GROUP_JOIN_REQUEST(hashMap).enqueue(new MyApiCallback(progressBar) {
+                            @Override
+                            public void onResponse(Call call, Response response) {
+                                super.onResponse(call, response);
+                                if (response.isSuccessful()) {
+                                    if (response.body() != null) {
+                                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                        if (normalCommonResponse.status)
+                                            removeItem(position);
+                                        else
+                                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+                return view;
+            }
+
+            private void removeItem(int position) {
+                sugGroup.dt.remove(position);
+                notifyDataSetChanged();
+            }
+        };
+        return baseAdapter;
+    }
+
+    private void loadAllSuggestedGroup() {
+        main_ll.removeAllViews();
+        networkSeeAllList(new NetworkSeeAllCallback() {
+            @Override
+            public void apiCallBack(Object responseBody) {
+                NetworkSuggestedListResponse.JsonDt.SugGroup sugGroup = (NetworkSuggestedListResponse.JsonDt.SugGroup) responseBody;
+                if (sugGroup.status) {
+                    View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                    TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                    nt_list_title.setText("Groups you may be interested in");
+                    MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                    nt_list_seeall.setVisibility(View.GONE);
+                    GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                    grid_lt.setAdapter(getSuggestedGroupAdapter(sugGroup));
+                    CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                    main_ll.addView(blankGridSt);
+                } else Toast.makeText(context, sugGroup.msg, Toast.LENGTH_SHORT).show();
+            }
+        }, SeeAllFnName.suggestedGroup);
     }
 
     BaseAdapter getSuggestedIndustryUserAdapter(NetworkSuggestedListResponse.JsonDt.SugUserIndustry sugUserIndustry) {
@@ -246,7 +354,6 @@ public class MyNetworkActivity extends AppCompatActivity {
                 connect_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //call req_accept api and remove view from gridlayout
                         networkActionMange(new NetworkActionCallback() {
                             @Override
                             public void apiCallBack(NormalCommonResponse normalCommonResponse) {
@@ -328,7 +435,6 @@ public class MyNetworkActivity extends AppCompatActivity {
                 connect_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //call req_accept api and remove view from gridlayout
                         networkActionMange(new NetworkActionCallback() {
                             @Override
                             public void apiCallBack(NormalCommonResponse normalCommonResponse) {
