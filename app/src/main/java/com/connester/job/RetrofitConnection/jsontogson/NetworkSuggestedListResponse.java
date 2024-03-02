@@ -152,7 +152,12 @@ public class NetworkSuggestedListResponse {
         @Expose
         public SugUserIndustry sugUserIndustry;
         public class SugUserIndustry {
-
+            @SerializedName("status")
+            @Expose
+            public Boolean status;
+            @SerializedName("msg")
+            @Expose
+            public String msg;
             @SerializedName("dt")
             @Expose
             public List<Dt> dt;

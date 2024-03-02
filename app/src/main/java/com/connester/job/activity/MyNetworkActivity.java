@@ -73,11 +73,7 @@ public class MyNetworkActivity extends AppCompatActivity {
     }
 
     private void setBottomNavBar() {
-        ImageView navHome_btn = findViewById(R.id.navHome_btn),
-                navNetwork_btn = findViewById(R.id.navNetwork_btn),
-                navAddFeeds_btn = findViewById(R.id.navAddFeeds_btn),
-                navNotification_btn = findViewById(R.id.navNotification_btn),
-                navJob_btn = findViewById(R.id.navJob_btn);
+        ImageView navHome_btn = findViewById(R.id.navHome_btn), navNetwork_btn = findViewById(R.id.navNetwork_btn), navAddFeeds_btn = findViewById(R.id.navAddFeeds_btn), navNotification_btn = findViewById(R.id.navNotification_btn), navJob_btn = findViewById(R.id.navJob_btn);
         navHome_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -254,12 +250,11 @@ public class MyNetworkActivity extends AppCompatActivity {
                         networkActionMange(new NetworkActionCallback() {
                             @Override
                             public void apiCallBack(NormalCommonResponse normalCommonResponse) {
-                                if (normalCommonResponse.status)
-                                    removeItem(position);
+                                if (normalCommonResponse.status) removeItem(position);
                                 else
                                     Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                             }
-                        }, "SendInvReq", row.userMasterId);
+                        }, ActionName.SendInvReq, row.userMasterId);
                     }
                 });
                 return view;
@@ -278,20 +273,20 @@ public class MyNetworkActivity extends AppCompatActivity {
         networkSeeAllList(new NetworkSeeAllCallback() {
             @Override
             public void apiCallBack(Object responseBody) {
-                NetworkSuggestedListResponse.JsonDt.SugUserCity sugUserCity = (NetworkSuggestedListResponse.JsonDt.SugUserCity) responseBody;
-                if (sugUserCity.status) {
+                NetworkSuggestedListResponse.JsonDt.SugUserIndustry sugUserIndustry = (NetworkSuggestedListResponse.JsonDt.SugUserIndustry) responseBody;
+                if (sugUserIndustry.status) {
                     View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
                     TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
-                    nt_list_title.setText("People same city are");
+                    nt_list_title.setText("People same industry are");
                     MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
                     nt_list_seeall.setVisibility(View.GONE);
                     GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                    grid_lt.setAdapter(getSuggestedCityUserAdapter(sugUserCity));
+                    grid_lt.setAdapter(getSuggestedIndustryUserAdapter(sugUserIndustry));
                     CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                     main_ll.addView(blankGridSt);
-                } else Toast.makeText(context, sugUserCity.msg, Toast.LENGTH_SHORT).show();
+                } else Toast.makeText(context, sugUserIndustry.msg, Toast.LENGTH_SHORT).show();
             }
-        }, "suggestedCityUser");
+        }, SeeAllFnName.suggestedCityUser);
     }
 
 
@@ -337,12 +332,11 @@ public class MyNetworkActivity extends AppCompatActivity {
                         networkActionMange(new NetworkActionCallback() {
                             @Override
                             public void apiCallBack(NormalCommonResponse normalCommonResponse) {
-                                if (normalCommonResponse.status)
-                                    removeItem(position);
+                                if (normalCommonResponse.status) removeItem(position);
                                 else
                                     Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                             }
-                        }, "SendInvReq", row.userMasterId);
+                        }, ActionName.SendInvReq, row.userMasterId);
                     }
                 });
                 return view;
@@ -374,7 +368,7 @@ public class MyNetworkActivity extends AppCompatActivity {
                     main_ll.addView(blankGridSt);
                 } else Toast.makeText(context, sugUserCity.msg, Toast.LENGTH_SHORT).show();
             }
-        }, "suggestedCityUser");
+        }, SeeAllFnName.suggestedCityUser);
     }
 
     BaseAdapter getInvitationReqAdapter(NetworkSuggestedListResponse.JsonDt.ConnReq connReq) {
@@ -410,12 +404,11 @@ public class MyNetworkActivity extends AppCompatActivity {
                         networkActionMange(new NetworkActionCallback() {
                             @Override
                             public void apiCallBack(NormalCommonResponse normalCommonResponse) {
-                                if (normalCommonResponse.status)
-                                    removeItem(position);
+                                if (normalCommonResponse.status) removeItem(position);
                                 else
                                     Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                             }
-                        }, "InvReqDecline", row.userMasterId);
+                        }, ActionName.InvReqDecline, row.userMasterId);
                     }
                 };
                 req_decline_iv.setOnClickListener(req_decline);
@@ -437,12 +430,11 @@ public class MyNetworkActivity extends AppCompatActivity {
                         networkActionMange(new NetworkActionCallback() {
                             @Override
                             public void apiCallBack(NormalCommonResponse normalCommonResponse) {
-                                if (normalCommonResponse.status)
-                                    removeItem(position);
+                                if (normalCommonResponse.status) removeItem(position);
                                 else
                                     Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                             }
-                        }, "InvReqAccept", row.userMasterId);
+                        }, ActionName.InvReqAccept, row.userMasterId);
                     }
                 });
                 return inv_rq_view;
@@ -474,8 +466,7 @@ public class MyNetworkActivity extends AppCompatActivity {
                     main_ll.addView(blankGridSt);
                 } else Toast.makeText(context, connReq.msg, Toast.LENGTH_SHORT).show();
             }
-        }, "connectReqUsersMaster");
-        SeeAllFnName.connectUsers.getVal();
+        }, SeeAllFnName.connectReqUsersMaster);
     }
 
     interface NetworkSeeAllCallback {
@@ -485,8 +476,7 @@ public class MyNetworkActivity extends AppCompatActivity {
     //connectReqUsersMaster / connectUsers / followReqUsers / followerUsers / followingUsers / userCommunitys / userBusinessPages / userEvents /
     //suggestedCityUser / suggestedIndustryUser / suggestedGroup / suggestedBusPages
     enum SeeAllFnName {
-        connectReqUsersMaster("connectReqUsersMaster"), connectUsers("connectUsers"), followReqUsers("followReqUsers"), followerUsers("followerUsers"),
-        followingUsers("followingUsers"),userCommunitys("userCommunitys"),userBusinessPages("userBusinessPages") ;
+        connectReqUsersMaster("connectReqUsersMaster"), connectUsers("connectUsers"), followReqUsers("followReqUsers"), followerUsers("followerUsers"), followingUsers("followingUsers"), userCommunitys("userCommunitys"), userBusinessPages("userBusinessPages"), userEvents("userEvents"), suggestedCityUser("suggestedCityUser"), suggestedIndustryUser("suggestedIndustryUser"), suggestedGroup("suggestedGroup"), suggestedBusPages("suggestedBusPages");
         String val;
 
         SeeAllFnName(String val) {
@@ -499,7 +489,7 @@ public class MyNetworkActivity extends AppCompatActivity {
     }
 
 
-    private void networkSeeAllList(NetworkSeeAllCallback networkSeeAllCallback, String fnName) {
+    private void networkSeeAllList(NetworkSeeAllCallback networkSeeAllCallback, SeeAllFnName fnName) {
         progressBar.setVisibility(View.VISIBLE);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
@@ -507,7 +497,7 @@ public class MyNetworkActivity extends AppCompatActivity {
         hashMap.put("device", "ANDROID");
         //connectReqUsersMaster / connectUsers / followReqUsers / followerUsers / followingUsers / userCommunitys / userBusinessPages / userEvents /
         //suggestedCityUser / suggestedIndustryUser / suggestedGroup / suggestedBusPages
-        hashMap.put("fnName", fnName);
+        hashMap.put("fnName", fnName.getVal());
         apiInterface.NETWORK_SEE_ALL_LIST(hashMap).enqueue(new MyApiCallback(progressBar) {
             @Override
             public void onResponse(Call call, Response response) {
@@ -527,13 +517,27 @@ public class MyNetworkActivity extends AppCompatActivity {
     }
 
     //InvReqAccept / InvReqDecline / SendInvReq / RemoveConnection / RemoveFollower / UnFollowFollowing / ReqFollow / FollowReqAccept / FollowReqReject
-    void networkActionMange(NetworkActionCallback networkActionCallback, String action, String userOpponentsId) {
+    enum ActionName {
+        InvReqAccept("InvReqAccept"), InvReqDecline("InvReqDecline"), SendInvReq("SendInvReq"), RemoveConnection("RemoveConnection"), RemoveFollower("RemoveFollower"), UnFollowFollowing("UnFollowFollowing"), ReqFollow("ReqFollow"), FollowReqAccept("FollowReqAccept"), FollowReqReject("FollowReqReject");
+        private String val;
+
+        ActionName(String val) {
+            this.val = val;
+        }
+
+        public String getVal() {
+            return val;
+        }
+    }
+
+
+    void networkActionMange(NetworkActionCallback networkActionCallback, ActionName action, String userOpponentsId) {
         progressBar.setVisibility(View.VISIBLE);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
 //      InvReqAccept / InvReqDecline / SendInvReq / RemoveConnection / RemoveFollower / UnFollowFollowing / ReqFollow / FollowReqAccept / FollowReqReject
-        hashMap.put("action", action);
+        hashMap.put("action", action.getVal());
         hashMap.put("opponentsId", userOpponentsId);
         apiInterface.NETWORK_ACTION_MANGE(hashMap).enqueue(new MyApiCallback(progressBar) {
             @Override
