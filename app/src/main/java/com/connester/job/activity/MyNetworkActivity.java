@@ -150,6 +150,7 @@ public class MyNetworkActivity extends AppCompatActivity {
                     if (response.body() != null) {
                         NetworkSuggestedListResponse networkSuggestedListResponse = (NetworkSuggestedListResponse) response.body();
                         if (networkSuggestedListResponse.status) {
+                            //invitation request
                             if (networkSuggestedListResponse.jsonDt.connReq.dt.size() > 0) {
                                 View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
                                 TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
@@ -167,6 +168,41 @@ public class MyNetworkActivity extends AppCompatActivity {
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                                 main_ll.addView(blankGridSt);
                             }
+                            if (networkSuggestedListResponse.jsonDt.sugUserCity.dt.size() > 0) {
+                                View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                                TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                                nt_list_title.setText("People same city are");
+                                MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                                nt_list_seeall.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        //load all invitation request
+                                        loadAllSuggestedCityUser();
+                                    }
+                                });
+                                GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                                grid_lt.setAdapter(getSuggestedCityUserAdapter(networkSuggestedListResponse.jsonDt.sugUserCity));
+                                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                                main_ll.addView(blankGridSt);
+                            }
+                            if (networkSuggestedListResponse.jsonDt.sugUserIndustry.dt.size() > 0) {
+                                View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                                TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                                nt_list_title.setText("People same industry are");
+                                MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                                nt_list_seeall.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        //load all invitation request
+                                        loadAllSuggestedIndustryUser();
+                                    }
+                                });
+                                GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                                grid_lt.setAdapter(getSuggestedIndustryUserAdapter(networkSuggestedListResponse.jsonDt.sugUserIndustry));
+                                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                                main_ll.addView(blankGridSt);
+                            }
+
                             progressBar.setVisibility(View.GONE);
                         } else
                             Toast.makeText(context, networkSuggestedListResponse.msg, Toast.LENGTH_SHORT).show();
@@ -176,12 +212,170 @@ public class MyNetworkActivity extends AppCompatActivity {
         });
     }
 
+    BaseAdapter getSuggestedIndustryUserAdapter(NetworkSuggestedListResponse.JsonDt.SugUserIndustry sugUserIndustry) {
+        String imgPath = sugUserIndustry.imgPath;
+        BaseAdapter baseAdapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return sugUserIndustry.dt.size();
+            }
+
+            @Override
+            public NetworkSuggestedListResponse.JsonDt.SugUserIndustry.Dt getItem(int position) {
+                return sugUserIndustry.dt.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View view, ViewGroup parent) {
+                if (view == null)
+                    view = LayoutInflater.from(context).inflate(R.layout.network_card_connect, parent, false);
+
+                NetworkSuggestedListResponse.JsonDt.SugUserIndustry.Dt row = getItem(position);
 
 
+                TextView member_tv = view.findViewById(R.id.member_tv);
+                member_tv.setText(row.name);
+                TextView member_pos_tv = view.findViewById(R.id.member_pos_tv);
+                member_pos_tv.setText(row.position);
+                ImageView member_profile_pic = view.findViewById(R.id.member_profile_pic);
+                Glide.with(context).load(imgPath + row.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+                TextView member_mutual_conn_tv = view.findViewById(R.id.member_mutual_conn_tv);
+                member_mutual_conn_tv.setText(UserMaster.findMutualIds(row.connectUser, sugUserIndustry.myDt.connectUser).size() + " Mutual Connections");
+                MaterialButton connect_btn = view.findViewById(R.id.connect_btn);
+                connect_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //call req_accept api and remove view from gridlayout
+                        networkActionMange(new NetworkActionCallback() {
+                            @Override
+                            public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                if (normalCommonResponse.status)
+                                    removeItem(position);
+                                else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }, "SendInvReq", row.userMasterId);
+                    }
+                });
+                return view;
+            }
+
+            private void removeItem(int position) {
+                sugUserIndustry.dt.remove(position);
+                notifyDataSetChanged();
+            }
+        };
+        return baseAdapter;
+    }
+
+    private void loadAllSuggestedIndustryUser() {
+        main_ll.removeAllViews();
+        networkSeeAllList(new NetworkSeeAllCallback() {
+            @Override
+            public void apiCallBack(Object responseBody) {
+                NetworkSuggestedListResponse.JsonDt.SugUserCity sugUserCity = (NetworkSuggestedListResponse.JsonDt.SugUserCity) responseBody;
+                if (sugUserCity.status) {
+                    View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                    TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                    nt_list_title.setText("People same city are");
+                    MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                    nt_list_seeall.setVisibility(View.GONE);
+                    GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                    grid_lt.setAdapter(getSuggestedCityUserAdapter(sugUserCity));
+                    CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                    main_ll.addView(blankGridSt);
+                } else Toast.makeText(context, sugUserCity.msg, Toast.LENGTH_SHORT).show();
+            }
+        }, "suggestedCityUser");
+    }
 
 
+    BaseAdapter getSuggestedCityUserAdapter(NetworkSuggestedListResponse.JsonDt.SugUserCity sugUserCity) {
+        String imgPath = sugUserCity.imgPath;
+        BaseAdapter baseAdapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return sugUserCity.dt.size();
+            }
+
+            @Override
+            public NetworkSuggestedListResponse.JsonDt.SugUserCity.Dt getItem(int position) {
+                return sugUserCity.dt.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View view, ViewGroup parent) {
+                if (view == null)
+                    view = LayoutInflater.from(context).inflate(R.layout.network_card_connect, parent, false);
+
+                NetworkSuggestedListResponse.JsonDt.SugUserCity.Dt row = getItem(position);
 
 
+                TextView member_tv = view.findViewById(R.id.member_tv);
+                member_tv.setText(row.name);
+                TextView member_pos_tv = view.findViewById(R.id.member_pos_tv);
+                member_pos_tv.setText(row.position);
+                ImageView member_profile_pic = view.findViewById(R.id.member_profile_pic);
+                Glide.with(context).load(imgPath + row.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+                TextView member_mutual_conn_tv = view.findViewById(R.id.member_mutual_conn_tv);
+                member_mutual_conn_tv.setText(UserMaster.findMutualIds(row.connectUser, sugUserCity.myDt.connectUser).size() + " Mutual Connections");
+                MaterialButton connect_btn = view.findViewById(R.id.connect_btn);
+                connect_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //call req_accept api and remove view from gridlayout
+                        networkActionMange(new NetworkActionCallback() {
+                            @Override
+                            public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                if (normalCommonResponse.status)
+                                    removeItem(position);
+                                else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }, "SendInvReq", row.userMasterId);
+                    }
+                });
+                return view;
+            }
+
+            private void removeItem(int position) {
+                sugUserCity.dt.remove(position);
+                notifyDataSetChanged();
+            }
+        };
+        return baseAdapter;
+    }
+
+    private void loadAllSuggestedCityUser() {
+        main_ll.removeAllViews();
+        networkSeeAllList(new NetworkSeeAllCallback() {
+            @Override
+            public void apiCallBack(Object responseBody) {
+                NetworkSuggestedListResponse.JsonDt.SugUserCity sugUserCity = (NetworkSuggestedListResponse.JsonDt.SugUserCity) responseBody;
+                if (sugUserCity.status) {
+                    View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                    TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                    nt_list_title.setText("People same city are");
+                    MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                    nt_list_seeall.setVisibility(View.GONE);
+                    GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                    grid_lt.setAdapter(getSuggestedCityUserAdapter(sugUserCity));
+                    CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                    main_ll.addView(blankGridSt);
+                } else Toast.makeText(context, sugUserCity.msg, Toast.LENGTH_SHORT).show();
+            }
+        }, "suggestedCityUser");
+    }
 
     BaseAdapter getInvitationReqAdapter(NetworkSuggestedListResponse.JsonDt.ConnReq connReq) {
         String imgPath = connReq.imgPath;
@@ -281,11 +475,29 @@ public class MyNetworkActivity extends AppCompatActivity {
                 } else Toast.makeText(context, connReq.msg, Toast.LENGTH_SHORT).show();
             }
         }, "connectReqUsersMaster");
+        SeeAllFnName.connectUsers.getVal();
     }
 
     interface NetworkSeeAllCallback {
         void apiCallBack(Object responseBody);
     }
+
+    //connectReqUsersMaster / connectUsers / followReqUsers / followerUsers / followingUsers / userCommunitys / userBusinessPages / userEvents /
+    //suggestedCityUser / suggestedIndustryUser / suggestedGroup / suggestedBusPages
+    enum SeeAllFnName {
+        connectReqUsersMaster("connectReqUsersMaster"), connectUsers("connectUsers"), followReqUsers("followReqUsers"), followerUsers("followerUsers"),
+        followingUsers("followingUsers"),userCommunitys("userCommunitys"),userBusinessPages("userBusinessPages") ;
+        String val;
+
+        SeeAllFnName(String val) {
+            this.val = val;
+        }
+
+        public String getVal() {
+            return val;
+        }
+    }
+
 
     private void networkSeeAllList(NetworkSeeAllCallback networkSeeAllCallback, String fnName) {
         progressBar.setVisibility(View.VISIBLE);
@@ -293,7 +505,8 @@ public class MyNetworkActivity extends AppCompatActivity {
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
         hashMap.put("device", "ANDROID");
-        //connectReqUsersMaster / connectUsers / followReqUsers / followerUsers / followingUsers / userCommunitys / userBusinessPages / userEvents / suggestedCityUser / suggestedIndustryUser / suggestedGroup / suggestedBusPages
+        //connectReqUsersMaster / connectUsers / followReqUsers / followerUsers / followingUsers / userCommunitys / userBusinessPages / userEvents /
+        //suggestedCityUser / suggestedIndustryUser / suggestedGroup / suggestedBusPages
         hashMap.put("fnName", fnName);
         apiInterface.NETWORK_SEE_ALL_LIST(hashMap).enqueue(new MyApiCallback(progressBar) {
             @Override
@@ -313,6 +526,7 @@ public class MyNetworkActivity extends AppCompatActivity {
         void apiCallBack(NormalCommonResponse normalCommonResponse);
     }
 
+    //InvReqAccept / InvReqDecline / SendInvReq / RemoveConnection / RemoveFollower / UnFollowFollowing / ReqFollow / FollowReqAccept / FollowReqReject
     void networkActionMange(NetworkActionCallback networkActionCallback, String action, String userOpponentsId) {
         progressBar.setVisibility(View.VISIBLE);
         HashMap hashMap = new HashMap();

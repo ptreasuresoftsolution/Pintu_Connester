@@ -81,7 +81,12 @@ public class NetworkSuggestedListResponse {
         @Expose
         public SugUserCity sugUserCity;
         public class SugUserCity {
-
+            @SerializedName("status")
+            @Expose
+            public Boolean status;
+            @SerializedName("msg")
+            @Expose
+            public String msg;
             @SerializedName("dt")
             @Expose
             public List<Dt> dt;
