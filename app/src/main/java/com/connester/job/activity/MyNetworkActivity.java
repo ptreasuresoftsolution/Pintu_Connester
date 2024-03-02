@@ -1,12 +1,16 @@
 package com.connester.job.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -63,6 +67,7 @@ public class MyNetworkActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //show full screen dialog for list network
+                openNetworkListMenu();
             }
         });
 
@@ -71,6 +76,7 @@ public class MyNetworkActivity extends AppCompatActivity {
 
         loadDefaultView();
     }
+
 
     private void setBottomNavBar() {
         ImageView navHome_btn = findViewById(R.id.navHome_btn), navNetwork_btn = findViewById(R.id.navNetwork_btn), navAddFeeds_btn = findViewById(R.id.navAddFeeds_btn), navNotification_btn = findViewById(R.id.navNotification_btn), navJob_btn = findViewById(R.id.navJob_btn);
@@ -215,8 +221,23 @@ public class MyNetworkActivity extends AppCompatActivity {
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                                 main_ll.addView(blankGridSt);
                             }
-
-
+                            if (networkSuggestedListResponse.jsonDt.sugBusPages.dt.size() > 0) {
+                                View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                                TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                                nt_list_title.setText("Suggested pages");
+                                MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                                nt_list_seeall.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        //load all invitation request
+                                        loadAllSuggestedPages();
+                                    }
+                                });
+                                GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                                grid_lt.setAdapter(getSuggestedPagesAdapter(networkSuggestedListResponse.jsonDt.sugBusPages));
+                                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                                main_ll.addView(blankGridSt);
+                            }
                             progressBar.setVisibility(View.GONE);
                         } else
                             Toast.makeText(context, networkSuggestedListResponse.msg, Toast.LENGTH_SHORT).show();
@@ -224,6 +245,97 @@ public class MyNetworkActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private BaseAdapter getSuggestedPagesAdapter(NetworkSuggestedListResponse.JsonDt.SugBusPages sugBusPages) {
+        String imgPath = sugBusPages.imgPath;
+        BaseAdapter baseAdapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return sugBusPages.dt.size();
+            }
+
+            @Override
+            public NetworkSuggestedListResponse.JsonDt.SugBusPages.Dt getItem(int position) {
+                return sugBusPages.dt.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View view, ViewGroup parent) {
+                if (view == null)
+                    view = LayoutInflater.from(context).inflate(R.layout.network_card_pages, parent, false);
+
+                NetworkSuggestedListResponse.JsonDt.SugBusPages.Dt row = getItem(position);
+                ImageView page_logo_iv = view.findViewById(R.id.page_logo_iv);
+                Glide.with(context).load(imgPath + row.logo).placeholder(R.drawable.default_groups_pic).into(page_logo_iv);
+                TextView page_name_tv = view.findViewById(R.id.page_name_tv);
+                page_name_tv.setText(row.busName);
+                TextView page_member_tv = view.findViewById(R.id.page_member_tv);
+                page_member_tv.setText(row.members + " members");
+
+                MaterialButton page_follow_btn = view.findViewById(R.id.page_follow_btn);
+                page_follow_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // call follow page request api
+                        progressBar.setVisibility(View.VISIBLE);
+                        HashMap hashMap = new HashMap();
+                        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                        hashMap.put("apiKey", sessionPref.getApiKey());
+                        hashMap.put("business_page_id", row.businessPageId);
+                        apiInterface.PAGE_FOLLOW_REQUEST(hashMap).enqueue(new MyApiCallback(progressBar) {
+                            @Override
+                            public void onResponse(Call call, Response response) {
+                                super.onResponse(call, response);
+                                progressBar.setVisibility(View.GONE);
+                                if (response.isSuccessful()) {
+                                    if (response.body() != null) {
+                                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                        if (normalCommonResponse.status)
+                                            removeItem(position);
+                                        else
+                                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+                return view;
+            }
+
+            private void removeItem(int position) {
+                sugBusPages.dt.remove(position);
+                notifyDataSetChanged();
+            }
+        };
+        return baseAdapter;
+    }
+
+    private void loadAllSuggestedPages() {
+        main_ll.removeAllViews();
+        networkSeeAllList(new NetworkSeeAllCallback() {
+            @Override
+            public void apiCallBack(Object responseBody) {
+                NetworkSuggestedListResponse.JsonDt.SugBusPages sugBusPages = (NetworkSuggestedListResponse.JsonDt.SugBusPages) responseBody;
+                if (sugBusPages.status) {
+                    View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                    TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
+                    nt_list_title.setText("Suggested pages");
+                    MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
+                    nt_list_seeall.setVisibility(View.GONE);
+                    GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
+                    grid_lt.setAdapter(getSuggestedPagesAdapter(sugBusPages));
+                    CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                    main_ll.addView(blankGridSt);
+                } else Toast.makeText(context, sugBusPages.msg, Toast.LENGTH_SHORT).show();
+            }
+        }, SeeAllFnName.suggestedBusPages);
     }
 
     BaseAdapter getSuggestedGroupAdapter(NetworkSuggestedListResponse.JsonDt.SugGroup sugGroup) {
@@ -271,6 +383,7 @@ public class MyNetworkActivity extends AppCompatActivity {
                             @Override
                             public void onResponse(Call call, Response response) {
                                 super.onResponse(call, response);
+                                progressBar.setVisibility(View.GONE);
                                 if (response.isSuccessful()) {
                                     if (response.body() != null) {
                                         NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
@@ -475,6 +588,24 @@ public class MyNetworkActivity extends AppCompatActivity {
                 } else Toast.makeText(context, sugUserCity.msg, Toast.LENGTH_SHORT).show();
             }
         }, SeeAllFnName.suggestedCityUser);
+    }
+
+    //list option dialog open full screen
+
+    private void openNetworkListMenu() {
+        Dialog dialog = new Dialog(activity, android.R.style.Theme_Translucent_NoTitleBar);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.network_list_menu_dialog);
+        Window window = dialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.CENTER;
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
+        window.setAttributes(wlp);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+
+
+        dialog.show();
     }
 
     BaseAdapter getInvitationReqAdapter(NetworkSuggestedListResponse.JsonDt.ConnReq connReq) {

@@ -305,7 +305,12 @@ public class NetworkSuggestedListResponse {
         public SugBusPages sugBusPages;
 
         public class SugBusPages {
-
+            @SerializedName("status")
+            @Expose
+            public Boolean status;
+            @SerializedName("msg")
+            @Expose
+            public String msg;
             @SerializedName("dt")
             @Expose
             public List<Dt> dt;

@@ -80,6 +80,10 @@ public class UserMaster {
     }
 
     public static List<String> findMutualIds(String ids1,String ids2){
+        if (ids1 == null)
+            ids1 = "";
+        if (ids2 == null)
+            ids2 = "";
         //split and filter (remove blank)
         List<String> idA1 = Stream.of(ids1.split(",")).filter(item -> item!= null && !item.isEmpty() && !item.trim().equals("")).collect(Collectors.toList());
         //unique item

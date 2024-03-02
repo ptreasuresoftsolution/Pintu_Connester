@@ -25,6 +25,7 @@
 
             <ImageView
                 android:layout_width="120dp"
+                android:scaleType="centerCrop"
                 android:layout_height="120dp"
                 android:src="@drawable/default_business_pic" />
         </com.google.android.material.card.MaterialCardView>
