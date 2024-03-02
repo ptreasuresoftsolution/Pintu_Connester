@@ -32,6 +32,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
+import android.widget.GridView;
+import android.widget.ListAdapter;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -357,6 +359,42 @@ public class CommonFunction {
         view.setLayoutParams(params);
 
     }
+
+    public static void setGridViewHeightBasedOnChildren(GridView gridView) {
+        ListAdapter gridViewAdapter = gridView.getAdapter();
+        if (gridViewAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = 0;
+        int items = gridViewAdapter.getCount();
+        int rows = 1;
+
+        View listItem = gridViewAdapter.getView(0, null, gridView);
+        listItem.measure(0, 0);
+        totalHeight = listItem.getMeasuredHeight();
+        Log.d("rows234", String.valueOf(totalHeight));
+        float x = 1;
+        if (items > 2) {
+            x = items / 2;
+            if (items % 2 != 0) {
+                rows = (int) (x + 1);
+                Log.d("rows", String.valueOf(rows));
+            } else {
+                rows = (int) (x);
+                Log.d("rows", String.valueOf(rows));
+            }
+            totalHeight *= rows;
+            Log.d("rows2", String.valueOf(totalHeight));
+        }
+
+        ViewGroup.LayoutParams params = gridView.getLayoutParams();
+
+        params.height = totalHeight + gridView.getPaddingTop() + gridView.getPaddingBottom() + 20;
+        gridView.setLayoutParams(params);
+    }
+
 
     public static String getDeviceName(Context context) {
         String manufacturer = Build.MANUFACTURER;

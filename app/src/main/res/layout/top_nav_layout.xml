@@ -2,20 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:paddingRight="10dp"
-    android:paddingLeft="10dp"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:paddingLeft="10dp"
+    android:paddingTop="10dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="10dp">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="35dp"
         android:layout_height="35dp"
         app:cardCornerRadius="35dp"
+        app:strokeWidth="0.5dp"
         app:strokeColor="@color/secondary_2">
 
         <ImageView
+            android:id="@+id/user_pic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -25,20 +27,22 @@
     </com.google.android.material.card.MaterialCardView>
 
     <androidx.appcompat.widget.SearchView
-        android:layout_weight="0.30"
+        android:id="@+id/search_master_sv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:hint="Search"
-        app:queryBackground="@android:color/transparent"
-        app:queryHint="Search"
-        app:iconifiedByDefault="false"
-        android:layout_width="match_parent"
+        android:layout_weight="0.30"
         android:background="@drawable/rounded_bg"
-        android:layout_height="wrap_content" />
+        android:hint="Search"
+        app:iconifiedByDefault="false"
+        app:queryBackground="@android:color/transparent"
+        app:queryHint="Search" />
 
     <ImageView
-        android:layout_weight="1"
+        android:id="@+id/open_message_iv"
         android:layout_width="match_parent"
         android:layout_height="35dp"
+        android:layout_weight="1"
         android:src="@drawable/top_bar_chat" />
 </LinearLayout>

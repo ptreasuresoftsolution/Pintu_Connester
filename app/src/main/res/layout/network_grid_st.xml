@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="0dp"
+    app:strokeWidth="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="8dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/nt_list_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="3dp"
+                android:text="People same city area"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/nt_list_seeall"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_gravity="end|center"
+                android:backgroundTint="@android:color/transparent"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp"
+                android:text="See all"
+                android:textColor="@color/secondary_3" />
+        </FrameLayout>
+
+        <GridView
+            android:id="@+id/grid_lt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="3dp"
+            android:layout_marginVertical="3dp"
+            android:nestedScrollingEnabled="false"
+            android:stretchMode="columnWidth"
+            android:numColumns="2"
+            android:scrollbars="none"></GridView>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

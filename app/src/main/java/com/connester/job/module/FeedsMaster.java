@@ -180,12 +180,11 @@ public class FeedsMaster {
     }
 
     private void callHomeFeeds() {
-        if (isLoading)
-            return;
+        if (isLoading) return;
         isLoading = true;
-        if (progressBar != null)
-            progressBar.setVisibility(View.VISIBLE);
-        CommonFunction.PleaseWaitShow(context);
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        else CommonFunction.PleaseWaitShow(context);
+
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
@@ -224,8 +223,7 @@ public class FeedsMaster {
             setSingleFeeds(feedsRow, viewIndex);
             viewIndex++;
         }
-        if (progressBar != null)
-            progressBar.setVisibility(View.GONE);
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
     }
 
     private void setSingleFeeds(FeedsRow feedsRow, int vIndex) {
@@ -324,9 +322,7 @@ public class FeedsMaster {
             public Object instantiateItem(ViewGroup container, int position) {
                 View view = layoutInflater.inflate(R.layout.view_pager_img_item, container, false);
                 SimpleDraweeView imageView = view.findViewById(R.id.img_view);
-                Glide.with(context)
-                        .load(feedImgPath + imgs[position])
-                        .into(imageView);
+                Glide.with(context).load(feedImgPath + imgs[position]).into(imageView);
 //                Uri uri = Uri.parse(feedImgPath + imgs[position]);
 //                imageView.setImageURI(uri);
                 container.addView(view);
@@ -770,7 +766,7 @@ public class FeedsMaster {
                             if (response.body() != null) {
                                 NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                 if (normalCommonResponse.status) {
-                                    int counter = Integer.parseInt(feedsRow.likes);
+                                    int counter = Integer.parseInt(like_counter_txt.getText().toString());
                                     if (normalCommonResponse.msg.equalsIgnoreCase("Like!")) {
                                         like_iv.setImageResource(R.drawable.like_fill);
                                         like_counter_txt.setText(String.valueOf(counter + 1));
@@ -1051,8 +1047,7 @@ public class FeedsMaster {
         View.OnClickListener openTitleProfile = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (finalClickPicNm != null)
-                    context.startActivity(finalClickPicNm);
+                if (finalClickPicNm != null) context.startActivity(finalClickPicNm);
             }
         };
         feeds_title_img.setOnClickListener(openTitleProfile);

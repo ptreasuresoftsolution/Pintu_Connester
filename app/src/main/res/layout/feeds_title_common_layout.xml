@@ -29,7 +29,8 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginRight="6dp"
-                app:strokeColor="@color/secondary_6">
+                app:strokeColor="@color/secondary_6"
+                app:strokeWidth="0.5dp">
 
                 <ImageView
                     android:id="@+id/feeds_shareBy_User_pic"
@@ -71,7 +72,8 @@
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"
                 app:cardCornerRadius="6dp"
-                app:strokeColor="@color/secondary_7">
+                app:strokeColor="@color/secondary_7"
+                app:strokeWidth="0.5dp">
 
                 <ImageView
                     android:id="@+id/feeds_title_img"
@@ -87,7 +89,8 @@
                 android:layout_gravity="bottom|right"
                 android:visibility="gone"
                 app:cardCornerRadius="3dp"
-                app:strokeColor="@color/secondary_7">
+                app:strokeColor="@color/secondary_7"
+                app:strokeWidth="0.5dp">
 
                 <ImageView
                     android:id="@+id/title_gMember_pic"
