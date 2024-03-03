@@ -343,7 +343,7 @@ public class MyNetworkActivity extends AppCompatActivity {
         }, SeeAllFnName.suggestedBusPages);
     }
 
-    BaseAdapter getSuggestedGroupAdapter(NetworkSuggestedListResponse.JsonDt.SugGroup sugGroup) {
+    private BaseAdapter getSuggestedGroupAdapter(NetworkSuggestedListResponse.JsonDt.SugGroup sugGroup) {
         String imgPath = sugGroup.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -434,7 +434,7 @@ public class MyNetworkActivity extends AppCompatActivity {
         }, SeeAllFnName.suggestedGroup);
     }
 
-    BaseAdapter getSuggestedIndustryUserAdapter(NetworkSuggestedListResponse.JsonDt.SugUserIndustry sugUserIndustry) {
+    private BaseAdapter getSuggestedIndustryUserAdapter(NetworkSuggestedListResponse.JsonDt.SugUserIndustry sugUserIndustry) {
         String imgPath = sugUserIndustry.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -515,7 +515,7 @@ public class MyNetworkActivity extends AppCompatActivity {
     }
 
 
-    BaseAdapter getSuggestedCityUserAdapter(NetworkSuggestedListResponse.JsonDt.SugUserCity sugUserCity) {
+    private BaseAdapter getSuggestedCityUserAdapter(NetworkSuggestedListResponse.JsonDt.SugUserCity sugUserCity) {
         String imgPath = sugUserCity.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -798,19 +798,262 @@ public class MyNetworkActivity extends AppCompatActivity {
     }
 
     private BaseAdapter getBusPageAdapter(NetworkSeeAllCommonResponse.BusinessPagesListResponse businessPagesListResponse) {
-        return null;
+        String imgPath = businessPagesListResponse.imgPath;
+        BaseAdapter baseAdapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return businessPagesListResponse.dt.size();
+            }
+
+            @Override
+            public NetworkSeeAllCommonResponse.BusinessPagesListResponse.Dt getItem(int position) {
+                return businessPagesListResponse.dt.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View view, ViewGroup parent) {
+                if (view == null)
+                    view = LayoutInflater.from(context).inflate(R.layout.network_card_network_pages, parent, false);
+
+                NetworkSeeAllCommonResponse.BusinessPagesListResponse.Dt row = getItem(position);
+
+                ImageView page_logo_iv = view.findViewById(R.id.page_logo_iv);
+                Glide.with(context).load(imgPath + row.logo).placeholder(R.drawable.default_user_pic).into(page_logo_iv);
+                TextView page_name_tv = view.findViewById(R.id.page_name_tv);
+                page_name_tv.setText(row.busName);
+                TextView page_member_tv = view.findViewById(R.id.page_member_tv);
+                page_member_tv.setText(row.members + " Members");
+
+                MaterialButton page_unfollow_mbtn = view.findViewById(R.id.page_unfollow_mbtn);
+                page_unfollow_mbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        HashMap hashMap = new HashMap();
+                        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                        hashMap.put("apiKey", sessionPref.getApiKey());
+                        hashMap.put("business_page_id", row.businessPageId);
+                        apiInterface.PAGE_UNFOLLOW_CALL(hashMap).enqueue(new MyApiCallback(progressBar) {
+                            @Override
+                            public void onResponse(Call call, Response response) {
+                                super.onResponse(call, response);
+                                progressBar.setVisibility(View.GONE);
+                                if (response.isSuccessful()) {
+                                    if (response.body() != null) {
+                                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                        if (normalCommonResponse.status)
+                                            removeItem(position);
+                                        else
+                                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+                return view;
+            }
+
+            private void removeItem(int position) {
+                businessPagesListResponse.dt.remove(position);
+                notifyDataSetChanged();
+            }
+        };
+        return baseAdapter;
     }
 
     private BaseAdapter getCommunityGroupAdapter(NetworkSeeAllCommonResponse.CommunitysListResponse communitysListResponse) {
-        return null;
+        String imgPath = communitysListResponse.imgPath;
+        BaseAdapter baseAdapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return communitysListResponse.dt.size();
+            }
+
+            @Override
+            public NetworkSeeAllCommonResponse.CommunitysListResponse.Dt getItem(int position) {
+                return communitysListResponse.dt.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View view, ViewGroup parent) {
+                if (view == null)
+                    view = LayoutInflater.from(context).inflate(R.layout.network_card_network_group, parent, false);
+
+                NetworkSeeAllCommonResponse.CommunitysListResponse.Dt row = getItem(position);
+
+                ImageView group_logo_iv = view.findViewById(R.id.group_logo_iv);
+                Glide.with(context).load(imgPath + row.logo).placeholder(R.drawable.default_user_pic).into(group_logo_iv);
+                TextView group_name_tv = view.findViewById(R.id.group_name_tv);
+                group_name_tv.setText(row.name);
+                TextView group_members = view.findViewById(R.id.group_members);
+                group_members.setText(row.members + " Members");
+
+                MaterialButton group_exit_mbtn = view.findViewById(R.id.group_exit_mbtn);
+                group_exit_mbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        HashMap hashMap = new HashMap();
+                        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                        hashMap.put("apiKey", sessionPref.getApiKey());
+                        hashMap.put("community_master_id", row.communityMasterId);
+                        hashMap.put("exit_user_master_id", sessionPref.getUserMasterId());
+                        apiInterface.GROUP_EXIT_CALL(hashMap).enqueue(new MyApiCallback(progressBar) {
+                            @Override
+                            public void onResponse(Call call, Response response) {
+                                super.onResponse(call, response);
+                                progressBar.setVisibility(View.GONE);
+                                if (response.isSuccessful()) {
+                                    if (response.body() != null) {
+                                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                        if (normalCommonResponse.status)
+                                            removeItem(position);
+                                        else
+                                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+                return view;
+            }
+
+            private void removeItem(int position) {
+                communitysListResponse.dt.remove(position);
+                notifyDataSetChanged();
+            }
+        };
+        return baseAdapter;
     }
 
     private BaseAdapter getFollowingsAdapter(NetworkSeeAllCommonResponse.FollowingsListResponse followingsListResponse) {
-        return null;
+        String imgPath = followingsListResponse.imgPath;
+        BaseAdapter baseAdapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return followingsListResponse.dt.size();
+            }
+
+            @Override
+            public NetworkSeeAllCommonResponse.FollowingsListResponse.Dt getItem(int position) {
+                return followingsListResponse.dt.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View view, ViewGroup parent) {
+                if (view == null)
+                    view = LayoutInflater.from(context).inflate(R.layout.network_card_following, parent, false);
+
+                NetworkSeeAllCommonResponse.FollowingsListResponse.Dt row = getItem(position);
+
+                ImageView member_profile_pic = view.findViewById(R.id.member_profile_pic);
+                Glide.with(context).load(imgPath + row.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+                TextView member_tv = view.findViewById(R.id.member_tv);
+                member_tv.setText(row.name);
+                TextView member_pos_tv = view.findViewById(R.id.member_pos_tv);
+                member_pos_tv.setText(row.position);
+                TextView member_mutual_conn_tv = view.findViewById(R.id.member_mutual_conn_tv);
+                member_mutual_conn_tv.setText(UserMaster.findMutualIds(row.connectUser, followingsListResponse.myDt.connectUser).size() + " Mutual Connections");
+
+                MaterialButton unfollow_following_mbtn = view.findViewById(R.id.unfollow_following_mbtn);
+                unfollow_following_mbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        networkActionMange(new NetworkActionCallback() {
+                            @Override
+                            public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                if (normalCommonResponse.status) removeItem(position);
+                                else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }, ActionName.UnFollowFollowing, row.userMasterId);
+                    }
+                });
+                return view;
+            }
+
+            private void removeItem(int position) {
+                followingsListResponse.dt.remove(position);
+                notifyDataSetChanged();
+            }
+        };
+        return baseAdapter;
     }
 
     private BaseAdapter getFollowerAdapter(NetworkSeeAllCommonResponse.FollowerListResponse followerListResponse) {
-        return null;
+        String imgPath = followerListResponse.imgPath;
+        BaseAdapter baseAdapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return followerListResponse.dt.size();
+            }
+
+            @Override
+            public NetworkSeeAllCommonResponse.FollowerListResponse.Dt getItem(int position) {
+                return followerListResponse.dt.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View view, ViewGroup parent) {
+                if (view == null)
+                    view = LayoutInflater.from(context).inflate(R.layout.network_card_follower, parent, false);
+
+                NetworkSeeAllCommonResponse.FollowerListResponse.Dt row = getItem(position);
+
+                ImageView member_profile_pic = view.findViewById(R.id.member_profile_pic);
+                Glide.with(context).load(imgPath + row.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+                TextView member_tv = view.findViewById(R.id.member_tv);
+                member_tv.setText(row.name);
+                TextView member_pos_tv = view.findViewById(R.id.member_pos_tv);
+                member_pos_tv.setText(row.position);
+                TextView member_mutual_conn_tv = view.findViewById(R.id.member_mutual_conn_tv);
+                member_mutual_conn_tv.setText(UserMaster.findMutualIds(row.connectUser, followerListResponse.myDt.connectUser).size() + " Mutual Connections");
+
+                MaterialButton remove_follower_mbtn = view.findViewById(R.id.remove_follower_mbtn);
+                remove_follower_mbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        networkActionMange(new NetworkActionCallback() {
+                            @Override
+                            public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                if (normalCommonResponse.status) removeItem(position);
+                                else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }, ActionName.RemoveFollower, row.userMasterId);
+                    }
+                });
+                return view;
+            }
+
+            private void removeItem(int position) {
+                followerListResponse.dt.remove(position);
+                notifyDataSetChanged();
+            }
+        };
+        return baseAdapter;
     }
 
     private BaseAdapter getFollowReqAdapter(NetworkSeeAllCommonResponse.FollowReqListResponse followReqListResponse) {
@@ -942,7 +1185,7 @@ public class MyNetworkActivity extends AppCompatActivity {
         return baseAdapter;
     }
 
-    BaseAdapter getInvitationReqAdapter(NetworkSuggestedListResponse.JsonDt.ConnReq connReq) {
+    private BaseAdapter getInvitationReqAdapter(NetworkSuggestedListResponse.JsonDt.ConnReq connReq) {
         String imgPath = connReq.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override

@@ -211,7 +211,7 @@ public class NetworkSeeAllCommonResponse {
             public String profilePic;
             @SerializedName("connect_user")
             @Expose
-            public Object connectUser;
+            public String connectUser;
             @SerializedName("bio")
             @Expose
             public String bio;

@@ -17,6 +17,7 @@
         android:paddingBottom="20dp">
 
         <TextView
+            android:id="@+id/member_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
@@ -46,14 +47,16 @@
             app:strokeWidth="0.5dp">
 
             <ImageView
+                android:id="@+id/member_profile_pic"
                 android:layout_width="120dp"
-                android:scaleType="centerCrop"
                 android:layout_height="120dp"
+                android:scaleType="centerCrop"
                 android:src="@drawable/default_user_pic" />
         </com.google.android.material.card.MaterialCardView>
 
 
         <TextView
+            android:id="@+id/member_mutual_conn_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -61,6 +64,7 @@
             android:textColor="@color/secondary_4" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/unfollow_following_mbtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"

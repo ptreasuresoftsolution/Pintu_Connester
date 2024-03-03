@@ -24,24 +24,27 @@
             app:strokeWidth="0.5dp">
 
             <ImageView
-                android:scaleType="centerCrop"
+                android:id="@+id/page_logo_iv"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@drawable/default_groups_pic" />
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_business_pic" />
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
+            android:id="@+id/page_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="true"
-            android:text="Group name"
+            android:text="Business page name"
             android:textSize="@dimen/label"
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/page_member_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -49,10 +52,11 @@
             android:textColor="@color/secondary_4" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/page_unfollow_mbtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Exit"
+            android:text="UnFollow"
             app:backgroundTint="@color/primary" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -118,10 +118,16 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/userCommunityJoinRequest")
     Call<NormalCommonResponse> GROUP_JOIN_REQUEST(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/userCommunityExit")
+    Call<NormalCommonResponse> GROUP_EXIT_CALL(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/followBusinessPage")
     Call<NormalCommonResponse> PAGE_FOLLOW_REQUEST(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/unFollowBusinessPage")
+    Call<NormalCommonResponse> PAGE_UNFOLLOW_CALL(@FieldMap Map<String, String> params);
 
 
 }
