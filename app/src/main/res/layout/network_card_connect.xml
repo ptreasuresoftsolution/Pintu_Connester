@@ -1,78 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="2dp"
     android:layout_weight="1"
-    app:cardBackgroundColor="@color/secondary_6"
-    app:cardCornerRadius="14dp"
-    app:strokeWidth="0dp">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp">
+        android:layout_margin="2dp"
+        app:cardBackgroundColor="@color/secondary_6"
+        app:cardCornerRadius="14dp"
+        app:strokeWidth="0dp">
 
-        <TextView
-            android:id="@+id/member_tv"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:singleLine="true"
-            android:text="Member name"
-            android:textSize="@dimen/label"
-            android:textStyle="bold" />
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp">
 
-        <TextView
-            android:id="@+id/member_pos_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:singleLine="true"
-            android:text="Position"
-            android:textSize="@dimen/small_lg" />
+            <TextView
+                android:id="@+id/member_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:singleLine="true"
+                android:text="Member name"
+                android:textSize="@dimen/label"
+                android:textStyle="bold" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="75dp"
-            app:strokeColor="@color/secondary_2"
-            app:strokeWidth="0.5dp">
+            <TextView
+                android:id="@+id/member_pos_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:singleLine="true"
+                android:text="Position"
+                android:textSize="@dimen/small_lg" />
 
-            <ImageView
-                android:id="@+id/member_profile_pic"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/default_user_pic" />
-        </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="75dp"
+                app:strokeColor="@color/secondary_2"
+                app:strokeWidth="0.5dp">
+
+                <ImageView
+                    android:id="@+id/member_profile_pic"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/default_user_pic" />
+            </com.google.android.material.card.MaterialCardView>
 
 
-        <TextView
-            android:id="@+id/member_mutual_conn_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="1 mutual connections"
-            android:textColor="@color/secondary_4" />
+            <TextView
+                android:id="@+id/member_mutual_conn_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="1 mutual connections"
+                android:textColor="@color/secondary_4" />
 
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/connect_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Connect"
-            app:backgroundTint="@color/primary"
-            app:icon="@drawable/user_plus_solid" />
-    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/connect_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="0dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="0dp"
+                android:text="Connect"
+                app:backgroundTint="@color/primary"
+                app:icon="@drawable/user_plus_solid" />
+        </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
+</FrameLayout>

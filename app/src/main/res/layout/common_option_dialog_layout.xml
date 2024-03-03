@@ -9,6 +9,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingLeft="16dp"
+        android:paddingBottom="25dp"
         android:paddingRight="16dp">
 
         <ImageView

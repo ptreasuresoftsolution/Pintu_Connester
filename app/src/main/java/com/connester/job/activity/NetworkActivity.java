@@ -99,6 +99,7 @@ public class NetworkActivity extends AppCompatActivity {
                     if (response.body() != null) {
                         NetworkSuggestedListResponse networkSuggestedListResponse = (NetworkSuggestedListResponse) response.body();
                         if (networkSuggestedListResponse.status) {
+                            View divider_v = null;
                             //invitation request
                             if (networkSuggestedListResponse.jsonDt.connReq.dt.size() > 0) {
                                 View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
@@ -115,6 +116,7 @@ public class NetworkActivity extends AppCompatActivity {
                                 GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
                                 grid_lt.setAdapter(getInvitationReqAdapter(networkSuggestedListResponse.jsonDt.connReq));
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                                divider_v = blankGridSt.findViewById(R.id.divider_v);
                                 main_ll.addView(blankGridSt);
                             }
                             if (networkSuggestedListResponse.jsonDt.sugUserCity.dt.size() > 0) {
@@ -132,6 +134,7 @@ public class NetworkActivity extends AppCompatActivity {
                                 GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
                                 grid_lt.setAdapter(getSuggestedCityUserAdapter(networkSuggestedListResponse.jsonDt.sugUserCity));
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                                divider_v = blankGridSt.findViewById(R.id.divider_v);
                                 main_ll.addView(blankGridSt);
                             }
                             if (networkSuggestedListResponse.jsonDt.sugUserIndustry.dt.size() > 0) {
@@ -149,6 +152,7 @@ public class NetworkActivity extends AppCompatActivity {
                                 GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
                                 grid_lt.setAdapter(getSuggestedIndustryUserAdapter(networkSuggestedListResponse.jsonDt.sugUserIndustry));
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                                divider_v = blankGridSt.findViewById(R.id.divider_v);
                                 main_ll.addView(blankGridSt);
                             }
                             if (networkSuggestedListResponse.jsonDt.sugGroup.dt.size() > 0) {
@@ -166,6 +170,7 @@ public class NetworkActivity extends AppCompatActivity {
                                 GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
                                 grid_lt.setAdapter(getSuggestedGroupAdapter(networkSuggestedListResponse.jsonDt.sugGroup));
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                                divider_v = blankGridSt.findViewById(R.id.divider_v);
                                 main_ll.addView(blankGridSt);
                             }
                             if (networkSuggestedListResponse.jsonDt.sugBusPages.dt.size() > 0) {
@@ -183,8 +188,11 @@ public class NetworkActivity extends AppCompatActivity {
                                 GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
                                 grid_lt.setAdapter(getSuggestedPagesAdapter(networkSuggestedListResponse.jsonDt.sugBusPages));
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                                divider_v = blankGridSt.findViewById(R.id.divider_v);
                                 main_ll.addView(blankGridSt);
                             }
+                            if (divider_v != null)
+                                divider_v.setVisibility(View.GONE);
                             progressBar.setVisibility(View.GONE);
                         } else
                             Toast.makeText(context, networkSuggestedListResponse.msg, Toast.LENGTH_SHORT).show();
