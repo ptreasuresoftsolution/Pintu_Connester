@@ -16,12 +16,11 @@ import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -34,18 +33,18 @@ import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
+import com.connester.job.module.SetTopBottomBar;
 import com.connester.job.module.UserMaster;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.Response;
 
-/****
- * Notes : member profile open click / group profile open click / business profile open click is remain********
- */
-public class MyNetworkActivity extends AppCompatActivity {
+public class NetworkActivity extends AppCompatActivity {
     SessionPref sessionPref;
     Context context;
     Activity activity;
@@ -53,14 +52,16 @@ public class MyNetworkActivity extends AppCompatActivity {
     LayoutInflater layoutInflater;
     FrameLayout progressBar;
     ApiInterface apiInterface;
+    SetTopBottomBar setTopBottomBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_network);
-        context = MyNetworkActivity.this;
-        activity = MyNetworkActivity.this;
+        context = NetworkActivity.this;
+        activity = NetworkActivity.this;
         sessionPref = new SessionPref(context);
+        setTopBottomBar = new SetTopBottomBar(context, activity);
         layoutInflater = LayoutInflater.from(context);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
@@ -76,69 +77,10 @@ public class MyNetworkActivity extends AppCompatActivity {
             }
         });
 
-        setTopBar();
-        setBottomNavBar();
+        setTopBottomBar.setTopBar();
+        setTopBottomBar.setBottomNavBar(SetTopBottomBar.MenuItem.navNetwork_btn);
 
         loadDefaultView();
-    }
-
-
-    private void setBottomNavBar() {
-        ImageView navHome_btn = findViewById(R.id.navHome_btn), navNetwork_btn = findViewById(R.id.navNetwork_btn), navAddFeeds_btn = findViewById(R.id.navAddFeeds_btn), navNotification_btn = findViewById(R.id.navNotification_btn), navJob_btn = findViewById(R.id.navJob_btn);
-        navHome_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(context, MainActivity.class));
-            }
-        });
-        navAddFeeds_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, AddFeedsActivity.class);
-                intent.putExtra("feed_for", "USER");//USER/COMMUNITY/BUSINESS
-                startActivity(intent);
-            }
-        });
-        navNotification_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(context, NotificationActivity.class));
-            }
-        });
-        navJob_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(context, JobsAndEventsActivity.class));
-            }
-        });
-        navNetwork_btn.setColorFilter(ContextCompat.getColor(context, R.color.primary));
-
-    }
-
-    private void setTopBar() {
-        ImageView user_pic = findViewById(R.id.user_pic);
-        Glide.with(context).load(sessionPref.getUserProfilePic()).centerCrop().placeholder(R.drawable.default_user_pic).into(user_pic);
-
-        SearchView search_master_sv = findViewById(R.id.search_master_sv);
-        search_master_sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
-        ImageView open_message_iv = findViewById(R.id.open_message_iv);
-        open_message_iv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(context, MessageActivity.class));
-            }
-        });
     }
 
 
@@ -276,10 +218,18 @@ public class MyNetworkActivity extends AppCompatActivity {
                     view = LayoutInflater.from(context).inflate(R.layout.network_card_pages, parent, false);
 
                 NetworkSuggestedListResponse.JsonDt.SugBusPages.Dt row = getItem(position);
+                View.OnClickListener openBusinessPage = v -> {
+                    Intent intent = new Intent(context, BusinessActivity.class);
+                    intent.putExtra("business_page_id", row.businessPageId);
+                    startActivity(intent);
+                };
+
                 ImageView page_logo_iv = view.findViewById(R.id.page_logo_iv);
                 Glide.with(context).load(imgPath + row.logo).placeholder(R.drawable.default_groups_pic).into(page_logo_iv);
+                page_logo_iv.setOnClickListener(openBusinessPage);
                 TextView page_name_tv = view.findViewById(R.id.page_name_tv);
                 page_name_tv.setText(row.busName);
+                page_name_tv.setOnClickListener(openBusinessPage);
                 TextView page_member_tv = view.findViewById(R.id.page_member_tv);
                 page_member_tv.setText(row.members + " members");
 
@@ -367,10 +317,18 @@ public class MyNetworkActivity extends AppCompatActivity {
                     view = LayoutInflater.from(context).inflate(R.layout.network_card_group, parent, false);
 
                 NetworkSuggestedListResponse.JsonDt.SugGroup.Dt row = getItem(position);
+                View.OnClickListener openGroup = v -> {
+                    Intent intent = new Intent(context, CommunityActivity.class);
+                    intent.putExtra("community_master_id", row.communityMasterId);
+                    startActivity(intent);
+                };
+
                 ImageView group_logo_iv = view.findViewById(R.id.group_logo_iv);
                 Glide.with(context).load(imgPath + row.logo).placeholder(R.drawable.default_groups_pic).into(group_logo_iv);
+                group_logo_iv.setOnClickListener(openGroup);
                 TextView group_name_tv = view.findViewById(R.id.group_name_tv);
                 group_name_tv.setText(row.name);
+                group_name_tv.setOnClickListener(openGroup);
                 TextView group_members = view.findViewById(R.id.group_members);
                 group_members.setText(row.members + " members");
 
@@ -418,7 +376,7 @@ public class MyNetworkActivity extends AppCompatActivity {
         networkSeeAllList(new NetworkSeeAllCallback() {
             @Override
             public void apiCallBack(Object responseBody) {
-                NetworkSuggestedListResponse.JsonDt.SugGroup sugGroup = (NetworkSuggestedListResponse.JsonDt.SugGroup) responseBody;
+                NetworkSuggestedListResponse.JsonDt.SugGroup sugGroup = new Gson().fromJson(new Gson().toJson(responseBody), NetworkSuggestedListResponse.JsonDt.SugGroup.class);
                 if (sugGroup.status) {
                     View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
                     TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
@@ -458,14 +416,20 @@ public class MyNetworkActivity extends AppCompatActivity {
                     view = LayoutInflater.from(context).inflate(R.layout.network_card_connect, parent, false);
 
                 NetworkSuggestedListResponse.JsonDt.SugUserIndustry.Dt row = getItem(position);
-
+                View.OnClickListener openUserProfile = v -> {
+                    Intent intent = new Intent(context, CommunityActivity.class);
+                    intent.putExtra("user_master_id", row.userMasterId);
+                    startActivity(intent);
+                };
 
                 TextView member_tv = view.findViewById(R.id.member_tv);
                 member_tv.setText(row.name);
+                member_tv.setOnClickListener(openUserProfile);
                 TextView member_pos_tv = view.findViewById(R.id.member_pos_tv);
                 member_pos_tv.setText(row.position);
                 ImageView member_profile_pic = view.findViewById(R.id.member_profile_pic);
                 Glide.with(context).load(imgPath + row.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+                member_profile_pic.setOnClickListener(openUserProfile);
                 TextView member_mutual_conn_tv = view.findViewById(R.id.member_mutual_conn_tv);
                 member_mutual_conn_tv.setText(UserMaster.findMutualIds(row.connectUser, sugUserIndustry.myDt.connectUser).size() + " Mutual Connections");
                 MaterialButton connect_btn = view.findViewById(R.id.connect_btn);
@@ -498,7 +462,7 @@ public class MyNetworkActivity extends AppCompatActivity {
         networkSeeAllList(new NetworkSeeAllCallback() {
             @Override
             public void apiCallBack(Object responseBody) {
-                NetworkSuggestedListResponse.JsonDt.SugUserIndustry sugUserIndustry = (NetworkSuggestedListResponse.JsonDt.SugUserIndustry) responseBody;
+                NetworkSuggestedListResponse.JsonDt.SugUserIndustry sugUserIndustry = new Gson().fromJson(new Gson().toJson(responseBody), NetworkSuggestedListResponse.JsonDt.SugUserIndustry.class);
                 if (sugUserIndustry.status) {
                     View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
                     TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
@@ -539,14 +503,20 @@ public class MyNetworkActivity extends AppCompatActivity {
                     view = LayoutInflater.from(context).inflate(R.layout.network_card_connect, parent, false);
 
                 NetworkSuggestedListResponse.JsonDt.SugUserCity.Dt row = getItem(position);
-
+                View.OnClickListener openUserProfile = v -> {
+                    Intent intent = new Intent(context, CommunityActivity.class);
+                    intent.putExtra("user_master_id", row.userMasterId);
+                    startActivity(intent);
+                };
 
                 TextView member_tv = view.findViewById(R.id.member_tv);
                 member_tv.setText(row.name);
+                member_tv.setOnClickListener(openUserProfile);
                 TextView member_pos_tv = view.findViewById(R.id.member_pos_tv);
                 member_pos_tv.setText(row.position);
                 ImageView member_profile_pic = view.findViewById(R.id.member_profile_pic);
                 Glide.with(context).load(imgPath + row.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+                member_profile_pic.setOnClickListener(openUserProfile);
                 TextView member_mutual_conn_tv = view.findViewById(R.id.member_mutual_conn_tv);
                 member_mutual_conn_tv.setText(UserMaster.findMutualIds(row.connectUser, sugUserCity.myDt.connectUser).size() + " Mutual Connections");
                 MaterialButton connect_btn = view.findViewById(R.id.connect_btn);
@@ -579,7 +549,7 @@ public class MyNetworkActivity extends AppCompatActivity {
         networkSeeAllList(new NetworkSeeAllCallback() {
             @Override
             public void apiCallBack(Object responseBody) {
-                NetworkSuggestedListResponse.JsonDt.SugUserCity sugUserCity = (NetworkSuggestedListResponse.JsonDt.SugUserCity) responseBody;
+                NetworkSuggestedListResponse.JsonDt.SugUserCity sugUserCity = new Gson().fromJson(new Gson().toJson(responseBody), NetworkSuggestedListResponse.JsonDt.SugUserCity.class);
                 if (sugUserCity.status) {
                     View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
                     TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
@@ -616,26 +586,27 @@ public class MyNetworkActivity extends AppCompatActivity {
         back_iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                dialog.dismiss();
             }
         });
 
         LinearLayout see_all_connection_ll = dialog.findViewById(R.id.see_all_connection_ll);
         see_all_connection_ll.setOnClickListener(v -> {
+            dialog.dismiss();
             main_ll.removeAllViews();
             networkSeeAllList(new NetworkSeeAllCallback() {
                 @Override
                 public void apiCallBack(Object responseBody) {
-                    NetworkSeeAllCommonResponse.ConnectionListResponse connectionListResponse = (NetworkSeeAllCommonResponse.ConnectionListResponse) responseBody;
+                    NetworkSeeAllCommonResponse.ConnectionListResponse connectionListResponse = new Gson().fromJson(new Gson().toJson(responseBody), NetworkSeeAllCommonResponse.ConnectionListResponse.class);
                     if (connectionListResponse.status) {
-                        View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
+                        View blankGridSt = layoutInflater.inflate(R.layout.network_list_st, null);
                         TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
                         nt_list_title.setText("My Connection");
                         MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
                         nt_list_seeall.setVisibility(View.GONE);
-                        GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                        grid_lt.setAdapter(getConnectionAdapter(connectionListResponse));
-                        CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
+                        ListView list_lt = blankGridSt.findViewById(R.id.list_lt);
+                        list_lt.setAdapter(getConnectionAdapter(connectionListResponse));
+                        CommonFunction.setViewHeightBasedOnChildren(list_lt);
                         main_ll.addView(blankGridSt);
                     } else
                         Toast.makeText(context, connectionListResponse.msg, Toast.LENGTH_SHORT).show();
@@ -648,6 +619,7 @@ public class MyNetworkActivity extends AppCompatActivity {
         see_all_inv_req_ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.dismiss();
                 loadAllInvitationRequest();
             }
         });
@@ -655,11 +627,12 @@ public class MyNetworkActivity extends AppCompatActivity {
 
         LinearLayout see_all_follow_rq_ll = dialog.findViewById(R.id.see_all_follow_rq_ll);
         see_all_follow_rq_ll.setOnClickListener(v -> {
+            dialog.dismiss();
             main_ll.removeAllViews();
             networkSeeAllList(new NetworkSeeAllCallback() {
                 @Override
                 public void apiCallBack(Object responseBody) {
-                    NetworkSeeAllCommonResponse.FollowReqListResponse followReqListResponse = (NetworkSeeAllCommonResponse.FollowReqListResponse) responseBody;
+                    NetworkSeeAllCommonResponse.FollowReqListResponse followReqListResponse = new Gson().fromJson(new Gson().toJson(responseBody), NetworkSeeAllCommonResponse.FollowReqListResponse.class);
                     if (followReqListResponse.status) {
                         View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
                         TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
@@ -679,11 +652,12 @@ public class MyNetworkActivity extends AppCompatActivity {
 
         LinearLayout see_all_followers_ll = dialog.findViewById(R.id.see_all_followers_ll);
         see_all_followers_ll.setOnClickListener(v -> {
+            dialog.dismiss();
             main_ll.removeAllViews();
             networkSeeAllList(new NetworkSeeAllCallback() {
                 @Override
                 public void apiCallBack(Object responseBody) {
-                    NetworkSeeAllCommonResponse.FollowerListResponse followerListResponse = (NetworkSeeAllCommonResponse.FollowerListResponse) responseBody;
+                    NetworkSeeAllCommonResponse.FollowerListResponse followerListResponse = new Gson().fromJson(new Gson().toJson(responseBody), NetworkSeeAllCommonResponse.FollowerListResponse.class);
                     if (followerListResponse.status) {
                         View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
                         TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
@@ -703,11 +677,12 @@ public class MyNetworkActivity extends AppCompatActivity {
 
         LinearLayout see_all_following_ll = dialog.findViewById(R.id.see_all_following_ll);
         see_all_following_ll.setOnClickListener(v -> {
+            dialog.dismiss();
             main_ll.removeAllViews();
             networkSeeAllList(new NetworkSeeAllCallback() {
                 @Override
                 public void apiCallBack(Object responseBody) {
-                    NetworkSeeAllCommonResponse.FollowingsListResponse followingsListResponse = (NetworkSeeAllCommonResponse.FollowingsListResponse) responseBody;
+                    NetworkSeeAllCommonResponse.FollowingsListResponse followingsListResponse = new Gson().fromJson(new Gson().toJson(responseBody), NetworkSeeAllCommonResponse.FollowingsListResponse.class);
                     if (followingsListResponse.status) {
                         View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
                         TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
@@ -727,11 +702,12 @@ public class MyNetworkActivity extends AppCompatActivity {
 
         LinearLayout see_all_group_ll = dialog.findViewById(R.id.see_all_group_ll);
         see_all_group_ll.setOnClickListener(v -> {
+            dialog.dismiss();
             main_ll.removeAllViews();
             networkSeeAllList(new NetworkSeeAllCallback() {
                 @Override
                 public void apiCallBack(Object responseBody) {
-                    NetworkSeeAllCommonResponse.CommunitysListResponse communitysListResponse = (NetworkSeeAllCommonResponse.CommunitysListResponse) responseBody;
+                    NetworkSeeAllCommonResponse.CommunitysListResponse communitysListResponse = new Gson().fromJson(new Gson().toJson(responseBody), NetworkSeeAllCommonResponse.CommunitysListResponse.class);
                     if (communitysListResponse.status) {
                         View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
                         TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
@@ -751,11 +727,12 @@ public class MyNetworkActivity extends AppCompatActivity {
 
         LinearLayout see_all_business_page_ll = dialog.findViewById(R.id.see_all_business_page_ll);
         see_all_business_page_ll.setOnClickListener(v -> {
+            dialog.dismiss();
             main_ll.removeAllViews();
             networkSeeAllList(new NetworkSeeAllCallback() {
                 @Override
                 public void apiCallBack(Object responseBody) {
-                    NetworkSeeAllCommonResponse.BusinessPagesListResponse businessPagesListResponse = (NetworkSeeAllCommonResponse.BusinessPagesListResponse) responseBody;
+                    NetworkSeeAllCommonResponse.BusinessPagesListResponse businessPagesListResponse = new Gson().fromJson(new Gson().toJson(responseBody), NetworkSeeAllCommonResponse.BusinessPagesListResponse.class);
                     if (businessPagesListResponse.status) {
                         View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
                         TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
@@ -821,11 +798,18 @@ public class MyNetworkActivity extends AppCompatActivity {
                     view = LayoutInflater.from(context).inflate(R.layout.network_card_network_pages, parent, false);
 
                 NetworkSeeAllCommonResponse.BusinessPagesListResponse.Dt row = getItem(position);
+                View.OnClickListener openBusinessPage = v -> {
+                    Intent intent = new Intent(context, BusinessActivity.class);
+                    intent.putExtra("business_page_id", row.businessPageId);
+                    startActivity(intent);
+                };
 
                 ImageView page_logo_iv = view.findViewById(R.id.page_logo_iv);
                 Glide.with(context).load(imgPath + row.logo).placeholder(R.drawable.default_user_pic).into(page_logo_iv);
+                page_logo_iv.setOnClickListener(openBusinessPage);
                 TextView page_name_tv = view.findViewById(R.id.page_name_tv);
                 page_name_tv.setText(row.busName);
+                page_name_tv.setOnClickListener(openBusinessPage);
                 TextView page_member_tv = view.findViewById(R.id.page_member_tv);
                 page_member_tv.setText(row.members + " Members");
 
@@ -891,11 +875,18 @@ public class MyNetworkActivity extends AppCompatActivity {
                     view = LayoutInflater.from(context).inflate(R.layout.network_card_network_group, parent, false);
 
                 NetworkSeeAllCommonResponse.CommunitysListResponse.Dt row = getItem(position);
+                View.OnClickListener openGroup = v -> {
+                    Intent intent = new Intent(context, CommunityActivity.class);
+                    intent.putExtra("community_master_id", row.communityMasterId);
+                    startActivity(intent);
+                };
 
                 ImageView group_logo_iv = view.findViewById(R.id.group_logo_iv);
                 Glide.with(context).load(imgPath + row.logo).placeholder(R.drawable.default_user_pic).into(group_logo_iv);
+                group_logo_iv.setOnClickListener(openGroup);
                 TextView group_name_tv = view.findViewById(R.id.group_name_tv);
                 group_name_tv.setText(row.name);
+                group_name_tv.setOnClickListener(openGroup);
                 TextView group_members = view.findViewById(R.id.group_members);
                 group_members.setText(row.members + " Members");
 
@@ -962,11 +953,18 @@ public class MyNetworkActivity extends AppCompatActivity {
                     view = LayoutInflater.from(context).inflate(R.layout.network_card_following, parent, false);
 
                 NetworkSeeAllCommonResponse.FollowingsListResponse.Dt row = getItem(position);
+                View.OnClickListener openUserProfile = v -> {
+                    Intent intent = new Intent(context, CommunityActivity.class);
+                    intent.putExtra("user_master_id", row.userMasterId);
+                    startActivity(intent);
+                };
 
                 ImageView member_profile_pic = view.findViewById(R.id.member_profile_pic);
                 Glide.with(context).load(imgPath + row.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+                member_profile_pic.setOnClickListener(openUserProfile);
                 TextView member_tv = view.findViewById(R.id.member_tv);
                 member_tv.setText(row.name);
+                member_tv.setOnClickListener(openUserProfile);
                 TextView member_pos_tv = view.findViewById(R.id.member_pos_tv);
                 member_pos_tv.setText(row.position);
                 TextView member_mutual_conn_tv = view.findViewById(R.id.member_mutual_conn_tv);
@@ -1021,11 +1019,18 @@ public class MyNetworkActivity extends AppCompatActivity {
                     view = LayoutInflater.from(context).inflate(R.layout.network_card_follower, parent, false);
 
                 NetworkSeeAllCommonResponse.FollowerListResponse.Dt row = getItem(position);
+                View.OnClickListener openUserProfile = v -> {
+                    Intent intent = new Intent(context, CommunityActivity.class);
+                    intent.putExtra("user_master_id", row.userMasterId);
+                    startActivity(intent);
+                };
 
                 ImageView member_profile_pic = view.findViewById(R.id.member_profile_pic);
                 Glide.with(context).load(imgPath + row.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+                member_profile_pic.setOnClickListener(openUserProfile);
                 TextView member_tv = view.findViewById(R.id.member_tv);
                 member_tv.setText(row.name);
+                member_tv.setOnClickListener(openUserProfile);
                 TextView member_pos_tv = view.findViewById(R.id.member_pos_tv);
                 member_pos_tv.setText(row.position);
                 TextView member_mutual_conn_tv = view.findViewById(R.id.member_mutual_conn_tv);
@@ -1080,11 +1085,18 @@ public class MyNetworkActivity extends AppCompatActivity {
                     view = LayoutInflater.from(context).inflate(R.layout.network_card_follow_rq, parent, false);
 
                 NetworkSeeAllCommonResponse.FollowReqListResponse.Dt row = getItem(position);
+                View.OnClickListener openUserProfile = v -> {
+                    Intent intent = new Intent(context, CommunityActivity.class);
+                    intent.putExtra("user_master_id", row.userMasterId);
+                    startActivity(intent);
+                };
 
                 ImageView member_profile_pic = view.findViewById(R.id.member_profile_pic);
                 Glide.with(context).load(imgPath + row.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+                member_profile_pic.setOnClickListener(openUserProfile);
                 TextView member_tv = view.findViewById(R.id.member_tv);
                 member_tv.setText(row.name);
+                member_tv.setOnClickListener(openUserProfile);
                 TextView member_pos_tv = view.findViewById(R.id.member_pos_tv);
                 member_pos_tv.setText(row.position);
 
@@ -1151,10 +1163,18 @@ public class MyNetworkActivity extends AppCompatActivity {
                     view = LayoutInflater.from(context).inflate(R.layout.network_card_connection, parent, false);
 
                 NetworkSeeAllCommonResponse.ConnectionListResponse.Dt row = getItem(position);
+                View.OnClickListener openUserProfile = v -> {
+                    Intent intent = new Intent(context, CommunityActivity.class);
+                    intent.putExtra("user_master_id", row.userMasterId);
+                    startActivity(intent);
+                };
+
                 ImageView member_profile_pic = view.findViewById(R.id.member_profile_pic);
                 Glide.with(context).load(imgPath + row.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+                member_profile_pic.setOnClickListener(openUserProfile);
                 TextView member_tv = view.findViewById(R.id.member_tv);
                 member_tv.setText(row.name);
+                member_tv.setOnClickListener(openUserProfile);
                 TextView member_pos_tv = view.findViewById(R.id.member_pos_tv);
                 member_pos_tv.setText(row.position);
 
@@ -1162,7 +1182,10 @@ public class MyNetworkActivity extends AppCompatActivity {
                 members_start_chat_iv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //start chat with this user (**)
+                        Intent intent = new Intent(context, MessageActivity.class);
+                        intent.putExtra("action", "startChat");
+                        intent.putExtra("userId", row.userMasterId);
+                        startActivity(intent);
                     }
                 });
 
@@ -1170,8 +1193,24 @@ public class MyNetworkActivity extends AppCompatActivity {
                 connection_option.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //remove option show in bottom sheet menu (**)
-                        removeItem(position);
+                        BottomSheetDialog optionDialog = new BottomSheetDialog(context);
+                        optionDialog.setContentView(R.layout.common_option_dialog_layout);
+                        LinearLayout remove_option_LL = optionDialog.findViewById(R.id.remove_option_LL);
+                        remove_option_LL.setVisibility(View.VISIBLE);
+                        remove_option_LL.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                networkActionMange(new NetworkActionCallback() {
+                                    @Override
+                                    public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                        if (normalCommonResponse.status) removeItem(position);
+                                        else
+                                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                }, ActionName.RemoveConnection, row.userMasterId);
+                            }
+                        });
+                        optionDialog.show();
                     }
                 });
                 return view;
@@ -1209,6 +1248,12 @@ public class MyNetworkActivity extends AppCompatActivity {
                     inv_rq_view = LayoutInflater.from(context).inflate(R.layout.network_card_invitation, parent, false);
 
                 NetworkSuggestedListResponse.JsonDt.ConnReq.Dt row = getItem(position);
+                View.OnClickListener openUserProfile = v -> {
+                    Intent intent = new Intent(context, CommunityActivity.class);
+                    intent.putExtra("user_master_id", row.userMasterId);
+                    startActivity(intent);
+                };
+
                 ImageView req_decline_iv = inv_rq_view.findViewById(R.id.req_decline_iv);
                 MaterialButton req_decline_mbtn = inv_rq_view.findViewById(R.id.req_decline_mbtn);
                 View.OnClickListener req_decline = new View.OnClickListener() {
@@ -1230,10 +1275,12 @@ public class MyNetworkActivity extends AppCompatActivity {
 
                 TextView member_tv = inv_rq_view.findViewById(R.id.member_tv);
                 member_tv.setText(row.name);
+                member_tv.setOnClickListener(openUserProfile);
                 TextView member_pos_tv = inv_rq_view.findViewById(R.id.member_pos_tv);
                 member_pos_tv.setText(row.position);
                 ImageView member_profile_pic = inv_rq_view.findViewById(R.id.member_profile_pic);
                 Glide.with(context).load(imgPath + row.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+                member_profile_pic.setOnClickListener(openUserProfile);
                 TextView member_mutual_conn_tv = inv_rq_view.findViewById(R.id.member_mutual_conn_tv);
                 member_mutual_conn_tv.setText(UserMaster.findMutualIds(row.connectUser, connReq.myDt.connectUser).size() + " Mutual Connections");
                 MaterialButton req_accept_mbtn = inv_rq_view.findViewById(R.id.req_accept_mbtn);
@@ -1267,7 +1314,7 @@ public class MyNetworkActivity extends AppCompatActivity {
         networkSeeAllList(new NetworkSeeAllCallback() {
             @Override
             public void apiCallBack(Object responseBody) {
-                NetworkSuggestedListResponse.JsonDt.ConnReq connReq = (NetworkSuggestedListResponse.JsonDt.ConnReq) responseBody;
+                NetworkSuggestedListResponse.JsonDt.ConnReq connReq = new Gson().fromJson(new Gson().toJson(responseBody), NetworkSuggestedListResponse.JsonDt.ConnReq.class);
                 if (connReq.status) {
                     View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
                     TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
@@ -1318,6 +1365,8 @@ public class MyNetworkActivity extends AppCompatActivity {
                 super.onResponse(call, response);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+//                        Log.e(LogTag.TMP_LOG, response.message());
+//                        Log.e(LogTag.TMP_LOG, new Gson().toJson(response.body()));
                         networkSeeAllCallback.apiCallBack(response.body());
                         progressBar.setVisibility(View.GONE);
                     }

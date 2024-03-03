@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="14dp"
+            android:paddingBottom="10dp"
+            android:src="@drawable/bottom_dialog_line" />
+
+        <LinearLayout
+            android:id="@+id/remove_option_LL"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_marginBottom="6dp"
+            android:visibility="gone"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="20dp"
+                android:src="@drawable/delete_trash"
+                app:tint="@color/secondary_3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Remove"
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/label" />
+        </LinearLayout>
+
+    </LinearLayout>
+</FrameLayout>

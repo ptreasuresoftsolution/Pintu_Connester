@@ -48,7 +48,7 @@
             android:name=".activity.AddFeedsActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.MyNetworkActivity"
+            android:name=".activity.NetworkActivity"
             android:exported="false" />
         <activity
             android:name=".activity.MessageActivity"

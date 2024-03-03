@@ -113,7 +113,7 @@ public interface ApiInterface {
     //connectReqUsersMaster / connectUsers / followReqUsers / followerUsers / followingUsers / userCommunitys / userBusinessPages / userEvents / suggestedCityUser / suggestedIndustryUser / suggestedGroup / suggestedBusPages
     @FormUrlEncoded
     @POST(PRE_FIX + "Network/seeAll")
-    Call<?> NETWORK_SEE_ALL_LIST(@FieldMap Map<String, String> params);
+    Call<Object> NETWORK_SEE_ALL_LIST(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/userCommunityJoinRequest")

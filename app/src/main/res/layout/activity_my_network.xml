@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/secondary_7"
     android:orientation="vertical"
-    tools:context=".activity.MyNetworkActivity">
+    tools:context=".activity.NetworkActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
