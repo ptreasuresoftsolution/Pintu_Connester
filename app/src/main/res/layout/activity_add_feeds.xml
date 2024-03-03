@@ -51,6 +51,8 @@
                 android:textSize="@dimen/small"
                 android:textStyle="bold" />
         </FrameLayout>
+
+        <include layout="@layout/feed_add_photos_layout" />
     </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView
