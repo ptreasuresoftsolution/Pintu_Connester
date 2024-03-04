@@ -10,8 +10,11 @@ public class Constant {
     public static String DOMAIN = "http://192.168.29.235";
 
     public static String getStorageDirectoryPath(Context context) {
-        return Environment.getExternalStorageDirectory()
+        String path = Environment.getExternalStorageDirectory()
                 + File.separator + "Android" + File.separator + "media" + File.separator + context.getPackageName();
+        if (!new File(path).exists())
+            new File(path).mkdirs();
+        return path;
     }
 
     public static String[] ON = {"Splash", "Intro", "Login"};
