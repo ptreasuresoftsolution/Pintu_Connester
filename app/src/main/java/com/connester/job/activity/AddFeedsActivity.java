@@ -2,18 +2,30 @@ package com.connester.job.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.braver.tool.picker.BraveFilePicker;
+import com.braver.tool.picker.BraveFileType;
 import com.connester.job.R;
+import com.connester.job.function.AppUtils;
+import com.connester.job.function.LogTag;
 import com.connester.job.function.SessionPref;
+
+import java.io.File;
 
 public class AddFeedsActivity extends AppCompatActivity {
     Context context;
@@ -53,15 +65,58 @@ public class AddFeedsActivity extends AppCompatActivity {
         });
         submit_post = findViewById(R.id.submit_post); // set direct in add*Feed Function
 
-
         addTextLinkFeed();
+
+
+
+        activityResultLauncherForGallery = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            Log.e(LogTag.TMP_LOG, "CHECK A");
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                try {
+                    Uri selectedMediaUri = result.getData().getData();
+                    if (selectedMediaUri.toString().contains("image") || selectedMediaUri.toString().contains("jpg") || selectedMediaUri.toString().contains("jpeg") || selectedMediaUri.toString().contains("png")) {
+                        File imageFile = new BraveFilePicker().setActivity(AddFeedsActivity.this).setIsCompressImage(false).setIsTrimVide(false).setFileType(BraveFileType.IMAGE).setDestinationFilePath(AppUtils.getRandomImageFileName(AddFeedsActivity.this)).setContentUri(selectedMediaUri).getSourceFile();
+                        // Do something with the result...
+                        Log.e(LogTag.TMP_LOG, "File name : " + imageFile.getAbsolutePath());
+                    } else {
+                        //For Video
+                        // Do something with the result...
+                        Log.e(LogTag.TMP_LOG, "File name : " + selectedMediaUri.getPath());
+                    }
+                } catch (Exception e) {
+                    Log.e(LogTag.TMP_LOG, "Exception A");
+                    AppUtils.printLogConsole("activityResultLauncherForGallery", "Exception-------->" + e.getMessage());
+                }
+            }
+        });
     }
+
+
+    ActivityResultLauncher<Intent> activityResultLauncherForGallery;
 
     private View addPhotosFeed() {
         add_photos_feed_iv.setColorFilter(ContextCompat.getColor(context, R.color.primary));
         add_video_feed_iv.clearColorFilter();
         add_text_link_feed_iv.clearColorFilter();
         View view = layoutInflater.inflate(R.layout.feed_add_photos_layout, null);
+
+
+
+        ImageView add_feed_photos = view.findViewById(R.id.add_feed_photos);
+        add_feed_photos.setOnClickListener(v -> {
+            try {
+//                Intent intent = new Intent(Intent.ACTION_PICK);
+//                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "*/*");
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                activityResultLauncherForGallery.launch(intent);
+            } catch (Exception exception) {
+                AppUtils.printLogConsole("openGalleryForImageAndVideo", "Exception-------->" + exception.getMessage());
+            }
+        });
+
 
         feeds_add_ly.removeAllViews();
         feeds_add_ly.addView(view);

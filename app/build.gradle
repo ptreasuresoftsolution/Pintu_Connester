@@ -53,6 +53,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.13.2'
     implementation 'com.facebook.fresco:fresco:2.6.0'
 
+    //file picker
+    implementation 'com.github.braver-tool:Android11FilePicker:1.0.0'
+
     //view pager indicator
     implementation 'me.relex:circleindicator:2.1.6'// circle indicator
 

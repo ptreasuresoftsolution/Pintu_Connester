@@ -123,6 +123,7 @@
                     android:textSize="@dimen/small_lg" />
 
                 <ImageView
+                    android:id="@+id/add_feed_photos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"

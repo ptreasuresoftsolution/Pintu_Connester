@@ -20,4 +20,9 @@ public class NormalCommonResponse {
     @SerializedName("feedSave")
     @Expose
     public Boolean feedSave;
+
+    //feed add / post on submit
+    @SerializedName("feed_master_id")
+    @Expose
+    public Integer feedMasterId;
 }
