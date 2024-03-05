@@ -34,6 +34,7 @@
                         android:id="@+id/feeds_title_img"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
                         android:src="@drawable/default_user_pic" />
                 </com.google.android.material.card.MaterialCardView>
 
@@ -89,6 +90,7 @@
             app:strokeWidth="0dp">
 
             <EditText
+                android:id="@+id/pt_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/secondary_6"
@@ -151,6 +153,7 @@
             app:strokeWidth="0dp">
 
             <EditText
+                android:id="@+id/link_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/secondary_6"
@@ -163,6 +166,50 @@
                 android:paddingBottom="6dp"
                 android:singleLine="true"
                 android:textSize="@dimen/small_lg" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/link_details_cv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="@color/secondary_7"
+            app:strokeColor="@color/light">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/link_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/feeds_photos_default" />
+
+                <TextView
+                    android:id="@+id/link_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="2dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="dsfsd" />
+
+                <TextView
+                    android:id="@+id/link_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="dsfsd.com"
+                    android:textColor="@color/secondary_4"
+                    android:textSize="@dimen/small_lg" />
+            </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 </FrameLayout>

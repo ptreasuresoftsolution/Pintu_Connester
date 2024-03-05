@@ -32,6 +32,7 @@
                         app:strokeWidth="0.5dp">
 
                         <ImageView
+                            android:scaleType="centerCrop"
                             android:id="@+id/feeds_title_img"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -90,6 +91,7 @@
                 app:strokeWidth="0dp">
 
                 <EditText
+                    android:id="@+id/pt_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/secondary_6"

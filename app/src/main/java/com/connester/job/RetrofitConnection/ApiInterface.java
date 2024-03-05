@@ -2,6 +2,7 @@ package com.connester.job.RetrofitConnection;
 
 import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
+import com.connester.job.RetrofitConnection.jsontogson.GetLinkMetaDataResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
@@ -128,6 +129,18 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/unFollowBusinessPage")
     Call<NormalCommonResponse> PAGE_UNFOLLOW_CALL(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/getMetaData")
+    Call<GetLinkMetaDataResponse> GET_LINK_META_DATA_CALL(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/addFeedPhotos")
+    Call<NormalCommonResponse> FEED_ADD_PHOTOS_SUBMIT(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/addFeedVideo")
+    Call<NormalCommonResponse> FEED_ADD_VIDEO_SUBMIT(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/addFeedTextLink")
+    Call<NormalCommonResponse> FEED_ADD_TEXT_LINK_SUBMIT(@FieldMap Map<String, String> params);
 
 
 }
