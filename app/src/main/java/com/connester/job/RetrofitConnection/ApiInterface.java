@@ -12,7 +12,9 @@ import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 
 import java.util.Map;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
@@ -132,9 +134,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/getMetaData")
     Call<GetLinkMetaDataResponse> GET_LINK_META_DATA_CALL(@FieldMap Map<String, String> params);
-    @FormUrlEncoded
+
     @POST(PRE_FIX + "Feeds/addFeedPhotos")
-    Call<NormalCommonResponse> FEED_ADD_PHOTOS_SUBMIT(@FieldMap Map<String, String> params);
+    Call<NormalCommonResponse> FEED_ADD_PHOTOS_SUBMIT(@Body RequestBody body);
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/addFeedVideo")
     Call<NormalCommonResponse> FEED_ADD_VIDEO_SUBMIT(@FieldMap Map<String, String> params);

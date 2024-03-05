@@ -2,10 +2,12 @@ package com.connester.job.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -34,6 +36,7 @@ import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.GetLinkMetaDataResponse;
+import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.DateUtils;
 import com.connester.job.function.FilePath;
@@ -53,6 +56,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import id.zelory.compressor.Compressor;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -69,6 +75,8 @@ public class AddFeedsActivity extends AppCompatActivity {
     TextView submit_post;
 
     String feedFor = "USER";
+    String business_page_id = "0";
+    String community_master_id = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +89,12 @@ public class AddFeedsActivity extends AppCompatActivity {
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         if (getIntent() != null) {
-            feedFor = getIntent().getStringExtra("feed_for");
+            feedFor = getIntent().getStringExtra("feed_for") != null ? getIntent().getStringExtra("feed_for") : "USER";
+            if (feedFor.equalsIgnoreCase("BUSINESS")) {
+                business_page_id = getIntent().getStringExtra("business_page_id");
+            } else if (feedFor.equalsIgnoreCase("COMMUNITY")) {
+                community_master_id = getIntent().getStringExtra("community_master_id");
+            }
         }
 
         feeds_add_ly = findViewById(R.id.feeds_add_ly);
@@ -160,7 +173,13 @@ public class AddFeedsActivity extends AppCompatActivity {
             activityResultLauncherForPhotos.launch(("image/*"));
         });
         submit_post.setOnClickListener(v -> {
-            Toast.makeText(context, "Click img compress", Toast.LENGTH_LONG).show();
+            if (pt_title.getText().toString().trim().equalsIgnoreCase("")) {
+                Toast.makeText(context, "Please post title/text/description...", Toast.LENGTH_SHORT).show();
+                pt_title.setError("Please Enter some text!");
+                return;
+            }
+            CommonFunction.PleaseWaitShow(context);
+            CommonFunction.PleaseWaitShowMessage("Files is compressing...");
             List<File> photoFiles = new ArrayList<>();
             for (Uri photoUri : photosUri) {
                 try {
@@ -179,6 +198,7 @@ public class AddFeedsActivity extends AppCompatActivity {
                 }
             }
             Log.e(LogTag.TMP_LOG, "Image Compress Completed");
+            CommonFunction.PleaseWaitShowMessage("Files is compressed completed");
             postSubmitPhoto(photoFiles, pt_title.getText().toString());
         });
 
@@ -187,7 +207,51 @@ public class AddFeedsActivity extends AppCompatActivity {
         return view;
     }
 
-    private void postSubmitPhoto(List<File> photoFiles, String string) {
+    //done testing completed
+    private void postSubmitPhoto(List<File> photoFiles, String pt_title) {
+        CommonFunction.PleaseWaitShowMessage("Please wait, data upload on server...");
+
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        builder.setType(MultipartBody.FORM)
+                .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
+                .addFormDataPart("apiKey", "RBqtNuh+0qdrKn+Bb9WafA==")
+                .addFormDataPart("pt_title", pt_title);
+
+        if (feedFor.equalsIgnoreCase("BUSINESS")) {
+            builder.addFormDataPart("business_page_id", business_page_id);
+        } else if (feedFor.equalsIgnoreCase("COMMUNITY")) {
+            builder.addFormDataPart("community_master_id", community_master_id);
+        }
+
+        for (File file : photoFiles) {
+            builder.addFormDataPart("images[]", file.getName(),
+                    RequestBody.create(MediaType.parse(FilePath.getMimeType(file)), file));
+        }
+        RequestBody body = builder.build();
+        apiInterface.FEED_ADD_PHOTOS_SUBMIT(body).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                        if (normalCommonResponse.status) {
+                            for (File file : photoFiles) {
+                                file.delete();
+                            }
+                            CommonFunction._LoadAlert(context, "Your Post is submited successfully").setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    onBackPressed();
+                                }
+                            });
+                        } else
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            }
+        });
     }
 
     GridView grid_img;
@@ -250,6 +314,11 @@ public class AddFeedsActivity extends AppCompatActivity {
         submit_post.setOnClickListener(v -> {
 //            Log.e(LogTag.TMP_LOG, "start compression");
 //            Toast.makeText(context, "start compression", Toast.LENGTH_SHORT).show();
+            if (pt_title.getText().toString().trim().equalsIgnoreCase("")) {
+                Toast.makeText(context, "Please post title/text/description...", Toast.LENGTH_SHORT).show();
+                pt_title.setError("Please Enter some text!");
+                return;
+            }
             String fp = FilePath.getPath2(context, feed_video_uri);
             MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
             metaRetriever.setDataSource(fp);
@@ -290,7 +359,7 @@ public class AddFeedsActivity extends AppCompatActivity {
                             // => Source can be provided as content uris
                             true,
                             // => isStreamable
-                            context.getFilesDir().getAbsolutePath(),
+                            Environment.DIRECTORY_MOVIES,
                             // => the directory to save the compressed video(s)
                             new CompressionListener() {
                                 @Override
@@ -374,7 +443,10 @@ public class AddFeedsActivity extends AppCompatActivity {
         return view;
     }
 
-    private void postSubmitVideo(File file, String string) {
+    private void postSubmitVideo(File file, String pt_title) {
+        Log.e(LogTag.TMP_LOG, "File :" + file.getAbsolutePath());
+        Log.e(LogTag.TMP_LOG, "pt_title :" + pt_title);
+        Toast.makeText(context, "video submit", Toast.LENGTH_SHORT).show();
     }
 
     StyledPlayerView feed_video;
@@ -472,7 +544,10 @@ public class AddFeedsActivity extends AppCompatActivity {
                     hashMap.put("linkTitle", link_title.getText().toString());
                     linkJson = new Gson().toJson(hashMap);
                 }
-                postSubmitTextLink(pt_title.getText().toString(), linkJson);
+                Log.e(LogTag.TMP_LOG, "pt_title : " + pt_title.getText().toString());
+                Log.e(LogTag.TMP_LOG, "linkJson : " + linkJson);
+                Toast.makeText(context, "TEXT LINK submit", Toast.LENGTH_SHORT).show();
+//                postSubmitTextLink(pt_title.getText().toString(), linkJson);
             }
         });
 
@@ -481,7 +556,40 @@ public class AddFeedsActivity extends AppCompatActivity {
         return view;
     }
 
-    private void postSubmitTextLink(String string, String linkJson) {
+    private void postSubmitTextLink(String pt_title, String linkJson) {
+        CommonFunction.PleaseWaitShow(context);
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+        hashMap.put("apiKey", sessionPref.getApiKey());
+        hashMap.put("pt_title", pt_title);
+        if (feedFor.equalsIgnoreCase("BUSINESS")) {
+            hashMap.put("business_page_id", business_page_id);
+        } else if (feedFor.equalsIgnoreCase("COMMUNITY")) {
+            hashMap.put("community_master_id", community_master_id);
+        }
+        if (!linkJson.trim().equalsIgnoreCase("")) {
+            hashMap.put("linkJson", linkJson);
+        }
+        apiInterface.FEED_ADD_TEXT_LINK_SUBMIT(hashMap).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                        if (normalCommonResponse.status) {
+                            CommonFunction._LoadAlert(context, "Your Post is submited successfully").setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    onBackPressed();
+                                }
+                            });
+                        } else
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
 
     interface GetLinkMetaDataCallback {
