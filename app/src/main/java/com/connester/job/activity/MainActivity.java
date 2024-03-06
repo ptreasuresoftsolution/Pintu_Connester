@@ -29,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout feeds_mainList;
     ScrollView scrollView;
     FrameLayout progressBar;
-SetTopBottomBar setTopBottomBar;
+    SetTopBottomBar setTopBottomBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
