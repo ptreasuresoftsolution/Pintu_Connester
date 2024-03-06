@@ -3,6 +3,7 @@ package com.connester.job.RetrofitConnection;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.GetLinkMetaDataResponse;
+import com.connester.job.RetrofitConnection.jsontogson.JobsEventMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
@@ -97,10 +98,6 @@ public interface ApiInterface {
     Call<FeedsMasterResponse> HOME_FEEDS_LIST(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
-    @POST(PRE_FIX + "Feeds/applyJob")
-    Call<NormalCommonResponse> JOB_APPLY(@FieldMap Map<String, String> params);
-
-    @FormUrlEncoded
     @POST(PRE_FIX + "Network/networkDefaultData")
     Call<NetworkSuggestedListResponse> NETWORK_SUGGESTED_LIST(@FieldMap Map<String, String> params);
 
@@ -147,6 +144,18 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/addFeedTextLink")
     Call<NormalCommonResponse> FEED_ADD_TEXT_LINK_SUBMIT(@FieldMap Map<String, String> params);
+
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/applyJob")
+    Call<NormalCommonResponse> JOB_APPLY(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/suggestedJobs")
+    Call<JobsEventMasterResponse> JOB_SUGGESTED_LIST(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/suggestedEvents")
+    Call<JobsEventMasterResponse> EVENT_SUGGESTED_LIST(@FieldMap Map<String, String> params);
 
 
 }

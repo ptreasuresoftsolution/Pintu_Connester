@@ -5,7 +5,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,7 @@ import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsRow;
+import com.connester.job.RetrofitConnection.jsontogson.JobsEventMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.connester.job.activity.BusinessActivity;
@@ -141,6 +144,7 @@ public class FeedsMaster {
         this.mainLinearLayout = mainLinearLayout;
         this.scrollView = scrollView;
         feedListBy = "home";
+        //pagination
         this.scrollView = CommonFunction.OnScrollSetBottomListener(scrollView, new ScrollBottomListener() {
             @Override
             public void onScrollBottom() {
@@ -152,6 +156,7 @@ public class FeedsMaster {
                 }
             }
         });
+        //video play/pause
         this.scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
@@ -216,6 +221,136 @@ public class FeedsMaster {
     }
 
     public void callCommonFeeds() {
+
+    }
+
+    public void callJobsEventsFeeds(LinearLayout mainLinearLayout, ScrollView scrollView) {
+        this.mainLinearLayout = mainLinearLayout;
+        this.scrollView = scrollView;
+        feedListBy = "JobsEvent";
+        resetList();
+        callJobsFeeds(false);
+    }
+
+    private void callJobsFeeds(boolean seeAll) {
+        progressBar.setVisibility(View.VISIBLE);
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+        hashMap.put("apiKey", sessionPref.getApiKey());
+        hashMap.put("device", "ANDROID");
+        hashMap.put("seeAll", seeAll);
+        apiInterface.JOB_SUGGESTED_LIST(hashMap).enqueue(new MyApiCallback(progressBar) {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        JobsEventMasterResponse jobsEventMasterResponse = (JobsEventMasterResponse) response.body();
+                        if (jobsEventMasterResponse.status) {
+                            imgPath = jobsEventMasterResponse.imgPath;
+                            feedImgPath = jobsEventMasterResponse.feedsFilePath;
+                            FrameLayout frameLayout = new FrameLayout(context);
+                            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+
+                            frameLayout.setLayoutParams(layoutParams);
+
+                            TextView nt_list_title = new TextView(context);
+                            FrameLayout.LayoutParams layout_867 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+                            layout_867.gravity = Gravity.CENTER_VERTICAL;
+                            nt_list_title.setLayoutParams(layout_867);
+                            nt_list_title.setPadding((int) (10 / context.getResources().getDisplayMetrics().density), (int) (4 / context.getResources().getDisplayMetrics().density), 0, (int) (3 / context.getResources().getDisplayMetrics().density));
+                            nt_list_title.setText("Jobs recommended for you");
+                            nt_list_title.setTypeface(nt_list_title.getTypeface(), Typeface.BOLD);
+                            frameLayout.addView(nt_list_title);
+
+                            if (!seeAll) {
+                                MaterialButton nt_list_seeall = new MaterialButton(context);
+                                FrameLayout.LayoutParams layout_865 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, 50);
+                                layout_865.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+                                nt_list_seeall.setLayoutParams(layout_865);
+                                nt_list_seeall.setBackgroundTintList(context.getResources().getColorStateList(android.R.color.transparent));
+                                nt_list_seeall.setPadding(10, 0, 10, 0);
+                                nt_list_seeall.setText("See All");
+                                nt_list_seeall.setTextColor(context.getColor(R.color.secondary_3));
+                                frameLayout.addView(nt_list_seeall);
+                                nt_list_seeall.setOnClickListener(v -> {
+                                    resetList();
+                                    callJobsFeeds(true);
+                                });
+                            }
+                            FeedStorage feedStorage = new FeedStorage(frameLayout, viewIndex, null);
+                            feedsViews.add(viewIndex, feedStorage);
+                            mainLinearLayout.addView(frameLayout,viewIndex);
+                            viewIndex++;
+                            listToView(jobsEventMasterResponse.feedsRows);
+                            if (!seeAll) {
+                                callEventsFeeds(false);
+                            }
+                        } else
+                            Toast.makeText(context, jobsEventMasterResponse.msg, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+    }
+
+    private void callEventsFeeds(boolean seeAll) {
+        progressBar.setVisibility(View.VISIBLE);
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+        hashMap.put("apiKey", sessionPref.getApiKey());
+        hashMap.put("device", "ANDROID");
+        hashMap.put("seeAll", seeAll);
+        apiInterface.EVENT_SUGGESTED_LIST(hashMap).enqueue(new MyApiCallback(progressBar) {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        JobsEventMasterResponse jobsEventMasterResponse = (JobsEventMasterResponse) response.body();
+                        if (jobsEventMasterResponse.status) {
+                            imgPath = jobsEventMasterResponse.imgPath;
+                            feedImgPath = jobsEventMasterResponse.feedsFilePath;
+                            FrameLayout frameLayout = new FrameLayout(context);
+                            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                            frameLayout.setLayoutParams(layoutParams);
+
+                            TextView nt_list_title = new TextView(context);
+                            FrameLayout.LayoutParams layout_867 = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                            layout_867.gravity = Gravity.CENTER_VERTICAL;
+                            nt_list_title.setLayoutParams(layout_867);
+                            nt_list_title.setPadding((int) (10 / context.getResources().getDisplayMetrics().density), (int) (4 / context.getResources().getDisplayMetrics().density), 0, (int) (3 / context.getResources().getDisplayMetrics().density));
+                            nt_list_title.setText("Events start soon");
+                            nt_list_title.setTypeface(nt_list_title.getTypeface(), Typeface.BOLD);
+                            frameLayout.addView(nt_list_title);
+
+                            if (!seeAll) {
+                                MaterialButton nt_list_seeall = new MaterialButton(context);
+                                FrameLayout.LayoutParams layout_865 = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 50);
+                                layout_865.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
+                                nt_list_seeall.setLayoutParams(layout_865);
+                                nt_list_seeall.setBackgroundTintList(context.getResources().getColorStateList(android.R.color.transparent));
+                                nt_list_seeall.setPadding(10, 0, 10, 0);
+                                nt_list_seeall.setText("See All");
+                                nt_list_seeall.setTextColor(context.getColor(R.color.secondary_3));
+                                frameLayout.addView(nt_list_seeall);
+                                nt_list_seeall.setOnClickListener(v -> {
+                                    resetList();
+                                    callEventsFeeds(true);
+                                });
+                            }
+                            FeedStorage feedStorage = new FeedStorage(frameLayout, viewIndex, null);
+                            feedsViews.add(viewIndex, feedStorage);
+                            mainLinearLayout.addView(frameLayout,viewIndex);
+                            viewIndex++;
+                            listToView(jobsEventMasterResponse.feedsRows);
+                        } else
+                            Toast.makeText(context, jobsEventMasterResponse.msg, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
 
     private void listToView(List<FeedsRow> feedsRows) {
@@ -615,6 +750,7 @@ public class FeedsMaster {
 //        job_business_iv.setImageURI(uri);
         TextView job_title = view.findViewById(R.id.job_title);
         job_title.setText(feedsRow.tblJobPost.titlePost);
+        job_title.setOnClickListener(fullViewFeeds);
         TextView job_business_page_nm_txt = view.findViewById(R.id.job_business_page_nm_txt);
         job_business_page_nm_txt.setText(feedsRow.tblBusinessPage.busName);
         TextView job_location = view.findViewById(R.id.job_location);
@@ -1200,7 +1336,6 @@ public class FeedsMaster {
         reloadOrAddTopFeeds(null);
     }
 
-    /*** programing remain **/
     private void reloadOrAddTopFeeds(FeedsRow feedsRow) {
         if (feedsRow == null) {
             //compulsory reload
@@ -1246,14 +1381,15 @@ public class FeedsMaster {
 
     private void removeIdInList(String feedMasterId) {
         for (FeedStorage feedStorage : feedsViews) {
-            if (feedStorage.feedsRow.feedMasterId.equalsIgnoreCase(feedMasterId)) {
-                if (mainLinearLayout.getChildAt(feedStorage.viewIndex) != null) {
-                    mainLinearLayout.removeViewAt(feedStorage.viewIndex);
-                    feedsViews.remove(feedStorage.viewIndex);
-                    updateViewIndexInFeedStorage();
+            if (feedStorage.feedsRow != null)
+                if (feedStorage.feedsRow.feedMasterId.equalsIgnoreCase(feedMasterId)) {
+                    if (mainLinearLayout.getChildAt(feedStorage.viewIndex) != null) {
+                        mainLinearLayout.removeViewAt(feedStorage.viewIndex);
+                        feedsViews.remove(feedStorage.viewIndex);
+                        updateViewIndexInFeedStorage();
+                    }
+                    break;
                 }
-                break;
-            }
         }
     }
 
