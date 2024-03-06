@@ -11,6 +11,7 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -455,34 +456,36 @@ public class AddFeedsActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                getLinkMetaData(s, new GetLinkMetaDataCallback() {
-                    @Override
-                    public void CallBack(GetLinkMetaDataResponse.Dt dt) {
-                        boolean allNull = true;
-                        link_details_cv.setVisibility(View.VISIBLE);
-                        link_img.setVisibility(View.GONE);
-                        if (dt != null && dt.img != null && !dt.img.trim().equalsIgnoreCase("")) {
-                            link_img.setVisibility(View.VISIBLE);
-                            link_img.setTag(dt.img);
-                            Glide.with(context).load(dt.img).into(link_img);
-                            allNull = false;
-                        } else link_img.setTag("");
-                        link_title.setVisibility(View.GONE);
-                        if (dt != null && dt.title != null && !dt.title.trim().equalsIgnoreCase("")) {
-                            link_title.setVisibility(View.VISIBLE);
-                            link_title.setText(dt.title);
-                            allNull = false;
-                        } else link_title.setText("");
-                        link_url.setVisibility(View.GONE);
-                        if (dt != null && dt.url != null && !dt.url.trim().equalsIgnoreCase("")) {
-                            link_url.setVisibility(View.VISIBLE);
-                            link_url.setText(dt.url);
-                            allNull = false;
-                        } else link_url.setText("");
-                        if (allNull)
-                            link_details_cv.setVisibility(View.GONE);
-                    }
-                });
+                if (Patterns.WEB_URL.matcher(s).matches()) {
+                    getLinkMetaData(s, new GetLinkMetaDataCallback() {
+                        @Override
+                        public void CallBack(GetLinkMetaDataResponse.Dt dt) {
+                            boolean allNull = true;
+                            link_details_cv.setVisibility(View.VISIBLE);
+                            link_img.setVisibility(View.GONE);
+                            if (dt != null && dt.img != null && !dt.img.trim().equalsIgnoreCase("")) {
+                                link_img.setVisibility(View.VISIBLE);
+                                link_img.setTag(dt.img);
+                                Glide.with(context).load(dt.img).into(link_img);
+                                allNull = false;
+                            } else link_img.setTag("");
+                            link_title.setVisibility(View.GONE);
+                            if (dt != null && dt.title != null && !dt.title.trim().equalsIgnoreCase("")) {
+                                link_title.setVisibility(View.VISIBLE);
+                                link_title.setText(dt.title);
+                                allNull = false;
+                            } else link_title.setText("");
+                            link_url.setVisibility(View.GONE);
+                            if (dt != null && dt.url != null && !dt.url.trim().equalsIgnoreCase("")) {
+                                link_url.setVisibility(View.VISIBLE);
+                                link_url.setText(dt.url);
+                                allNull = false;
+                            } else link_url.setText("");
+                            if (allNull)
+                                link_details_cv.setVisibility(View.GONE);
+                        }
+                    });
+                }
             }
 
             @Override
@@ -493,6 +496,12 @@ public class AddFeedsActivity extends AppCompatActivity {
         submit_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!link_et.getText().toString().equalsIgnoreCase(""))
+                    if (!Patterns.WEB_URL.matcher(link_et.getText().toString()).matches()) {
+                        link_et.setError("Enter Valid URL!");
+                        Toast.makeText(context, "Please enter valid url", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                 String linkJson = "";
                 if (link_details_cv.getVisibility() == View.VISIBLE &&
                         !link_url.getText().toString().trim().equalsIgnoreCase("") &&
