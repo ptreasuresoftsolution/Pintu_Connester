@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -27,10 +27,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.abedelazizshe.lightcompressorlibrary.CompressionListener;
-import com.abedelazizshe.lightcompressorlibrary.VideoCompressor;
-import com.abedelazizshe.lightcompressorlibrary.VideoQuality;
-import com.abedelazizshe.lightcompressorlibrary.config.Configuration;
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
@@ -38,6 +34,7 @@ import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.GetLinkMetaDataResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.function.CommonFunction;
+import com.connester.job.function.Constant;
 import com.connester.job.function.DateUtils;
 import com.connester.job.function.FilePath;
 import com.connester.job.function.LogTag;
@@ -49,11 +46,13 @@ import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
+import com.iceteck.silicompressorr.SiliCompressor;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
@@ -87,6 +86,7 @@ public class AddFeedsActivity extends AppCompatActivity {
         sessionPref = new SessionPref(context);
         layoutInflater = LayoutInflater.from(context);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
+
 
         if (getIntent() != null) {
             feedFor = getIntent().getStringExtra("feed_for") != null ? getIntent().getStringExtra("feed_for") : "USER";
@@ -131,8 +131,8 @@ public class AddFeedsActivity extends AppCompatActivity {
 
         //for compress video and create application local dir
         activityResultLauncherForVideo = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
-            feed_video_uri = result;
             if (result != null) {
+                feed_video_uri = result;
                 if (feed_video != null) {
                     if (feed_video.getPlayer() != null && feed_video.getPlayer().isPlaying()) {
                         feed_video.getPlayer().stop();
@@ -312,129 +312,52 @@ public class AddFeedsActivity extends AppCompatActivity {
         fullname_txt.setText(sessionPref.getUserFullName());
 
         submit_post.setOnClickListener(v -> {
-//            Log.e(LogTag.TMP_LOG, "start compression");
-//            Toast.makeText(context, "start compression", Toast.LENGTH_SHORT).show();
             if (pt_title.getText().toString().trim().equalsIgnoreCase("")) {
                 Toast.makeText(context, "Please post title/text/description...", Toast.LENGTH_SHORT).show();
                 pt_title.setError("Please Enter some text!");
                 return;
             }
             String fp = FilePath.getPath2(context, feed_video_uri);
-            MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
-            metaRetriever.setDataSource(fp);
-            String height = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
-            String width = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-            String rotation = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
-            String has = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO);
-            String fCount = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
             String fileSize = CommonFunction.byteToScale(new File(fp).length());
             String size[] = fileSize.split(" ");
             float fileLength = Float.parseFloat(size[0]);
             String scale = size[1];
-//            Toast.makeText(context, "w :" + width + " & h :" + height + " & rotation :" + rotation, Toast.LENGTH_SHORT).show();
-            Log.d(LogTag.CHECK_DEBUG, "w :" + width + " & h :" + height + " rotation :" + rotation + " & has :" + has + " & fCount :" + fCount + " & size :" + fileSize);
-            boolean isLandscape = false;
-            if (Integer.parseInt(rotation) == 0 && Integer.parseInt(width) > Integer.parseInt(height)) {
-                isLandscape = true;
-            }
+
             if (fileSize.contains("GB")) {
                 Toast.makeText(context, "Video is too long size, Please try with another video!", Toast.LENGTH_LONG).show();
                 return;
             } else if (fileSize.contains("MB") && fileLength > 10) { //required compression video
-                //set fix size landscape(320 x 180, 640 x 360) and portrait (360 X 480)
-                double videoWidth = 360.0;
-                double videoHeight = 480.0;
-                if (isLandscape) {
-                    videoWidth = 640.0;
-                    videoHeight = 360.0;
-                }
-                try {
-                    List<Uri> list = new ArrayList<>();
-                    list.add(feed_video_uri);
-                    CommonFunction.PleaseWaitShow(context);
-                    CommonFunction.PleaseWaitShowMessage("Video is compressing...");
-                    VideoCompressor.start(context,
-                            // => This is required
-                            list,
-                            // => Source can be provided as content uris
-                            true,
-                            // => isStreamable
-                            Environment.DIRECTORY_MOVIES,
-                            // => the directory to save the compressed video(s)
-                            new CompressionListener() {
-                                @Override
-                                public void onSuccess(int i, long l, @org.jetbrains.annotations.Nullable String filePath) {
-
-                                    // On Compression success
-                                    Log.d("TAG", "videoCompress i: " + i);
-                                    Log.d("TAG", "videoCompress l: " + l);
-                                    Log.d("TAG", "videoCompress s: " + filePath);
+                CommonFunction.PleaseWaitShow(context);
+                CommonFunction.PleaseWaitShowMessage("Video is compressing...");
+                Executors.newSingleThreadExecutor().execute(() -> {
+                    //Background work here
+                    try {
+                        String filePath = SiliCompressor.with(context).compressVideo(feed_video_uri, Constant.getStorageDirectoryPath(context));
+                        Log.e(LogTag.TMP_LOG, "pth: " + filePath);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+//                                    CommonFunction.dismissDialog();
 //                                    Toast.makeText(context, "Completed compression", Toast.LENGTH_SHORT).show();
-                                    CommonFunction.PleaseWaitShowMessage("Video is compressing completed...");
-                                    CommonFunction.PleaseWaitShowMessage("Please Wait... Data upload to server...");
-                                    postSubmitVideo(new File(filePath), pt_title.getText().toString());
-                                }
+                                CommonFunction.PleaseWaitShowMessage("Video is compressing completed...");
+                                CommonFunction.PleaseWaitShowMessage("Please wait, data upload on server...");
+                                postSubmitVideo(new File(filePath), pt_title.getText().toString());
+                            }
+                        });
+                    } catch (Exception e) {
+                        CommonFunction.dismissDialog();
+                        Toast.makeText(context, "Video compressing failed, try again/another video!", Toast.LENGTH_LONG).show();
+                        Log.e(LogTag.EXCEPTION, "Video File Compressing Exception", e);
+                    }
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        //UI Thread work here
+                        //task is complete call
+                    });
+                });
 
-                                @Override
-                                public void onStart(int i) {
-                                    // Compression start
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            CommonFunction.PleaseWaitShowMessage("Video is compressing start...");
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onFailure(int index, String failureMessage) {
-                                    // On Failure
-                                    CommonFunction.dismissDialog();
-                                    Toast.makeText(context, "Video compressing failed, try again/another video!", Toast.LENGTH_LONG).show();
-                                }
-
-                                @Override
-                                public void onProgress(int index, float progressPercent) {
-                                    // Update UI with progress value
-                                    activity.runOnUiThread(new Runnable() {
-                                        public void run() {
-                                            CommonFunction.PleaseWaitShowMessage("Video is compressing... " + progressPercent + "%");
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onCancelled(int index) {
-                                    // On Cancelled
-                                    CommonFunction.dismissDialog();
-                                    Toast.makeText(context, "Video compressing cancelled, try again/another video!", Toast.LENGTH_LONG).show();
-                                }
-                            },
-                            new Configuration(VideoQuality.LOW,
-                                    24, /*frameRate: int, or null*/
-                                    false, /*isMinBitrateCheckEnabled*/
-                                    null, /*videoBitrate: int, or null*/
-                                    false, /*disableAudio: Boolean, or null*/
-                                    false, /*keepOriginalResolution: Boolean, or null*/
-                                    videoWidth, /*videoWidth: Double, or null*/
-                                    videoHeight /*videoHeight: Double, or null*/));
-                        /*
-                        VideoQuality: VERY_HIGH (original-bitrate * 0.6) , HIGH (original-bitrate * 0.4), MEDIUM (original-bitrate * 0.3), LOW (original-bitrate * 0.2), OR VERY_LOW (original-bitrate * 0.1)
-                        isMinBitrateCheckEnabled: this means, don't compress if bitrate is less than 2mbps
-                        frameRate: any fps value
-                        videoBitrate: any custom bitrate value
-                        disableAudio: true/false to generate a video without audio. False by default.
-                        keepOriginalResolution: true/false to tell the library not to change the resolution.
-                        videoWidth: custom video width.
-                        videoHeight: custom video height.
-                         */
-                } catch (Exception e) {
-                    Toast.makeText(context, "This is video file is corrupted!, Try with another video!", Toast.LENGTH_SHORT).show();
-                    Log.e(LogTag.EXCEPTION, "Compress Exception", e);
-                }
             } else {
                 CommonFunction.PleaseWaitShow(context);
-                CommonFunction.PleaseWaitShowMessage("Please Wait... Data upload to server...");
+                CommonFunction.PleaseWaitShowMessage("Please wait, data upload on server...");
                 postSubmitVideo(new File(fp), pt_title.getText().toString());
             }
         });
@@ -444,9 +367,46 @@ public class AddFeedsActivity extends AppCompatActivity {
     }
 
     private void postSubmitVideo(File file, String pt_title) {
-        Log.e(LogTag.TMP_LOG, "File :" + file.getAbsolutePath());
-        Log.e(LogTag.TMP_LOG, "pt_title :" + pt_title);
-        Toast.makeText(context, "video submit", Toast.LENGTH_SHORT).show();
+        Log.d(LogTag.CHECK_DEBUG, "File :" + file.getAbsolutePath());
+        Log.d(LogTag.CHECK_DEBUG, "pt_title :" + pt_title);
+//        Toast.makeText(context, "video submit", Toast.LENGTH_SHORT).show();
+//        CommonFunction.dismissDialog();
+
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        builder.setType(MultipartBody.FORM)
+                .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
+                .addFormDataPart("apiKey", "RBqtNuh+0qdrKn+Bb9WafA==")
+                .addFormDataPart("pt_title", pt_title);
+
+        if (feedFor.equalsIgnoreCase("BUSINESS")) {
+            builder.addFormDataPart("business_page_id", business_page_id);
+        } else if (feedFor.equalsIgnoreCase("COMMUNITY")) {
+            builder.addFormDataPart("community_master_id", community_master_id);
+        }
+        builder.addFormDataPart("video", file.getName(),
+                RequestBody.create(MediaType.parse(FilePath.getMimeType(file)), file));
+        RequestBody body = builder.build();
+        apiInterface.FEED_ADD_VIDEO_SUBMIT(body).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                        if (normalCommonResponse.status) {
+                            file.delete();
+                            CommonFunction._LoadAlert(context, "Your Post is submited successfully").setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    onBackPressed();
+                                }
+                            });
+                        } else
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
 
     StyledPlayerView feed_video;
@@ -546,8 +506,8 @@ public class AddFeedsActivity extends AppCompatActivity {
                 }
                 Log.e(LogTag.TMP_LOG, "pt_title : " + pt_title.getText().toString());
                 Log.e(LogTag.TMP_LOG, "linkJson : " + linkJson);
-                Toast.makeText(context, "TEXT LINK submit", Toast.LENGTH_SHORT).show();
-//                postSubmitTextLink(pt_title.getText().toString(), linkJson);
+//                Toast.makeText(context, "TEXT LINK submit", Toast.LENGTH_SHORT).show();
+                postSubmitTextLink(pt_title.getText().toString(), linkJson);
             }
         });
 

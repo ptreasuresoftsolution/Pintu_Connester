@@ -121,6 +121,7 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/userCommunityJoinRequest")
     Call<NormalCommonResponse> GROUP_JOIN_REQUEST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/userCommunityExit")
     Call<NormalCommonResponse> GROUP_EXIT_CALL(@FieldMap Map<String, String> params);
@@ -128,18 +129,21 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/followBusinessPage")
     Call<NormalCommonResponse> PAGE_FOLLOW_REQUEST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/unFollowBusinessPage")
     Call<NormalCommonResponse> PAGE_UNFOLLOW_CALL(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/getMetaData")
     Call<GetLinkMetaDataResponse> GET_LINK_META_DATA_CALL(@FieldMap Map<String, String> params);
 
     @POST(PRE_FIX + "Feeds/addFeedPhotos")
     Call<NormalCommonResponse> FEED_ADD_PHOTOS_SUBMIT(@Body RequestBody body);
-    @FormUrlEncoded
+
     @POST(PRE_FIX + "Feeds/addFeedVideo")
-    Call<NormalCommonResponse> FEED_ADD_VIDEO_SUBMIT(@FieldMap Map<String, String> params);
+    Call<NormalCommonResponse> FEED_ADD_VIDEO_SUBMIT(@Body RequestBody body);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/addFeedTextLink")
     Call<NormalCommonResponse> FEED_ADD_TEXT_LINK_SUBMIT(@FieldMap Map<String, String> params);

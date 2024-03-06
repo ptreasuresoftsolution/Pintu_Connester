@@ -17,7 +17,7 @@ android {
     }
 
     buildTypes {
-        debug() {
+        debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -56,10 +56,12 @@ dependencies {
     //file compressor images
     implementation 'id.zelory:compressor:2.1.1'
 
-    //file compressor video
-    implementation 'com.github.AbedElazizShe:LightCompressor:1.1.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0'
+    //file compressor video  //    https://github.com/Tourenathan-G5organisation/SiliCompressor
+    implementation 'com.iceteck.silicompressorr:silicompressor:2.2.4'
+//    implementation 'com.googlecode.mp4parser:isoparser:1.1.22' // no sound after compressing
+    implementation ('com.googlecode.mp4parser:isoparser:1.0.6') {
+        exclude group: 'org.aspectj', module: 'aspectjrt'
+    }
 
     //view pager indicator
     implementation 'me.relex:circleindicator:2.1.6'// circle indicator
