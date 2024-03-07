@@ -156,6 +156,15 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/suggestedEvents")
     Call<JobsEventMasterResponse> EVENT_SUGGESTED_LIST(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/accountClosed")
+    Call<NormalCommonResponse> ACCOUNT_CLOSED_CALL(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/reActivateAccount")
+    Call<NormalCommonResponse> ACCOUNT_REACTIVATE_CALL(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/logOutAllDevices")
+    Call<NormalCommonResponse> LOG_OUT_ALL_DEVICES_CALL(@FieldMap Map<String, String> params);
 
 
 }

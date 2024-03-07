@@ -43,7 +43,7 @@ public class JobsEvents_Activity extends AppCompatActivity {
 
         feedsMaster = new FeedsMaster(context, activity);
         feedsMaster.setProgressBar(progressBar);
-        feedsMaster.callJobsEventsFeeds(main_ll, scrollView);
+        feedsMaster.callSuggestedJobsEventsFeeds(main_ll, scrollView);
 
         setTopBottomBar.setTopBar();
         setTopBottomBar.setBottomNavBar(SetTopBottomBar.MenuItem.navJob_btn);

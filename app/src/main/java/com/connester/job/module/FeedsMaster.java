@@ -224,15 +224,15 @@ public class FeedsMaster {
 
     }
 
-    public void callJobsEventsFeeds(LinearLayout mainLinearLayout, ScrollView scrollView) {
+    public void callSuggestedJobsEventsFeeds(LinearLayout mainLinearLayout, ScrollView scrollView) {
         this.mainLinearLayout = mainLinearLayout;
         this.scrollView = scrollView;
         feedListBy = "JobsEvent";
         resetList();
-        callJobsFeeds(false);
+        callSuggestedJobsFeeds(false);
     }
 
-    private void callJobsFeeds(boolean seeAll) {
+    private void callSuggestedJobsFeeds(boolean seeAll) {
         progressBar.setVisibility(View.VISIBLE);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
@@ -275,7 +275,7 @@ public class FeedsMaster {
                                 frameLayout.addView(nt_list_seeall);
                                 nt_list_seeall.setOnClickListener(v -> {
                                     resetList();
-                                    callJobsFeeds(true);
+                                    callSuggestedJobsFeeds(true);
                                 });
                             }
                             FeedStorage feedStorage = new FeedStorage(frameLayout, viewIndex, null);
@@ -284,7 +284,7 @@ public class FeedsMaster {
                             viewIndex++;
                             listToView(jobsEventMasterResponse.feedsRows);
                             if (!seeAll) {
-                                callEventsFeeds(false);
+                                callSuggestedEventsFeeds(false);
                             }
                         } else
                             Toast.makeText(context, jobsEventMasterResponse.msg, Toast.LENGTH_SHORT).show();
@@ -294,7 +294,7 @@ public class FeedsMaster {
         });
     }
 
-    private void callEventsFeeds(boolean seeAll) {
+    private void callSuggestedEventsFeeds(boolean seeAll) {
         progressBar.setVisibility(View.VISIBLE);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
@@ -347,7 +347,7 @@ public class FeedsMaster {
                                 frameLayout.addView(nt_list_seeall);
                                 nt_list_seeall.setOnClickListener(v -> {
                                     resetList();
-                                    callEventsFeeds(true);
+                                    callSuggestedEventsFeeds(true);
                                 });
                             }
                             FeedStorage feedStorage = new FeedStorage(frameLayout, viewIndex, null);
