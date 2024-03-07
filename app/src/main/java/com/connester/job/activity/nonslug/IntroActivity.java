@@ -1,15 +1,14 @@
-package com.connester.job.activity;
+package com.connester.job.activity.nonslug;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.QuickContactBadge;
 
 import com.connester.job.R;
+import com.connester.job.activity.SignInActivity;
 import com.connester.job.function.SessionPref;
 
 public class IntroActivity extends AppCompatActivity {

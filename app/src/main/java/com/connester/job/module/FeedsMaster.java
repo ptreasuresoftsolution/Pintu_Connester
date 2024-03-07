@@ -280,7 +280,7 @@ public class FeedsMaster {
                             }
                             FeedStorage feedStorage = new FeedStorage(frameLayout, viewIndex, null);
                             feedsViews.add(viewIndex, feedStorage);
-                            mainLinearLayout.addView(frameLayout,viewIndex);
+                            mainLinearLayout.addView(frameLayout, viewIndex);
                             viewIndex++;
                             listToView(jobsEventMasterResponse.feedsRows);
                             if (!seeAll) {
@@ -313,12 +313,21 @@ public class FeedsMaster {
                             feedImgPath = jobsEventMasterResponse.feedsFilePath;
                             FrameLayout frameLayout = new FrameLayout(context);
                             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
+                            layoutParams.topMargin = 20;
                             frameLayout.setLayoutParams(layoutParams);
+
+                            if (!seeAll) {
+                                View view = new View(context);
+                                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2);
+                                view.setLayoutParams(params);
+                                view.setBackgroundColor(context.getColor(R.color.secondary));
+                                frameLayout.addView(view);
+                            }
 
                             TextView nt_list_title = new TextView(context);
                             FrameLayout.LayoutParams layout_867 = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                             layout_867.gravity = Gravity.CENTER_VERTICAL;
+                            layout_867.topMargin = 4;
                             nt_list_title.setLayoutParams(layout_867);
                             nt_list_title.setPadding((int) (10 / context.getResources().getDisplayMetrics().density), (int) (4 / context.getResources().getDisplayMetrics().density), 0, (int) (3 / context.getResources().getDisplayMetrics().density));
                             nt_list_title.setText("Events start soon");
@@ -329,6 +338,7 @@ public class FeedsMaster {
                                 MaterialButton nt_list_seeall = new MaterialButton(context);
                                 FrameLayout.LayoutParams layout_865 = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 50);
                                 layout_865.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
+                                layout_865.topMargin = 4;
                                 nt_list_seeall.setLayoutParams(layout_865);
                                 nt_list_seeall.setBackgroundTintList(context.getResources().getColorStateList(android.R.color.transparent));
                                 nt_list_seeall.setPadding(10, 0, 10, 0);
@@ -342,7 +352,7 @@ public class FeedsMaster {
                             }
                             FeedStorage feedStorage = new FeedStorage(frameLayout, viewIndex, null);
                             feedsViews.add(viewIndex, feedStorage);
-                            mainLinearLayout.addView(frameLayout,viewIndex);
+                            mainLinearLayout.addView(frameLayout, viewIndex);
                             viewIndex++;
                             listToView(jobsEventMasterResponse.feedsRows);
                         } else
@@ -669,7 +679,7 @@ public class FeedsMaster {
                 feedsOptionDialog.setContentView(R.layout.feeds_option_dialog_layout);
                 LinearLayout feed_close = feedsOptionDialog.findViewById(R.id.feed_close);
                 feed_close.setVisibility(View.GONE);
-                LinearLayout feed_unfollow = feedsOptionDialog.findViewById(R.id.feed_close);
+                LinearLayout feed_unfollow = feedsOptionDialog.findViewById(R.id.feed_unfollow);
                 feed_unfollow.setVisibility(View.GONE);
 
                 LinearLayout feed_save_unsave = feedsOptionDialog.findViewById(R.id.feed_save_unsave);
@@ -728,6 +738,7 @@ public class FeedsMaster {
                         //send report data
                     }
                 });
+                feedsOptionDialog.show();
             }
         });
         return view;
@@ -745,7 +756,7 @@ public class FeedsMaster {
             }
         };
         SimpleDraweeView job_business_iv = view.findViewById(R.id.job_business_iv);
-        Glide.with(context).load(feedImgPath + feedsRow.tblBusinessPage.logo).into(job_business_iv);
+        Glide.with(context).load(imgPath + feedsRow.tblBusinessPage.logo).into(job_business_iv);
 //        Uri uri = Uri.parse(feedImgPath + feedsRow.tblBusinessPage.logo);
 //        job_business_iv.setImageURI(uri);
         TextView job_title = view.findViewById(R.id.job_title);
@@ -866,7 +877,7 @@ public class FeedsMaster {
         String skills[] = feedsRow.tblJobPost.skills.split(",");
         for (String skill : skills) {
             View skillLayout = layoutInflater.inflate(R.layout.skill_tag_item, null);
-            MaterialButton skill_item = skillLayout.findViewById(R.id.skill_item);
+            TextView skill_item = skillLayout.findViewById(R.id.skill_item);
             skill_item.setText(skill);
             job_skill_tag_fbl.addView(skillLayout);
         }

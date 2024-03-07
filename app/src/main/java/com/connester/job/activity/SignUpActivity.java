@@ -111,7 +111,7 @@ public class SignUpActivity extends AppCompatActivity {
                                                 UserRowResponse userRowResponse = (UserRowResponse) response.body();
                                                 if (userRowResponse.status) {
                                                     if (userRowResponse.dt.profileStatus.equals("ON")) {
-                                                        startActivity(new Intent(context, MainActivity.class));
+                                                        startActivity(new Intent(context, HomeActivity.class));
                                                         activity.finish();
                                                     } else {
                                                         openDisableProfileActivity();
@@ -217,7 +217,7 @@ public class SignUpActivity extends AppCompatActivity {
         setEvent();
     }
     private void openDisableProfileActivity() {
-        startActivity(new Intent(context, UserDisableAcActivity.class));
+        startActivity(new Intent(context, AcDisableActivity.class));
         activity.finish();
     }
 }

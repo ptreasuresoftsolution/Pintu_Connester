@@ -1,4 +1,4 @@
-package com.connester.job.activity;
+package com.connester.job.activity.nonslug;
 
 import android.app.Activity;
 import android.content.Context;

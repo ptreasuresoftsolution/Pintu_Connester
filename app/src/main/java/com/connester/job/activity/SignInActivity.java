@@ -20,6 +20,7 @@ import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.UserLoginResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
+import com.connester.job.activity.nonslug.ForgotPasswordActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.SessionPref;
@@ -76,7 +77,7 @@ public class SignInActivity extends AppCompatActivity {
                                             UserRowResponse userRowResponse = (UserRowResponse) response.body();
                                             if (userRowResponse.status) {
                                                 if (userRowResponse.dt.profileStatus.equals("ON")) {
-                                                    startActivity(new Intent(context, MainActivity.class));
+                                                    startActivity(new Intent(context, HomeActivity.class));
                                                     activity.finish();
                                                 } else {
                                                     openDisableProfileActivity();
@@ -158,7 +159,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void openDisableProfileActivity() {
-        startActivity(new Intent(context, UserDisableAcActivity.class));
+        startActivity(new Intent(context, AcDisableActivity.class));
         activity.finish();
     }
 }

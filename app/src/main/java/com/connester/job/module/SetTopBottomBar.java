@@ -11,12 +11,13 @@ import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
-import com.connester.job.activity.AddFeedsActivity;
-import com.connester.job.activity.JobsAndEventsActivity;
-import com.connester.job.activity.MainActivity;
+import com.connester.job.activity.nonslug.AddFeedsActivity;
+import com.connester.job.activity.JobsEvents_Activity;
+import com.connester.job.activity.HomeActivity;
 import com.connester.job.activity.MessageActivity;
 import com.connester.job.activity.NetworkActivity;
 import com.connester.job.activity.NotificationActivity;
+import com.connester.job.activity.UserMenuActivity;
 import com.connester.job.function.SessionPref;
 
 public class SetTopBottomBar {
@@ -42,7 +43,7 @@ public class SetTopBottomBar {
             navHome_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    context.startActivity(new Intent(context, MainActivity.class));
+                    context.startActivity(new Intent(context, HomeActivity.class));
                 }
             });
         if (!activeItem.equals(MenuItem.navNetwork_btn))
@@ -72,7 +73,7 @@ public class SetTopBottomBar {
             navJob_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    context.startActivity(new Intent(context, JobsAndEventsActivity.class));
+                    context.startActivity(new Intent(context, JobsEvents_Activity.class));
                 }
             });
 
@@ -102,6 +103,9 @@ public class SetTopBottomBar {
     public void setTopBar() {
         ImageView user_pic = activity.findViewById(R.id.user_pic);
         Glide.with(context).load(sessionPref.getUserProfilePic()).centerCrop().placeholder(R.drawable.default_user_pic).into(user_pic);
+        user_pic.setOnClickListener(v -> {
+            context.startActivity(new Intent(context, UserMenuActivity.class));
+        });
 
         SearchView search_master_sv = activity.findViewById(R.id.search_master_sv);
         search_master_sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

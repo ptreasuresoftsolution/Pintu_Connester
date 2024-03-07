@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"
@@ -41,13 +40,31 @@
         tools:ignore="HardcodedDebugMode"
         tools:targetApi="s">
         <activity
-            android:name=".activity.JobsAndEventsActivity"
+            android:name=".activity.settingActivity.Blocking_PersonActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.settingActivity.ChangePasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.MyCommunityActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.BusinessPageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.Activity_Activity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.UserMenuActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.JobsEvents_Activity"
             android:exported="false" />
         <activity
             android:name=".activity.NotificationActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.AddFeedsActivity"
+            android:name=".activity.nonslug.AddFeedsActivity"
             android:exported="false" />
         <activity
             android:name=".activity.NetworkActivity"
@@ -74,10 +91,10 @@
             android:name=".activity.StepActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.UserDisableAcActivity"
+            android:name=".activity.AcDisableActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.ForgotPasswordActivity"
+            android:name=".activity.nonslug.ForgotPasswordActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
@@ -92,7 +109,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".activity.IntroActivity"
+            android:name=".activity.nonslug.IntroActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
@@ -108,7 +125,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.HomeActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 

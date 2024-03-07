@@ -1,129 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="4dp"
     android:orientation="horizontal">
-
-    <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/event_img"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/feeds_photos_default"
-        app:roundedCornerRadius="8dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="4dp">
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            app:strokeWidth="0dp">
 
-            <TextView
-                android:id="@+id/event_nm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Event Name"
-                android:textColor="@color/secondary_3"
-                android:textSize="@dimen/label"
-                android:textStyle="bold" />
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/event_img"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/feeds_photos_default"
+                app:roundedCornerRadius="8dp" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/event_finish_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/event_nm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Event Name"
+                    android:textColor="@color/secondary_3"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/event_finish_ll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
+                        android:text="@string/sign_bullet" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/calendar_check"
+                        android:drawablePadding="10dp"
+                        android:text="Event Finished"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/small_xs"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/event_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="4dp"
-                android:gravity="center_vertical"
+                android:layout_marginTop="4dp"
+                android:text="Thu, Feb 01, 1:00PM - Thu Feb 01,11:30PM"
+                android:textSize="@dimen/small_xs" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/event_online_offline_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/camera_video_off" />
+
+                <TextView
+                    android:id="@+id/event_online_offline_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:text="Walk-in"
+                    android:textColor="@color/secondary_4"
+                    android:textSize="@dimen/small_lg" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
                     android:text="@string/sign_bullet" />
 
                 <TextView
+                    android:id="@+id/event_business_page_name_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/calendar_check"
-                    android:drawablePadding="10dp"
-                    android:text="Event Finished"
-                    android:textColor="@color/primary"
-                    android:textStyle="bold" />
+                    android:text="By Business page"
+                    android:textColor="@color/secondary_4"
+                    android:textSize="@dimen/small_lg" />
             </LinearLayout>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/event_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Thu, Feb 01, 1:00PM - Thu Feb 01,11:30PM"
-            android:textSize="@dimen/small_lg" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/event_online_offline_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/camera_video_off" />
 
             <TextView
-                android:id="@+id/event_online_offline_txt"
+                android:id="@+id/event_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:text="Walk-in"
-                android:textColor="@color/secondary_4"
-                android:textSize="@dimen/small_lg" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:text="@string/sign_bullet" />
-
-            <TextView
-                android:id="@+id/event_business_page_name_txt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="By Business page"
-                android:textColor="@color/secondary_4"
+                android:layout_marginTop="4dp"
+                android:maxLines="2"
+                android:paddingRight="4dp"
+                android:text="The Indian great festivals The metaverse opens up new opportunities for people to connect in new ways as a result of the rise of digital"
                 android:textSize="@dimen/small_lg" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/event_desc"
+        <ImageView
+            android:id="@+id/feeds_event_option_iv"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:maxLines="2"
-            android:paddingRight="4dp"
-            android:text="The Indian great festivals The metaverse opens up new opportunities for people to connect in new ways as a result of the rise of digital"
-            android:textSize="@dimen/small_lg" />
+            android:layout_height="35dp"
+            android:layout_marginTop="20dp"
+            android:paddingRight="8dp"
+            android:paddingLeft="3dp"
+            android:src="@drawable/feed_option" />
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/feeds_event_option_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="8dp"
-        android:src="@drawable/feed_option" />
-</LinearLayout>
+</FrameLayout>

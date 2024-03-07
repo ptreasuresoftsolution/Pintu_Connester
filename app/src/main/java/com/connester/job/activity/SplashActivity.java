@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat;
 
 import com.connester.job.R;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
+import com.connester.job.activity.nonslug.IntroActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.UserMaster;
@@ -98,7 +99,7 @@ public class SplashActivity extends AppCompatActivity {
                 UserRowResponse userRowResponse = (UserRowResponse) response.body();
                 if (userRowResponse.status) {
                     if (userRowResponse.dt.profileStatus.equals("ON")) {
-                        startActivity(new Intent(context, MainActivity.class));
+                        startActivity(new Intent(context, HomeActivity.class));
                         SplashActivity.this.finish();
                     } else {
                         openDisableProfileActivity();
@@ -109,7 +110,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void openDisableProfileActivity() {
-        startActivity(new Intent(SplashActivity.this, UserDisableAcActivity.class));
+        startActivity(new Intent(SplashActivity.this, AcDisableActivity.class));
         SplashActivity.this.finish();
     }
 

@@ -1,150 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="4dp"
-    app:cardBackgroundColor="@color/secondary_6"
-    app:strokeWidth="0dp">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginBottom="8dp"
-        android:orientation="vertical">
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        app:cardBackgroundColor="@color/secondary_6"
+        app:strokeWidth="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                app:cardCornerRadius="28dp"
-                app:strokeColor="@color/secondary_7">
-
-                <com.facebook.drawee.view.SimpleDraweeView
-                    android:id="@+id/job_business_iv"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:actualImageResource="@drawable/default_user_pic" />
-            </com.google.android.material.card.MaterialCardView>
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    app:cardCornerRadius="28dp"
+                    app:strokeColor="@color/secondary_7">
+
+                    <com.facebook.drawee.view.SimpleDraweeView
+                        android:id="@+id/job_business_iv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        app:actualImageResource="@drawable/default_user_pic" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/job_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Job Heading"
+                        android:textColor="@color/secondary_3"
+                        android:textSize="@dimen/label"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/job_business_page_nm_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Page Name"
+                            android:textSize="@dimen/small" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:text="@string/sign_bullet"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/job_location"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Location"
+                            android:textSize="@dimen/small" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/feed_save_unsave_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="top"
+                    android:src="@drawable/feed_save_blank" />
+
+                <ImageView
+                    android:id="@+id/feed_close_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="top"
+                    android:layout_marginLeft="8dp"
+                    android:src="@drawable/close_remove" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/job_title"
+                    android:id="@+id/job_salary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Job Heading"
+                    android:text="INR 20K"
                     android:textColor="@color/secondary_3"
                     android:textSize="@dimen/label"
                     android:textStyle="bold" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/job_salary_payroll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:text="/ Month"
+                    android:textColor="@color/secondary_4"
+                    android:textSize="@dimen/small" />
 
-                    <TextView
-                        android:id="@+id/job_business_page_nm_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Page Name"
-                        android:textSize="@dimen/small" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="4dp"
-                        android:layout_marginRight="4dp"
-                        android:text="@string/sign_bullet"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/job_location"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Location"
-                        android:textSize="@dimen/small" />
-                </LinearLayout>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/job_apply_btn"
+                        android:layout_width="100dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="right"
+                        android:backgroundTint="@color/primary"
+                        android:padding="0dp"
+                        android:textColor="@color/white"
+                        android:text="Apply"
+                        app:cornerRadius="8dp" />
+                </FrameLayout>
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/feed_save_unsave_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:layout_gravity="top"
-                android:src="@drawable/feed_save_blank" />
-
-            <ImageView
-                android:id="@+id/feed_close_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="top"
-                android:layout_marginLeft="8dp"
-                android:src="@drawable/close_remove" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/job_salary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="INR 20K"
-                android:textColor="@color/secondary_3"
-                android:textSize="@dimen/label"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/job_salary_payroll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="/ Month"
-                android:textColor="@color/secondary_4"
-                android:textSize="@dimen/small" />
-
-            <FrameLayout
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/job_skill_tag_fbl"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:alignContent="stretch"
+                app:alignItems="stretch"
+                app:flexWrap="wrap">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/job_apply_btn"
-                    android:layout_width="100dp"
-                    android:layout_height="35dp"
-                    android:layout_gravity="right"
-                    android:backgroundTint="@color/primary"
-                    android:padding="0dp"
-                    android:text="Apply"
-                    app:cornerRadius="8dp" />
-            </FrameLayout>
+                <include layout="@layout/skill_tag_item" />
+            </com.google.android.flexbox.FlexboxLayout>
         </LinearLayout>
-
-        <com.google.android.flexbox.FlexboxLayout
-            android:id="@+id/job_skill_tag_fbl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:alignContent="stretch"
-            app:alignItems="stretch"
-            app:flexWrap="wrap">
-
-            <include layout="@layout/skill_tag_item" />
-        </com.google.android.flexbox.FlexboxLayout>
-    </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
+</FrameLayout>

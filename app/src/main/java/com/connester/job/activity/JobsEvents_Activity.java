@@ -16,7 +16,7 @@ import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 import com.connester.job.module.SetTopBottomBar;
 
-public class JobsAndEventsActivity extends AppCompatActivity {
+public class JobsEvents_Activity extends AppCompatActivity {
     SessionPref sessionPref;
     Context context;
     Activity activity;

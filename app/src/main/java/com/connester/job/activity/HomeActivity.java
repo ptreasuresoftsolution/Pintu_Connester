@@ -21,7 +21,7 @@ import com.connester.job.module.SetTopBottomBar;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
     SessionPref sessionPref;
     Context context;
     Activity activity;
@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        context = MainActivity.this;
-        activity = MainActivity.this;
+        context = HomeActivity.this;
+        activity = HomeActivity.this;
         sessionPref = new SessionPref(context);
         setTopBottomBar = new SetTopBottomBar(context, activity);
         redirectSettings();
@@ -113,6 +113,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        ActivityCompat.finishAffinity(MainActivity.this);
+        ActivityCompat.finishAffinity(HomeActivity.this);
     }
 }
