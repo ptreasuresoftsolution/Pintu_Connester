@@ -40,6 +40,9 @@
         tools:ignore="HardcodedDebugMode"
         tools:targetApi="s">
         <activity
+            android:name=".activity.ShowPortfolioApplyJobActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.MySavedItemActivity"
             android:exported="false" />
         <activity

@@ -78,6 +78,43 @@ public class UserMaster {
             }
         });
     }
+    public void getUserClmData(CallBack callBack,String clmKey, boolean waitShow) {
+        if (waitShow)
+            CommonFunction.PleaseWaitShow(context);
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+        hashMap.put("apiKey", sessionPref.getApiKey());
+        hashMap.put("key", clmKey);
+        apiInterface.GET_CLM_DATA_USER_ROW(hashMap).enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                if (waitShow)
+                    CommonFunction.dismissDialog();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        UserRowResponse userRowResponse = (UserRowResponse) response.body();
+                        if (userRowResponse.status) {
+                            sessionPref.setUserProfilePic(userRowResponse.imgPath + userRowResponse.dt.profilePic);
+                            sessionPref.setUserEmail(userRowResponse.dt.email);
+                            sessionPref.setUserPassword(userRowResponse.dt.password);
+                            sessionPref.setUserFullName(userRowResponse.dt.name);
+                            sessionPref.setUserName(userRowResponse.dt.userName);
+                            sessionPref.setUserMasterRow(new Gson().toJson(userRowResponse.dt));
+                        } else
+                            Toast.makeText(context, userRowResponse.msg, Toast.LENGTH_SHORT).show();
+                        callBack.DataCallBack(response);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                if (waitShow)
+                    CommonFunction.dismissDialog();
+                Log.d(LogTag.API_EXCEPTION, "UserMaster GET_CLM_DATA_USER_ROW Fail", t);
+            }
+        });
+    }
 
     public static List<String> findMutualIds(String ids1,String ids2){
         if (ids1 == null)
