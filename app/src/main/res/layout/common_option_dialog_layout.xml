@@ -42,6 +42,72 @@
                 android:textColor="@color/secondary_3"
                 android:textSize="@dimen/label" />
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/share_profile_option_LL"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_marginBottom="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="20dp"
+                android:src="@drawable/share_from_square_profile"
+                app:tint="@color/secondary_3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Share Profile"
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/label" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/web_portfolio_option_LL"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_marginBottom="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="20dp"
+                android:src="@drawable/delete_trash"
+                app:tint="@color/secondary_3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Web Portfolio"
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/label" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/edit_profile_option_LL"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_marginBottom="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="20dp"
+                android:src="@drawable/edit_pencil"
+                app:tint="@color/secondary_3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Edit Profile"
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/label" />
+        </LinearLayout>
 
     </LinearLayout>
 </FrameLayout>

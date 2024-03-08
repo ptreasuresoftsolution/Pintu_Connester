@@ -92,8 +92,8 @@
                         android:layout_marginTop="35dp"
                         android:orientation="vertical"
                         android:paddingLeft="10dp"
-                        android:paddingBottom="20dp"
-                        android:paddingRight="10dp">
+                        android:paddingRight="10dp"
+                        android:paddingBottom="20dp">
 
                         <TextView
                             android:id="@+id/userFullName_txt"
@@ -164,6 +164,7 @@
                             android:orientation="horizontal">
 
                             <com.google.android.material.button.MaterialButton
+                                android:id="@+id/post_activity_mbtn"
                                 android:layout_width="match_parent"
                                 android:layout_height="40dp"
                                 android:layout_weight="1"
@@ -176,6 +177,7 @@
                                 app:iconTint="@color/primary" />
 
                             <com.google.android.material.button.MaterialButton
+                                android:id="@+id/inbox_open_mbtn"
                                 android:layout_width="match_parent"
                                 android:layout_height="40dp"
                                 android:layout_marginLeft="4dp"
@@ -190,6 +192,7 @@
                                 app:iconTint="@color/primary" />
 
                             <com.google.android.material.button.MaterialButton
+                                android:id="@+id/setting_open_mbtn"
                                 android:layout_width="match_parent"
                                 android:layout_height="40dp"
                                 android:layout_weight="1"
@@ -202,6 +205,7 @@
                                 app:iconTint="@color/primary" />
 
                             <ImageView
+                                android:id="@+id/profile_option_iv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="40dp"
                                 android:paddingLeft="8dp"
@@ -490,8 +494,8 @@
                                 <com.google.android.flexbox.FlexboxLayout
                                     android:id="@+id/user_skill_tag_fbl"
                                     android:layout_width="match_parent"
-                                    android:layout_marginTop="10dp"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
                                     app:alignContent="stretch"
                                     app:alignItems="stretch"
                                     app:flexWrap="wrap">
@@ -551,8 +555,8 @@
                                 <com.google.android.flexbox.FlexboxLayout
                                     android:id="@+id/user_language_tag_fbl"
                                     android:layout_width="match_parent"
-                                    android:layout_marginTop="10dp"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
                                     app:alignContent="stretch"
                                     app:alignItems="stretch"
                                     app:flexWrap="wrap">

@@ -3,6 +3,7 @@ package com.connester.job.activity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +20,8 @@ import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.function.SessionPref;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
 public class EditProfileActivity extends AppCompatActivity {
@@ -40,8 +44,10 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     TextView userFullName_txt, user_position_tv, user_bio_tv, followers_tv, following_tv;
-    ImageView user_banner_iv, user_pic,about_edit;
+    ImageView user_banner_iv, user_pic, about_edit, profile_option_iv;
     MaterialCardView user_banner_edit, back_cv, user_pic_edit;
+    LinearLayout;
+    MaterialButton post_activity_mbtn, inbox_open_mbtn, setting_open_mbtn;
 
     private void initView() {
         back_cv = findViewById(R.id.back_cv);
@@ -58,6 +64,24 @@ public class EditProfileActivity extends AppCompatActivity {
         user_bio_tv = findViewById(R.id.user_bio_tv);
         followers_tv = findViewById(R.id.followers_tv);
         following_tv = findViewById(R.id.following_tv);
+
+        post_activity_mbtn = findViewById(R.id.post_activity_mbtn);
+        post_activity_mbtn.setOnClickListener(v -> {
+            startActivity(new Intent(context, Activity_Activity.class));
+        });
+        inbox_open_mbtn = findViewById(R.id.inbox_open_mbtn);
+        inbox_open_mbtn.setOnClickListener(v -> {
+            startActivity(new Intent(context, MessageActivity.class));
+        });
+        setting_open_mbtn = findViewById(R.id.setting_open_mbtn);
+        setting_open_mbtn.setOnClickListener(v -> {
+            startActivity(new Intent(context, UserMenuActivity.class));
+        });
+        profile_option_iv = findViewById(R.id.profile_option_iv);
+        profile_option_iv.setOnClickListener(v -> {
+            BottomSheetDialog feedsOptionDialog = new BottomSheetDialog(context);
+            feedsOptionDialog.setContentView(R.layout.common_option_dialog_layout);
+        });
 
         about_edit = findViewById(R.id.about_edit);
         about_edit.setOnClickListener(v -> {
