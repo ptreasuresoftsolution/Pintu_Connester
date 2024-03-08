@@ -1,9 +1,11 @@
 package com.connester.job.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -14,8 +16,10 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,6 +28,7 @@ import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.EducationListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.ProjectListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.WorkExperienceListResponse;
@@ -39,9 +44,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -182,7 +190,121 @@ public class EditProfileActivity extends AppCompatActivity {
     private void openEditLanguageDialog() {
     }
 
+    boolean[] selectedSkill;
+    List<Integer> skillList = new ArrayList<>();
+
     private void openEditSkillDialog() {
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.editprofile_skills_dialog);
+        setFullScreenSetting(dialog);
+
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        TextView skills_selected = dialog.findViewById(R.id.skills_selected);
+        skills_selected.setText(userDt.skill);
+        CommonFunction.PleaseWaitShow(context);
+        apiInterface.GET_SKILL_TBL(hashMapDefault).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                        if (normalCommonResponse.status) {
+                            selectedSkill = new boolean[normalCommonResponse.dt.size()];
+                            String skillDt[] = new String[normalCommonResponse.dt.size()];
+                            String dt[] = normalCommonResponse.dt.toArray(skillDt);
+                            for (String skill : userDt.skill.split(",")) {
+                                int ind = normalCommonResponse.dt.indexOf(skill);
+                                if (ind>0){
+                                    selectedSkill[ind-1] = true;
+                                }
+                            }
+                            skills_selected.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    // Initialize alert dialog
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                    // set title
+                                    builder.setTitle("Select Skills");
+                                    // set dialog non cancelable
+                                    builder.setCancelable(false);
+
+                                    builder.setMultiChoiceItems(dt, selectedSkill, new DialogInterface.OnMultiChoiceClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                                            // check condition
+                                            if (b) {
+                                                // when checkbox selected
+                                                // Add position  in lang list
+                                                skillList.add(i);
+                                                // Sort array list
+                                                Collections.sort(skillList);
+                                            } else {
+                                                // when checkbox unselected
+                                                // Remove position from langList
+                                                skillList.remove(Integer.valueOf(i));
+                                            }
+                                        }
+                                    });
+
+                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            // Initialize string builder
+                                            StringBuilder stringBuilder = new StringBuilder();
+                                            // use for loop
+                                            for (int j = 0; j < skillList.size(); j++) {
+                                                // concat array value
+                                                stringBuilder.append(dt[skillList.get(j)]);
+                                                // check condition
+                                                if (j != skillList.size() - 1) {
+                                                    // When j value  not equal
+                                                    // to lang list size - 1
+                                                    // add comma
+                                                    stringBuilder.append(",");
+                                                }
+                                            }
+                                            // set text on textView
+                                            skills_selected.setText(stringBuilder.toString());
+                                        }
+                                    });
+
+                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            // dismiss dialog
+                                            dialogInterface.dismiss();
+                                        }
+                                    });
+                                    builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            // use for loop
+                                            for (int j = 0; j < selectedSkill.length; j++) {
+                                                // remove all selection
+                                                selectedSkill[j] = false;
+                                            }
+                                            // clear language list
+                                            skillList.clear();
+                                            // clear text view value
+                                            skills_selected.setText("");
+                                        }
+                                    });
+                                    // show dialog
+                                    builder.show();
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        });
+        dialog.show();
     }
 
     private void openAddProjectDialog() {
@@ -208,7 +330,8 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void openEditInfoDialog() {
-        Dialog dialog = new Dialog(activity, android.R.style.Theme_Translucent_NoTitleBar);
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.editprofile_info_dialog);
         setFullScreenSetting(dialog);
 
@@ -233,6 +356,10 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
         RadioGroup radio_group_gender = dialog.findViewById(R.id.radio_group_gender);
+        radio_group_gender.setOnCheckedChangeListener((group, checkedId) -> {
+            RadioButton radioButton = group.findViewById(checkedId);
+            Toast.makeText(context, radioButton.getText().toString(), Toast.LENGTH_LONG).show();
+        });
         EditText city_input = dialog.findViewById(R.id.city_input);
         EditText country_region_input = dialog.findViewById(R.id.country_region_input);
         MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
@@ -274,11 +401,11 @@ public class EditProfileActivity extends AppCompatActivity {
 
                     //language set
                     user_language_tag_fbl.removeAllViews();
-                    for (String language : userDt.skill.split(",")) {
+                    for (String language : userDt.language.split(",")) {
                         View languageItem = getLayoutInflater().inflate(R.layout.skill_tag_item, null);
                         TextView language_item = languageItem.findViewById(R.id.skill_item);
                         language_item.setText(language);
-                        user_skill_tag_fbl.addView(languageItem);
+                        user_language_tag_fbl.addView(languageItem);
                     }
                 }
             }
@@ -396,7 +523,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
     private void setFullScreenSetting(Dialog dialog) {
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         Window window = dialog.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.gravity = Gravity.CENTER;

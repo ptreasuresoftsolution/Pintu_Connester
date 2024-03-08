@@ -125,50 +125,74 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/userCommunityExit")
     Call<NormalCommonResponse> GROUP_EXIT_CALL(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/followBusinessPage")
     Call<NormalCommonResponse> PAGE_FOLLOW_REQUEST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/unFollowBusinessPage")
     Call<NormalCommonResponse> PAGE_UNFOLLOW_CALL(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/getMetaData")
     Call<GetLinkMetaDataResponse> GET_LINK_META_DATA_CALL(@FieldMap Map<String, String> params);
+
     @POST(PRE_FIX + "Feeds/addFeedPhotos")
     Call<NormalCommonResponse> FEED_ADD_PHOTOS_SUBMIT(@Body RequestBody body);
+
     @POST(PRE_FIX + "Feeds/addFeedVideo")
     Call<NormalCommonResponse> FEED_ADD_VIDEO_SUBMIT(@Body RequestBody body);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/addFeedTextLink")
     Call<NormalCommonResponse> FEED_ADD_TEXT_LINK_SUBMIT(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/applyJob")
     Call<NormalCommonResponse> JOB_APPLY(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/suggestedJobs")
     Call<JobsEventMasterResponse> JOB_SUGGESTED_LIST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/suggestedEvents")
     Call<JobsEventMasterResponse> EVENT_SUGGESTED_LIST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/accountClosed")
     Call<NormalCommonResponse> ACCOUNT_CLOSED_CALL(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/reActivateAccount")
     Call<NormalCommonResponse> ACCOUNT_REACTIVATE_CALL(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/logOutAllDevices")
     Call<NormalCommonResponse> LOG_OUT_ALL_DEVICES_CALL(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getUserClmData")
     Call<UserRowResponse> GET_CLM_DATA_USER_ROW(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getProjects")
     Call<ProjectListResponse> PROJECT_LIST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getExperience")
     Call<WorkExperienceListResponse> WORK_EXPERIENCE_LIST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getEducation")
     Call<EducationListResponse> EDUCATION_LIST(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/getSkillTbl")
+    Call<NormalCommonResponse> GET_SKILL_TBL(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/getLangaugeTbl")
+    Call<NormalCommonResponse> GET_LANGUAGE_TBL(@FieldMap Map<String, String> params);
 }

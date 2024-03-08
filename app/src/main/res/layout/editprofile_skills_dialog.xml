@@ -43,7 +43,8 @@
         app:cardElevation="2dp"
         app:strokeWidth="0dp">
 
-        <MultiAutoCompleteTextView
+        <TextView
+            android:id="@+id/skills_selected"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"

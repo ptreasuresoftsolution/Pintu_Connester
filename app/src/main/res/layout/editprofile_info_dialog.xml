@@ -54,8 +54,8 @@
             android:id="@+id/fullname_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:backgroundTint="@android:color/transparent"
-            android:gravity="start"
             android:hint="Full Name"
             android:singleLine="true"
             android:textSize="@dimen/small_lg" />
@@ -82,7 +82,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
-            android:gravity="start"
             android:hint="Ex: xxxxxxxx00"
             android:inputType="phone"
             android:singleLine="true"
@@ -109,12 +108,13 @@
             android:id="@+id/date_birth_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:backgroundTint="@android:color/transparent"
             android:clickable="false"
             android:cursorVisible="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:gravity="start"
+            android:gravity="center_vertical"
             android:hint="dd-MMM-YYYY"
             android:singleLine="true"
             android:textSize="@dimen/small_lg" />
@@ -133,45 +133,23 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <com.google.android.material.card.MaterialCardView
+        <RadioButton
+            android:id="@+id/male"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="6dp"
-            android:layout_marginBottom="2dp"
             android:layout_weight="1"
-            app:cardBackgroundColor="@color/secondary_7"
-            app:cardCornerRadius="6dp"
-            app:cardElevation="2dp"
-            app:strokeWidth="0dp">
+            android:text="Male"
+            android:textColor="@color/secondary_3"
+            android:textSize="@dimen/small_lg" />
 
-            <RadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Male"
-                android:textSize="@dimen/small_lg" />
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
+        <RadioButton
+            android:id="@+id/female"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="2dp"
-            android:layout_marginBottom="2dp"
             android:layout_weight="1"
-            app:cardBackgroundColor="@color/secondary_7"
-            app:cardCornerRadius="6dp"
-            app:cardElevation="2dp"
-            app:strokeWidth="0dp">
-
-            <RadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Female"
-                android:textSize="@dimen/small_lg" />
-        </com.google.android.material.card.MaterialCardView>
+            android:text="Female"
+            android:textColor="@color/secondary_3"
+            android:textSize="@dimen/small_lg" />
     </RadioGroup>
 
     <TextView
@@ -195,7 +173,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
-            android:gravity="start"
+            android:gravity="center_vertical"
             android:hint="City"
             android:singleLine="true"
             android:textSize="@dimen/small_lg" />
@@ -222,7 +200,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
-            android:gravity="start"
+            android:gravity="center_vertical"
             android:hint="Country/Region"
             android:singleLine="true"
             android:textSize="@dimen/small_lg" />
