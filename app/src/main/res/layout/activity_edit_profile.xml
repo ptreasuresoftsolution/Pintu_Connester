@@ -247,6 +247,7 @@
                                     </LinearLayout>
 
                                     <ImageView
+                                        android:id="@+id/about_edit"
                                         android:layout_width="20dp"
                                         android:layout_height="20dp"
                                         android:layout_gravity="end|center_vertical"

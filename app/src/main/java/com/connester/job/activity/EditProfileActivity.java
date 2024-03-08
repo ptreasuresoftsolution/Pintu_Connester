@@ -1,8 +1,14 @@
 package com.connester.job.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,7 +40,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     TextView userFullName_txt, user_position_tv, user_bio_tv, followers_tv, following_tv;
-    ImageView user_banner_iv, user_pic;
+    ImageView user_banner_iv, user_pic,about_edit;
     MaterialCardView user_banner_edit, back_cv, user_pic_edit;
 
     private void initView() {
@@ -52,5 +58,26 @@ public class EditProfileActivity extends AppCompatActivity {
         user_bio_tv = findViewById(R.id.user_bio_tv);
         followers_tv = findViewById(R.id.followers_tv);
         following_tv = findViewById(R.id.following_tv);
+
+        about_edit = findViewById(R.id.about_edit);
+        about_edit.setOnClickListener(v -> {
+            Dialog dialog = new Dialog(activity, android.R.style.Theme_Translucent_NoTitleBar);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.network_list_menu_dialog);
+            Window window = dialog.getWindow();
+            WindowManager.LayoutParams wlp = window.getAttributes();
+            wlp.gravity = Gravity.CENTER;
+            wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
+            window.setAttributes(wlp);
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            ImageView back_iv = dialog.findViewById(R.id.back_iv);
+            back_iv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        });
     }
 }

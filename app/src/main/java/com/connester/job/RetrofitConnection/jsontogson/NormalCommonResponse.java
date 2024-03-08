@@ -25,4 +25,14 @@ public class NormalCommonResponse {
     @SerializedName("feed_master_id")
     @Expose
     public Integer feedMasterId;
+
+    //job Work experiences
+    @SerializedName("position")
+    @Expose
+    public String position;
+
+    //update profile pic and profile banner
+    @SerializedName("fileName")
+    @Expose
+    public String fileName;
 }
