@@ -1,5 +1,6 @@
 package com.connester.job.RetrofitConnection;
 
+import com.connester.job.RetrofitConnection.jsontogson.EducationListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.GetLinkMetaDataResponse;
@@ -7,9 +8,11 @@ import com.connester.job.RetrofitConnection.jsontogson.JobsEventMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
+import com.connester.job.RetrofitConnection.jsontogson.ProjectListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.SignUpOtpResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserLoginResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
+import com.connester.job.RetrofitConnection.jsontogson.WorkExperienceListResponse;
 
 import java.util.Map;
 
@@ -159,4 +162,13 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getUserClmData")
     Call<UserRowResponse> GET_CLM_DATA_USER_ROW(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/getProjects")
+    Call<ProjectListResponse> PROJECT_LIST(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/getExperience")
+    Call<WorkExperienceListResponse> WORK_EXPERIENCE_LIST(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/getEducation")
+    Call<EducationListResponse> EDUCATION_LIST(@FieldMap Map<String, String> params);
 }

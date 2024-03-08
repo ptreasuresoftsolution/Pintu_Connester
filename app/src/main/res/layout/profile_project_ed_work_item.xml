@@ -19,15 +19,18 @@
             android:layout_gravity="center_vertical">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/item_title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginRight="25dp"
                 android:text="item name"
                 android:textColor="@color/secondary_4"
                 android:textSize="@dimen/small_lg"
                 android:textStyle="bold" />
 
             <ImageView
+                android:id="@+id/item_edit"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="end|center_vertical"
@@ -36,6 +39,7 @@
         </FrameLayout>
 
         <TextView
+            android:id="@+id/item_subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="item subtitle"
@@ -43,6 +47,7 @@
             android:textSize="@dimen/small_xs" />
 
         <TextView
+            android:id="@+id/item_duration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Time Duration"

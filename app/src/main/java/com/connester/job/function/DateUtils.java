@@ -204,4 +204,12 @@ public class DateUtils {
         }
         return 0;
     }
+    public static Calendar toCalendar(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal;
+    }
+    public static Date toDate(Calendar calendar){
+        return calendar.getTime();
+    }
 }

@@ -261,6 +261,7 @@
                                 </FrameLayout>
 
                                 <TextView
+                                    android:id="@+id/about_me_tv"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="10dp"
@@ -308,6 +309,7 @@
                                     </LinearLayout>
 
                                     <ImageView
+                                        android:id="@+id/work_experience_add"
                                         android:layout_width="20dp"
                                         android:layout_height="20dp"
                                         android:layout_gravity="end|center_vertical"
@@ -320,6 +322,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="10dp"
+                                    android:id="@+id/work_experience_ll"
                                     android:orientation="vertical">
 
                                     <include layout="@layout/profile_project_ed_work_item" />
@@ -366,6 +369,7 @@
                                     </LinearLayout>
 
                                     <ImageView
+                                        android:id="@+id/education_add"
                                         android:layout_width="20dp"
                                         android:layout_height="20dp"
                                         android:layout_gravity="end|center_vertical"
@@ -375,6 +379,7 @@
                                 </FrameLayout>
 
                                 <LinearLayout
+                                    android:id="@+id/education_ll"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="10dp"
@@ -424,6 +429,7 @@
                                     </LinearLayout>
 
                                     <ImageView
+                                        android:id="@+id/project_add"
                                         android:layout_width="20dp"
                                         android:layout_height="20dp"
                                         android:layout_gravity="end|center_vertical"
@@ -433,6 +439,7 @@
                                 </FrameLayout>
 
                                 <LinearLayout
+                                    android:id="@+id/project_ll"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="10dp"
@@ -482,6 +489,7 @@
                                     </LinearLayout>
 
                                     <ImageView
+                                        android:id="@+id/skill_edit"
                                         android:layout_width="20dp"
                                         android:layout_height="20dp"
                                         android:layout_gravity="end|center_vertical"
@@ -544,6 +552,7 @@
                                     </LinearLayout>
 
                                     <ImageView
+                                        android:id="@+id/language_edit"
                                         android:layout_width="20dp"
                                         android:layout_height="20dp"
                                         android:layout_gravity="end|center_vertical"

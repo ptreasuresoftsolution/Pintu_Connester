@@ -1404,11 +1404,11 @@ public class FeedsMaster {
         }
     }
 
-    String feedTimeCount(String createDate) {
+    public static String feedTimeCount(String createDate) {
         return feedTimeCount(createDate, DateUtils.TODAYDATETIMEforDB());
     }
 
-    String feedTimeCount(String createDate, String nowDate) {
+    public static String feedTimeCount(String createDate, String nowDate) {
         long year = DateUtils.dateDiff("Y", createDate, nowDate);
         long month = DateUtils.dateDiff("m", createDate, nowDate);
         long days = DateUtils.dateDiff("d", createDate, nowDate);
