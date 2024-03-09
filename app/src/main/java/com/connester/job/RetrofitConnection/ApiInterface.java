@@ -8,10 +8,12 @@ import com.connester.job.RetrofitConnection.jsontogson.JobsEventMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
+import com.connester.job.RetrofitConnection.jsontogson.ProjectItemResponse;
 import com.connester.job.RetrofitConnection.jsontogson.ProjectListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.SignUpOtpResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserLoginResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
+import com.connester.job.RetrofitConnection.jsontogson.WorkExperienceItemResponse;
 import com.connester.job.RetrofitConnection.jsontogson.WorkExperienceListResponse;
 
 import java.util.Map;
@@ -181,13 +183,47 @@ public interface ApiInterface {
     Call<ProjectListResponse> PROJECT_LIST(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/getProjectsItem")
+    Call<ProjectItemResponse> GET_PROJECT_ITEM(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/manageProjects")
+    Call<NormalCommonResponse> PROJECT_ITEM_ADD_EDIT(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/removeProjectsItem")
+    Call<NormalCommonResponse> PROJECT_ITEM_REMOVE(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getExperience")
     Call<WorkExperienceListResponse> WORK_EXPERIENCE_LIST(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/getExperienceItem")
+    Call<WorkExperienceItemResponse> GET_WORK_EXPERIENCE_ITEM(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/manageWorkExperience")
+    Call<NormalCommonResponse> WORK_EXPERIENCE_ITEM_ADD_EDIT(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/removeExperienceItem")
+    Call<NormalCommonResponse> WORK_EXPERIENCE_ITEM_REMOVE(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getEducation")
     Call<EducationListResponse> EDUCATION_LIST(@FieldMap Map<String, String> params);
 
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/getEducationItem")
+    Call<ProjectItemResponse> GET_EDUCATION_ITEM(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/manageEducation")
+    Call<NormalCommonResponse> EDUCATION_ITEM_ADD_EDIT(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/removeEducationItem")
+    Call<NormalCommonResponse> EDUCATION_ITEM_REMOVE(@FieldMap Map<String, String> params);
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getSkillTbl")
     Call<NormalCommonResponse> GET_SKILL_TBL(@FieldMap Map<String, String> params);
@@ -195,4 +231,8 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getLangaugeTbl")
     Call<NormalCommonResponse> GET_LANGUAGE_TBL(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/editProfile")
+    Call<NormalCommonResponse> EDIT_PROFILE_INFO_OR_CLM_ITEM(@FieldMap Map<String, String> params);
 }

@@ -44,6 +44,7 @@
         app:strokeWidth="0dp">
 
         <EditText
+            android:id="@+id/edit_bio_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
@@ -59,6 +60,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/save_mbtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"

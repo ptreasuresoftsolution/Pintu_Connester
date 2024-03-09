@@ -187,7 +187,151 @@ public class EditProfileActivity extends AppCompatActivity {
         });
     }
 
+    boolean[] selectedLanguage;
+    List<Integer> languageList = new ArrayList<>();
+
     private void openEditLanguageDialog() {
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.editprofile_language_dialog);
+        setDialogFullScreenSetting(dialog);
+
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        TextView language_selected = dialog.findViewById(R.id.language_selected);
+        if (userDt.language != null)
+            language_selected.setText(userDt.language.replace(",", ", "));
+        CommonFunction.PleaseWaitShow(context);
+        apiInterface.GET_LANGUAGE_TBL(hashMapDefault).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                        if (normalCommonResponse.status) {
+                            selectedLanguage = new boolean[normalCommonResponse.dt.size()];
+                            String LanguageDt[] = new String[normalCommonResponse.dt.size()];
+                            String dt[] = normalCommonResponse.dt.toArray(LanguageDt);
+                            if (userDt.language != null)
+                                for (String skill : userDt.language.split(",")) {
+                                    int ind = normalCommonResponse.dt.indexOf(skill);
+                                    if (ind > 0) {
+                                        selectedSkill[ind - 1] = true;
+                                    }
+                                }
+                            language_selected.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    // Initialize alert dialog
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                    // set title
+                                    builder.setTitle("Select Language");
+                                    // set dialog non cancelable
+                                    builder.setCancelable(false);
+
+                                    builder.setMultiChoiceItems(dt, selectedLanguage, new DialogInterface.OnMultiChoiceClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                                            // check condition
+                                            if (b) {
+                                                // when checkbox selected
+                                                // Add position  in lang list
+                                                languageList.add(i);
+                                                // Sort array list
+                                                Collections.sort(languageList);
+                                            } else {
+                                                // when checkbox unselected
+                                                // Remove position from langList
+                                                languageList.remove(Integer.valueOf(i));
+                                            }
+                                        }
+                                    });
+
+                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            // Initialize string builder
+                                            StringBuilder stringBuilder = new StringBuilder();
+                                            // use for loop
+                                            for (int j = 0; j < languageList.size(); j++) {
+                                                // concat array value
+                                                stringBuilder.append(dt[languageList.get(j)]);
+                                                // check condition
+                                                if (j != languageList.size() - 1) {
+                                                    // When j value  not equal
+                                                    // to lang list size - 1
+                                                    // add comma
+                                                    stringBuilder.append(", ");
+                                                }
+                                            }
+                                            // set text on textView
+                                            language_selected.setText(stringBuilder.toString());
+                                        }
+                                    });
+
+                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            // dismiss dialog
+                                            dialogInterface.dismiss();
+                                        }
+                                    });
+                                    builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            // use for loop
+                                            for (int j = 0; j < selectedLanguage.length; j++) {
+                                                // remove all selection
+                                                selectedLanguage[j] = false;
+                                            }
+                                            // clear language list
+                                            languageList.clear();
+                                            // clear text view value
+                                            language_selected.setText("");
+                                        }
+                                    });
+                                    // show dialog
+                                    builder.show();
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        });
+
+        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
+        save_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+            hashMap.put("key", "language");
+            hashMap.put("val", language_selected.getText().toString().replace(", ", ","));
+            hashMap.put("update", "single");
+
+            apiInterface.EDIT_PROFILE_INFO_OR_CLM_ITEM(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
+        dialog.show();
     }
 
     boolean[] selectedSkill;
@@ -197,7 +341,7 @@ public class EditProfileActivity extends AppCompatActivity {
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.editprofile_skills_dialog);
-        setFullScreenSetting(dialog);
+        setDialogFullScreenSetting(dialog);
 
         ImageView back_iv = dialog.findViewById(R.id.back_iv);
         back_iv.setOnClickListener(v -> {
@@ -205,7 +349,8 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
         TextView skills_selected = dialog.findViewById(R.id.skills_selected);
-        skills_selected.setText(userDt.skill);
+        if (userDt.skill != null)
+            skills_selected.setText(userDt.skill.replace(",", ", "));
         CommonFunction.PleaseWaitShow(context);
         apiInterface.GET_SKILL_TBL(hashMapDefault).enqueue(new MyApiCallback() {
             @Override
@@ -218,12 +363,13 @@ public class EditProfileActivity extends AppCompatActivity {
                             selectedSkill = new boolean[normalCommonResponse.dt.size()];
                             String skillDt[] = new String[normalCommonResponse.dt.size()];
                             String dt[] = normalCommonResponse.dt.toArray(skillDt);
-                            for (String skill : userDt.skill.split(",")) {
-                                int ind = normalCommonResponse.dt.indexOf(skill);
-                                if (ind>0){
-                                    selectedSkill[ind-1] = true;
+                            if (userDt.skill != null)
+                                for (String skill : userDt.skill.split(",")) {
+                                    int ind = normalCommonResponse.dt.indexOf(skill);
+                                    if (ind > 0) {
+                                        selectedSkill[ind - 1] = true;
+                                    }
                                 }
-                            }
                             skills_selected.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -266,7 +412,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                                     // When j value  not equal
                                                     // to lang list size - 1
                                                     // add comma
-                                                    stringBuilder.append(",");
+                                                    stringBuilder.append(", ");
                                                 }
                                             }
                                             // set text on textView
@@ -304,6 +450,34 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             }
         });
+
+        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
+        save_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+            hashMap.put("key", "skill");
+            hashMap.put("val", skills_selected.getText().toString().replace(", ", ","));
+            hashMap.put("update", "single");
+
+            apiInterface.EDIT_PROFILE_INFO_OR_CLM_ITEM(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
         dialog.show();
     }
 
@@ -324,16 +498,54 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void editWorkExperienceDialog(String userExperienceId) {
+
     }
 
     private void openEditAboutDialog() {
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.editprofile_about_me_dialog);
+        setDialogFullScreenSetting(dialog);
+
+        EditText edit_bio_et = dialog.findViewById(R.id.edit_bio_et);
+        if (userDt.bio != null)
+            edit_bio_et.setText(userDt.bio);
+        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
+        save_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+            hashMap.put("key", "bio");
+            hashMap.put("val", edit_bio_et.getText().toString());
+            hashMap.put("update", "single");
+            apiInterface.EDIT_PROFILE_INFO_OR_CLM_ITEM(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
     }
+
+    String gender = "Male";
+    Calendar birthDateCalendar;
 
     private void openEditInfoDialog() {
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.editprofile_info_dialog);
-        setFullScreenSetting(dialog);
+        setDialogFullScreenSetting(dialog);
 
         ImageView back_iv = dialog.findViewById(R.id.back_iv);
         back_iv.setOnClickListener(v -> {
@@ -341,10 +553,19 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
         EditText fullname_input = dialog.findViewById(R.id.fullname_input);
+        if (userDt.name != null)
+            fullname_input.setText(userDt.name);
         EditText phone_number_input = dialog.findViewById(R.id.phone_number_input);
+        if (userDt.mainPhone != null)
+            phone_number_input.setText(userDt.mainPhone);
+
         EditText date_birth_input = dialog.findViewById(R.id.date_birth_input);
-        date_birth_input.setText(DateUtils.getStringDate("yyyy-MM-dd", "dd-MMM-yyyy", userDt.birthDate));
-        Calendar birthDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", userDt.birthDate));
+        date_birth_input.setText(DateUtils.getStringDate("yyyy-MM-dd", "dd-MMM-yyyy", DateUtils.TODAYDATEforDB()));
+        birthDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        if (userDt.birthDate != null) {
+            date_birth_input.setText(DateUtils.getStringDate("yyyy-MM-dd", "dd-MMM-yyyy", userDt.birthDate));
+            birthDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", userDt.birthDate));
+        }
         date_birth_input.setOnClickListener(v -> {
             new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
                 birthDateCalendar.set(Calendar.YEAR, year);
@@ -355,15 +576,56 @@ public class EditProfileActivity extends AppCompatActivity {
             }, birthDateCalendar.get(Calendar.YEAR), birthDateCalendar.get(Calendar.MONTH), birthDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
         });
 
+        RadioButton male_rb = dialog.findViewById(R.id.male_rb);
+        male_rb.setChecked(true);
+        gender = male_rb.getText().toString();
+        RadioButton female_rb = dialog.findViewById(R.id.female_rb);
+        if (userDt.gender != null && userDt.gender.equalsIgnoreCase("female")) {
+            female_rb.setChecked(true);
+            gender = female_rb.getText().toString();
+        }
         RadioGroup radio_group_gender = dialog.findViewById(R.id.radio_group_gender);
         radio_group_gender.setOnCheckedChangeListener((group, checkedId) -> {
             RadioButton radioButton = group.findViewById(checkedId);
-            Toast.makeText(context, radioButton.getText().toString(), Toast.LENGTH_LONG).show();
+            gender = radioButton.getText().toString();
         });
-        EditText city_input = dialog.findViewById(R.id.city_input);
-        EditText country_region_input = dialog.findViewById(R.id.country_region_input);
-        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
 
+        EditText city_input = dialog.findViewById(R.id.city_input);
+        if (userDt.city != null)
+            city_input.setText(userDt.city);
+        EditText country_region_input = dialog.findViewById(R.id.country_region_input);
+        if (userDt.countryRegion != null)
+            country_region_input.setText(userDt.countryRegion);
+        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
+        save_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+            hashMap.put("name", fullname_input.getText().toString());
+            hashMap.put("birth_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", date_birth_input.getText().toString()));
+            hashMap.put("main_phone", phone_number_input.getText().toString());
+            hashMap.put("gender", gender);
+            hashMap.put("city", city_input.getText().toString());
+            hashMap.put("country_region", country_region_input.getText().toString());
+            hashMap.put("update", "ac-setting");
+            apiInterface.EDIT_PROFILE_INFO_OR_CLM_ITEM(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
 
         dialog.show();
     }
@@ -522,7 +784,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
 
-    private void setFullScreenSetting(Dialog dialog) {
+    private void setDialogFullScreenSetting(Dialog dialog) {
         Window window = dialog.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.gravity = Gravity.CENTER;

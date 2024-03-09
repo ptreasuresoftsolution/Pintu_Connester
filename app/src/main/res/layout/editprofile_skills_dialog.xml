@@ -47,9 +47,14 @@
             android:id="@+id/skills_selected"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:backgroundTint="@android:color/transparent"
-            android:gravity="start"
+            android:gravity="center_vertical"
             android:hint="Add Skills known"
+            android:paddingLeft="4dp"
+            android:paddingTop="4dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="4dp"
             android:textSize="@dimen/small_lg" />
     </com.google.android.material.card.MaterialCardView>
 
@@ -58,6 +63,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/save_mbtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
