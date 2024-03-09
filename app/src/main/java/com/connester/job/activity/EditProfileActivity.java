@@ -130,10 +130,10 @@ public class EditProfileActivity extends AppCompatActivity {
                 builder.setType(MultipartBody.FORM)
                         .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
                         .addFormDataPart("apiKey", "RBqtNuh+0qdrKn+Bb9WafA==")
-                        .addFormDataPart("clmNm", "profile_pic")
+                        .addFormDataPart("clmNm", "profile_banner")
                         .addFormDataPart("old_pic", userDt.profilePic);
 
-                builder.addFormDataPart("profile_banner", imgFile.getName(),
+                builder.addFormDataPart("profile_img", imgFile.getName(),
                         RequestBody.create(MediaType.parse(FilePath.getMimeType(imgFile)), imgFile));
                 RequestBody body = builder.build();
                 CommonFunction.PleaseWaitShowMessage("Please wait, data upload on server...");
@@ -240,6 +240,7 @@ public class EditProfileActivity extends AppCompatActivity {
             LinearLayout share_profile_option_LL = profileOptionDialog.findViewById(R.id.share_profile_option_LL);
             share_profile_option_LL.setVisibility(View.VISIBLE);
             share_profile_option_LL.setOnClickListener(v1 -> {
+                profileOptionDialog.dismiss();
                 Intent intent = new Intent(context, MessageActivity.class);
                 intent.putExtra("action", "pick");
                 intent.putExtra("message", Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/profile/" + userDt.profileLink);
@@ -248,11 +249,13 @@ public class EditProfileActivity extends AppCompatActivity {
             LinearLayout web_portfolio_option_LL = profileOptionDialog.findViewById(R.id.web_portfolio_option_LL);
             web_portfolio_option_LL.setVisibility(View.VISIBLE);
             web_portfolio_option_LL.setOnClickListener(v1 -> {
+                profileOptionDialog.dismiss();
                 startActivity(new Intent(context, ShowPortfolioApplyJobActivity.class));
             });
             LinearLayout edit_profile_option_LL = profileOptionDialog.findViewById(R.id.edit_profile_option_LL);
             edit_profile_option_LL.setVisibility(View.VISIBLE);
             edit_profile_option_LL.setOnClickListener(v1 -> {
+                profileOptionDialog.dismiss();
                 openEditInfoDialog();
             });
 
@@ -446,6 +449,7 @@ public class EditProfileActivity extends AppCompatActivity {
     boolean[] selectedSkill;
     List<Integer> skillList = new ArrayList<>();
 
+    //selection proper not working and default select also proper not working (Both: Skill / language)
     private void openEditSkillDialog() {
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -899,7 +903,7 @@ public class EditProfileActivity extends AppCompatActivity {
             dialog.dismiss();
         });
         TextView title = dialog.findViewById(R.id.title);
-        title.setText("Add a education");
+        title.setText("Edit a education");
 
         EditText degree_input = dialog.findViewById(R.id.degree_input);
         EditText university_input = dialog.findViewById(R.id.university_input);
@@ -981,7 +985,7 @@ public class EditProfileActivity extends AppCompatActivity {
             HashMap hashMapRemove = new HashMap();
             hashMapRemove.put("user_master_id", sessionPref.getUserMasterId());
             hashMapRemove.put("apiKey", sessionPref.getApiKey());
-            hashMapSelect.put("user_education_id", userEducationId);
+            hashMapRemove.put("user_education_id", userEducationId);
 
             apiInterface.EDUCATION_ITEM_REMOVE(hashMapRemove).enqueue(new MyApiCallback() {
                 @Override
@@ -1123,7 +1127,7 @@ public class EditProfileActivity extends AppCompatActivity {
             dialog.dismiss();
         });
         TextView title = dialog.findViewById(R.id.title);
-        title.setText("Add a work experience");
+        title.setText("Edit a work experience");
 
         EditText job_title = dialog.findViewById(R.id.job_title);
         EditText company_et = dialog.findViewById(R.id.company_et);
@@ -1204,7 +1208,7 @@ public class EditProfileActivity extends AppCompatActivity {
             HashMap hashMapRemove = new HashMap();
             hashMapRemove.put("user_master_id", sessionPref.getUserMasterId());
             hashMapRemove.put("apiKey", sessionPref.getApiKey());
-            hashMapSelect.put("user_experience_id", userExperienceId);
+            hashMapRemove.put("user_experience_id", userExperienceId);
 
             apiInterface.WORK_EXPERIENCE_ITEM_REMOVE(hashMapRemove).enqueue(new MyApiCallback() {
                 @Override
@@ -1235,6 +1239,7 @@ public class EditProfileActivity extends AppCompatActivity {
             hashMap.put("end_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", end_date_et.getText().toString()));
             hashMap.put("is_current_company", is_current_company.isChecked() ? "1" : "0");
             hashMap.put("job_desc", description_et.getText().toString());
+            hashMap.put("user_experience_id", userExperienceId);
             apiInterface.WORK_EXPERIENCE_ITEM_ADD_EDIT(hashMap).enqueue(new MyApiCallback() {
                 @Override
                 public void onResponse(Call call, Response response) {

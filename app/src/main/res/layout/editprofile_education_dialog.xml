@@ -137,6 +137,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:gravity="center_vertical"
             android:hint="dd-MMM-YYYY"
             android:singleLine="true"
@@ -164,6 +168,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:gravity="center_vertical"
             android:hint="dd-MMM-YYYY"
             android:singleLine="true"
@@ -206,11 +214,11 @@
         android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/remove_mbtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginRight="3dp"
-            android:id="@+id/remove_mbtn"
             android:layout_weight="1"
             android:backgroundTint="@color/secondary_2"
             android:text="Remove"
@@ -218,10 +226,10 @@
             app:cornerRadius="8dp" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/save_mbtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:id="@+id/save_mbtn"
             android:layout_marginLeft="3dp"
             android:layout_weight="1"
             android:backgroundTint="@color/primary"
