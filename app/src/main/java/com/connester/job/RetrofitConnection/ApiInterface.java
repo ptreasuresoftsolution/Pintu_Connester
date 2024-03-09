@@ -235,4 +235,7 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/editProfile")
     Call<NormalCommonResponse> EDIT_PROFILE_INFO_OR_CLM_ITEM(@FieldMap Map<String, String> params);
+
+    @POST(PRE_FIX + "UserMange/changeProfilePic")
+    Call<NormalCommonResponse> EDIT_PROFILE_CHANGE_PROFILE_PIC_BANNER(@Body RequestBody body);
 }

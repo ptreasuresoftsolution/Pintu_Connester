@@ -24,6 +24,7 @@
             app:tint="@color/secondary_4" />
 
         <TextView
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -51,10 +52,11 @@
         app:strokeWidth="0dp">
 
         <EditText
+            android:id="@+id/degree_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
-            android:gravity="start"
+            android:gravity="center_vertical"
             android:hint="Ex: 12th/Bcom/Mcom"
             android:singleLine="true"
             android:textSize="@dimen/small_lg" />
@@ -77,10 +79,11 @@
         app:strokeWidth="0dp">
 
         <EditText
+            android:id="@+id/university_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
-            android:gravity="start"
+            android:gravity="center_vertical"
             android:hint="Ex: Oxford University"
             android:singleLine="true"
             android:textSize="@dimen/small_lg" />
@@ -103,10 +106,11 @@
         app:strokeWidth="0dp">
 
         <EditText
+            android:id="@+id/most_subject_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
-            android:gravity="start"
+            android:gravity="center_vertical"
             android:hint="Ex: Commerce"
             android:singleLine="true"
             android:textSize="@dimen/small_lg" />
@@ -129,10 +133,11 @@
         app:strokeWidth="0dp">
 
         <EditText
+            android:id="@+id/start_date_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
-            android:gravity="start"
+            android:gravity="center_vertical"
             android:hint="dd-MMM-YYYY"
             android:singleLine="true"
             android:textSize="@dimen/small_lg" />
@@ -155,10 +160,11 @@
         app:strokeWidth="0dp">
 
         <EditText
+            android:id="@+id/end_date_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
-            android:gravity="start"
+            android:gravity="center_vertical"
             android:hint="dd-MMM-YYYY"
             android:singleLine="true"
             android:textSize="@dimen/small_lg" />
@@ -181,6 +187,7 @@
         app:strokeWidth="0dp">
 
         <EditText
+            android:id="@+id/description_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
@@ -203,6 +210,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginRight="3dp"
+            android:id="@+id/remove_mbtn"
             android:layout_weight="1"
             android:backgroundTint="@color/secondary_2"
             android:text="Remove"
@@ -213,6 +221,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:id="@+id/save_mbtn"
             android:layout_marginLeft="3dp"
             android:layout_weight="1"
             android:backgroundTint="@color/primary"

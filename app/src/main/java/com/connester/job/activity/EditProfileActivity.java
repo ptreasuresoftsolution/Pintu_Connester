@@ -7,12 +7,15 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,20 +24,27 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
+import com.connester.job.RetrofitConnection.jsontogson.EducationItemResponse;
 import com.connester.job.RetrofitConnection.jsontogson.EducationListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
+import com.connester.job.RetrofitConnection.jsontogson.ProjectItemResponse;
 import com.connester.job.RetrofitConnection.jsontogson.ProjectListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
+import com.connester.job.RetrofitConnection.jsontogson.WorkExperienceItemResponse;
 import com.connester.job.RetrofitConnection.jsontogson.WorkExperienceListResponse;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.DateUtils;
+import com.connester.job.function.FilePath;
+import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
@@ -44,6 +54,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -51,6 +62,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import id.zelory.compressor.Compressor;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -73,7 +88,6 @@ public class EditProfileActivity extends AppCompatActivity {
         sessionPref = new SessionPref(context);
         userMaster = new UserMaster(context);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
-
         initView();
         setData();
     }
@@ -85,6 +99,8 @@ public class EditProfileActivity extends AppCompatActivity {
     LinearLayout work_experience_ll, education_ll, project_ll;
     MaterialButton post_activity_mbtn, inbox_open_mbtn, setting_open_mbtn;
 
+    ActivityResultLauncher activityResultLauncherForProfilePic, activityResultLauncherForProfileBanner;
+
     private void initView() {
         hashMapDefault.put("user_master_id", sessionPref.getUserMasterId());
         hashMapDefault.put("apiKey", sessionPref.getApiKey());
@@ -95,14 +111,107 @@ public class EditProfileActivity extends AppCompatActivity {
             onBackPressed();
         });
         user_banner_iv = findViewById(R.id.user_banner_iv);
+        activityResultLauncherForProfileBanner = registerForActivityResult(new ActivityResultContracts.GetContent(), photoUri -> {
+            CommonFunction.PleaseWaitShow(context);
+            CommonFunction.PleaseWaitShowMessage("Files is compressing...");
+            try {
+                File pFile = new File(FilePath.getPath2(context, photoUri));
+                File imgFile = new Compressor(context)
+                        .setMaxWidth(1080)
+                        .setMaxWidth(800)
+                        .setQuality(50)
+                        .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                        .setDestinationDirectoryPath(context.getFilesDir().getAbsolutePath())
+                        .compressToFile(pFile);
+                Log.e(LogTag.TMP_LOG, "Path :" + imgFile.getAbsolutePath());
+
+                CommonFunction.PleaseWaitShowMessage("Files is compressed completed");
+                MultipartBody.Builder builder = new MultipartBody.Builder();
+                builder.setType(MultipartBody.FORM)
+                        .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
+                        .addFormDataPart("apiKey", "RBqtNuh+0qdrKn+Bb9WafA==")
+                        .addFormDataPart("clmNm", "profile_pic")
+                        .addFormDataPart("old_pic", userDt.profilePic);
+
+                builder.addFormDataPart("profile_banner", imgFile.getName(),
+                        RequestBody.create(MediaType.parse(FilePath.getMimeType(imgFile)), imgFile));
+                RequestBody body = builder.build();
+                CommonFunction.PleaseWaitShowMessage("Please wait, data upload on server...");
+                apiInterface.EDIT_PROFILE_CHANGE_PROFILE_PIC_BANNER(body).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status) {
+                                    setData();
+                                }
+                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.e(LogTag.EXCEPTION, "Image Compress Exception", e);
+            }
+        });
         user_banner_edit = findViewById(R.id.user_banner_edit);
         user_banner_edit.setOnClickListener(v -> {
-            //open photo picker and upload banner api call
+            activityResultLauncherForProfileBanner.launch(("image/*"));
         });
+
         user_pic = findViewById(R.id.user_pic);
+        activityResultLauncherForProfilePic = registerForActivityResult(new ActivityResultContracts.GetContent(), photoUri -> {
+            CommonFunction.PleaseWaitShow(context);
+            CommonFunction.PleaseWaitShowMessage("Files is compressing...");
+            try {
+                File pFile = new File(FilePath.getPath2(context, photoUri));
+                File imgFile = new Compressor(context)
+                        .setMaxWidth(1080)
+                        .setMaxWidth(800)
+                        .setQuality(50)
+                        .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                        .setDestinationDirectoryPath(context.getFilesDir().getAbsolutePath())
+                        .compressToFile(pFile);
+                Log.e(LogTag.TMP_LOG, "Path :" + imgFile.getAbsolutePath());
+
+                CommonFunction.PleaseWaitShowMessage("Files is compressed completed");
+                MultipartBody.Builder builder = new MultipartBody.Builder();
+                builder.setType(MultipartBody.FORM)
+                        .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
+                        .addFormDataPart("apiKey", "RBqtNuh+0qdrKn+Bb9WafA==")
+                        .addFormDataPart("clmNm", "profile_pic")
+                        .addFormDataPart("old_pic", userDt.profilePic);
+
+                builder.addFormDataPart("profile_img", imgFile.getName(),
+                        RequestBody.create(MediaType.parse(FilePath.getMimeType(imgFile)), imgFile));
+                RequestBody body = builder.build();
+                CommonFunction.PleaseWaitShowMessage("Please wait, data upload on server...");
+                apiInterface.EDIT_PROFILE_CHANGE_PROFILE_PIC_BANNER(body).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status) {
+                                    setData();
+                                }
+                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.e(LogTag.EXCEPTION, "Image Compress Exception", e);
+            }
+        });
         user_pic_edit = findViewById(R.id.user_pic_edit);
         user_pic_edit.setOnClickListener(v -> {
-            //open photo picker and upload pic api call
+            activityResultLauncherForProfilePic.launch(("image/*"));
         });
 
         userFullName_txt = findViewById(R.id.userFullName_txt);
@@ -481,24 +590,670 @@ public class EditProfileActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    Calendar startDateCalendar, endDateCalendar;
+
     private void openAddProjectDialog() {
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.editprofile_project_dialog);
+        setDialogFullScreenSetting(dialog);
+
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        TextView title = dialog.findViewById(R.id.title);
+        title.setText("Add a project");
+        EditText project_nm_et = dialog.findViewById(R.id.project_nm_et);
+        EditText company_et = dialog.findViewById(R.id.company_et);
+
+        EditText start_date_et = dialog.findViewById(R.id.start_date_et);
+        startDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        start_date_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                startDateCalendar.set(Calendar.YEAR, year);
+                startDateCalendar.set(Calendar.MONTH, month);
+                startDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date birthDate = DateUtils.toDate(startDateCalendar);
+                start_date_et.setText(DateUtils.getStringDate("dd-MMM-yyyy", birthDate));
+            }, startDateCalendar.get(Calendar.YEAR), startDateCalendar.get(Calendar.MONTH), startDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        EditText end_date_et = dialog.findViewById(R.id.end_date_et);
+        endDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        end_date_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                endDateCalendar.set(Calendar.YEAR, year);
+                endDateCalendar.set(Calendar.MONTH, month);
+                endDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date birthDate = DateUtils.toDate(endDateCalendar);
+                end_date_et.setText(DateUtils.getStringDate("dd-MMM-yyyy", birthDate));
+            }, endDateCalendar.get(Calendar.YEAR), endDateCalendar.get(Calendar.MONTH), endDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        EditText description_et = dialog.findViewById(R.id.description_et);
+
+        MaterialButton remove_mbtn = dialog.findViewById(R.id.remove_mbtn);
+        remove_mbtn.setVisibility(View.GONE);
+        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
+        save_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+            hashMap.put("project_name", project_nm_et.getText().toString());
+            hashMap.put("company_name", company_et.getText().toString());
+            hashMap.put("start_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", start_date_et.getText().toString()));
+            hashMap.put("end_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", end_date_et.getText().toString()));
+            hashMap.put("project_desc", description_et.getText().toString());
+            apiInterface.PROJECT_ITEM_ADD_EDIT(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
+
+        dialog.show();
     }
 
     private void editProjectDialog(String userProjectId) {
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.editprofile_project_dialog);
+        setDialogFullScreenSetting(dialog);
 
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        TextView title = dialog.findViewById(R.id.title);
+        title.setText("Edit a project");
+        EditText project_nm_et = dialog.findViewById(R.id.project_nm_et);
+        EditText company_et = dialog.findViewById(R.id.company_et);
+
+        EditText start_date_et = dialog.findViewById(R.id.start_date_et);
+        startDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        start_date_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                startDateCalendar.set(Calendar.YEAR, year);
+                startDateCalendar.set(Calendar.MONTH, month);
+                startDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date birthDate = DateUtils.toDate(startDateCalendar);
+                start_date_et.setText(DateUtils.getStringDate("dd-MMM-yyyy", birthDate));
+            }, startDateCalendar.get(Calendar.YEAR), startDateCalendar.get(Calendar.MONTH), startDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        EditText end_date_et = dialog.findViewById(R.id.end_date_et);
+        endDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        end_date_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                endDateCalendar.set(Calendar.YEAR, year);
+                endDateCalendar.set(Calendar.MONTH, month);
+                endDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date birthDate = DateUtils.toDate(endDateCalendar);
+                end_date_et.setText(DateUtils.getStringDate("dd-MMM-yyyy", birthDate));
+            }, endDateCalendar.get(Calendar.YEAR), endDateCalendar.get(Calendar.MONTH), endDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        EditText description_et = dialog.findViewById(R.id.description_et);
+
+        //set project data
+        CommonFunction.PleaseWaitShow(context);
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+        hashMap.put("apiKey", sessionPref.getApiKey());
+        hashMap.put("user_project_id", userProjectId);
+        hashMap.put("device", "ANDROID");
+        apiInterface.GET_PROJECT_ITEM(hashMap).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        ProjectItemResponse projectItemResponse = (ProjectItemResponse) response.body();
+                        if (projectItemResponse.status) {
+                            if (projectItemResponse.dt.projectName != null)
+                                project_nm_et.setText(projectItemResponse.dt.projectName);
+
+                            if (projectItemResponse.dt.companyName != null)
+                                company_et.setText(projectItemResponse.dt.companyName);
+
+                            if (projectItemResponse.dt.startDate != null) {
+                                start_date_et.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd-MMM-yyyy", projectItemResponse.dt.startDate));
+                                startDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", projectItemResponse.dt.startDate));
+                            }
+                            if (projectItemResponse.dt.endDate != null) {
+                                end_date_et.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd-MMM-yyyy", projectItemResponse.dt.endDate));
+                                endDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", projectItemResponse.dt.endDate));
+                            }
+
+                            if (projectItemResponse.dt.projectDesc != null)
+                                description_et.setText(projectItemResponse.dt.projectDesc);
+                        } else {
+                            Toast.makeText(context, projectItemResponse.msg, Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    }
+                }
+            }
+        });
+
+        MaterialButton remove_mbtn = dialog.findViewById(R.id.remove_mbtn);
+        remove_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMapRemove = new HashMap();
+            hashMapRemove.put("user_master_id", sessionPref.getUserMasterId());
+            hashMapRemove.put("apiKey", sessionPref.getApiKey());
+            hashMapRemove.put("user_project_id", userProjectId);
+
+            apiInterface.PROJECT_ITEM_REMOVE(hashMapRemove).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
+        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
+        save_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMapEdit = new HashMap();
+            hashMapEdit.put("user_master_id", sessionPref.getUserMasterId());
+            hashMapEdit.put("apiKey", sessionPref.getApiKey());
+            hashMapEdit.put("project_name", project_nm_et.getText().toString());
+            hashMapEdit.put("company_name", company_et.getText().toString());
+            hashMapEdit.put("start_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", start_date_et.getText().toString()));
+            hashMapEdit.put("end_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", end_date_et.getText().toString()));
+            hashMapEdit.put("project_desc", description_et.getText().toString());
+            hashMapEdit.put("user_project_id", userProjectId);
+
+            apiInterface.PROJECT_ITEM_ADD_EDIT(hashMapEdit).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
+
+        dialog.show();
     }
 
     private void openAddEducationDialog() {
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.editprofile_education_dialog);
+        setDialogFullScreenSetting(dialog);
+
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        TextView title = dialog.findViewById(R.id.title);
+        title.setText("Add a education");
+
+        EditText degree_input = dialog.findViewById(R.id.degree_input);
+        EditText university_input = dialog.findViewById(R.id.university_input);
+        EditText most_subject_input = dialog.findViewById(R.id.most_subject_input);
+
+        EditText start_date_et = dialog.findViewById(R.id.start_date_et);
+        startDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        start_date_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                startDateCalendar.set(Calendar.YEAR, year);
+                startDateCalendar.set(Calendar.MONTH, month);
+                startDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date birthDate = DateUtils.toDate(startDateCalendar);
+                start_date_et.setText(DateUtils.getStringDate("dd-MMM-yyyy", birthDate));
+            }, startDateCalendar.get(Calendar.YEAR), startDateCalendar.get(Calendar.MONTH), startDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        EditText end_date_et = dialog.findViewById(R.id.end_date_et);
+        endDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        end_date_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                endDateCalendar.set(Calendar.YEAR, year);
+                endDateCalendar.set(Calendar.MONTH, month);
+                endDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date birthDate = DateUtils.toDate(endDateCalendar);
+                end_date_et.setText(DateUtils.getStringDate("dd-MMM-yyyy", birthDate));
+            }, endDateCalendar.get(Calendar.YEAR), endDateCalendar.get(Calendar.MONTH), endDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        EditText description_et = dialog.findViewById(R.id.description_et);
+
+        MaterialButton remove_mbtn = dialog.findViewById(R.id.remove_mbtn);
+        remove_mbtn.setVisibility(View.GONE);
+        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
+        save_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+            hashMap.put("degree", degree_input.getText().toString());
+            hashMap.put("school_institute_uni", university_input.getText().toString());
+            hashMap.put("study_field", most_subject_input.getText().toString());
+            hashMap.put("start_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", start_date_et.getText().toString()));
+            hashMap.put("end_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", end_date_et.getText().toString()));
+            hashMap.put("edu_desc", description_et.getText().toString());
+            apiInterface.EDUCATION_ITEM_ADD_EDIT(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
+
+        dialog.show();
     }
 
     private void editEducationDialog(String userEducationId) {
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.editprofile_education_dialog);
+        setDialogFullScreenSetting(dialog);
+
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        TextView title = dialog.findViewById(R.id.title);
+        title.setText("Add a education");
+
+        EditText degree_input = dialog.findViewById(R.id.degree_input);
+        EditText university_input = dialog.findViewById(R.id.university_input);
+        EditText most_subject_input = dialog.findViewById(R.id.most_subject_input);
+
+        EditText start_date_et = dialog.findViewById(R.id.start_date_et);
+        startDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        start_date_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                startDateCalendar.set(Calendar.YEAR, year);
+                startDateCalendar.set(Calendar.MONTH, month);
+                startDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date birthDate = DateUtils.toDate(startDateCalendar);
+                start_date_et.setText(DateUtils.getStringDate("dd-MMM-yyyy", birthDate));
+            }, startDateCalendar.get(Calendar.YEAR), startDateCalendar.get(Calendar.MONTH), startDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        EditText end_date_et = dialog.findViewById(R.id.end_date_et);
+        endDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        end_date_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                endDateCalendar.set(Calendar.YEAR, year);
+                endDateCalendar.set(Calendar.MONTH, month);
+                endDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date birthDate = DateUtils.toDate(endDateCalendar);
+                end_date_et.setText(DateUtils.getStringDate("dd-MMM-yyyy", birthDate));
+            }, endDateCalendar.get(Calendar.YEAR), endDateCalendar.get(Calendar.MONTH), endDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        EditText description_et = dialog.findViewById(R.id.description_et);
+
+        //set education data
+        CommonFunction.PleaseWaitShow(context);
+        HashMap hashMapSelect = new HashMap();
+        hashMapSelect.put("user_master_id", sessionPref.getUserMasterId());
+        hashMapSelect.put("apiKey", sessionPref.getApiKey());
+        hashMapSelect.put("user_education_id", userEducationId);
+        hashMapSelect.put("device", "ANDROID");
+        apiInterface.GET_EDUCATION_ITEM(hashMapSelect).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        EducationItemResponse educationItemResponse = (EducationItemResponse) response.body();
+                        if (educationItemResponse.status) {
+                            if (educationItemResponse.dt.degree != null)
+                                degree_input.setText(educationItemResponse.dt.degree);
+
+                            if (educationItemResponse.dt.schoolInstituteUni != null)
+                                university_input.setText(educationItemResponse.dt.schoolInstituteUni);
+
+                            if (educationItemResponse.dt.studyField != null)
+                                most_subject_input.setText(educationItemResponse.dt.studyField);
+
+                            if (educationItemResponse.dt.startDate != null) {
+                                start_date_et.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd-MMM-yyyy", educationItemResponse.dt.startDate));
+                                startDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", educationItemResponse.dt.startDate));
+                            }
+                            if (educationItemResponse.dt.endDate != null) {
+                                end_date_et.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd-MMM-yyyy", educationItemResponse.dt.endDate));
+                                endDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", educationItemResponse.dt.endDate));
+                            }
+
+                            if (educationItemResponse.dt.eduDesc != null)
+                                description_et.setText(educationItemResponse.dt.eduDesc);
+                        } else {
+                            Toast.makeText(context, educationItemResponse.msg, Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    }
+                }
+            }
+        });
+
+        MaterialButton remove_mbtn = dialog.findViewById(R.id.remove_mbtn);
+        remove_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMapRemove = new HashMap();
+            hashMapRemove.put("user_master_id", sessionPref.getUserMasterId());
+            hashMapRemove.put("apiKey", sessionPref.getApiKey());
+            hashMapSelect.put("user_education_id", userEducationId);
+
+            apiInterface.EDUCATION_ITEM_REMOVE(hashMapRemove).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
+        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
+        save_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+            hashMap.put("degree", degree_input.getText().toString());
+            hashMap.put("school_institute_uni", university_input.getText().toString());
+            hashMap.put("study_field", most_subject_input.getText().toString());
+            hashMap.put("start_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", start_date_et.getText().toString()));
+            hashMap.put("end_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", end_date_et.getText().toString()));
+            hashMap.put("edu_desc", description_et.getText().toString());
+            hashMap.put("user_education_id", userEducationId);
+            apiInterface.EDUCATION_ITEM_ADD_EDIT(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
+
+        dialog.show();
     }
 
     private void openAddWorkExperienceDialog() {
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.editprofile_work_experiences_dialog);
+        setDialogFullScreenSetting(dialog);
+
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        TextView title = dialog.findViewById(R.id.title);
+        title.setText("Add a work experience");
+
+        EditText job_title = dialog.findViewById(R.id.job_title);
+        EditText company_et = dialog.findViewById(R.id.company_et);
+
+        EditText start_date_et = dialog.findViewById(R.id.start_date_et);
+        startDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        start_date_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                startDateCalendar.set(Calendar.YEAR, year);
+                startDateCalendar.set(Calendar.MONTH, month);
+                startDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date birthDate = DateUtils.toDate(startDateCalendar);
+                start_date_et.setText(DateUtils.getStringDate("dd-MMM-yyyy", birthDate));
+            }, startDateCalendar.get(Calendar.YEAR), startDateCalendar.get(Calendar.MONTH), startDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        EditText end_date_et = dialog.findViewById(R.id.end_date_et);
+        endDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        end_date_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                endDateCalendar.set(Calendar.YEAR, year);
+                endDateCalendar.set(Calendar.MONTH, month);
+                endDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date birthDate = DateUtils.toDate(endDateCalendar);
+                end_date_et.setText(DateUtils.getStringDate("dd-MMM-yyyy", birthDate));
+            }, endDateCalendar.get(Calendar.YEAR), endDateCalendar.get(Calendar.MONTH), endDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+        CheckBox is_current_company = dialog.findViewById(R.id.is_current_company);
+
+        EditText description_et = dialog.findViewById(R.id.description_et);
+
+        MaterialButton remove_mbtn = dialog.findViewById(R.id.remove_mbtn);
+        remove_mbtn.setVisibility(View.GONE);
+        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
+        save_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+            hashMap.put("job_title", job_title.getText().toString());
+            hashMap.put("job_company", company_et.getText().toString());
+            hashMap.put("start_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", start_date_et.getText().toString()));
+            hashMap.put("end_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", end_date_et.getText().toString()));
+            hashMap.put("is_current_company", is_current_company.isChecked() ? "1" : "0");
+            hashMap.put("job_desc", description_et.getText().toString());
+            apiInterface.WORK_EXPERIENCE_ITEM_ADD_EDIT(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
+
+        dialog.show();
     }
 
     private void editWorkExperienceDialog(String userExperienceId) {
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.editprofile_work_experiences_dialog);
+        setDialogFullScreenSetting(dialog);
 
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        TextView title = dialog.findViewById(R.id.title);
+        title.setText("Add a work experience");
+
+        EditText job_title = dialog.findViewById(R.id.job_title);
+        EditText company_et = dialog.findViewById(R.id.company_et);
+
+        EditText start_date_et = dialog.findViewById(R.id.start_date_et);
+        startDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        start_date_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                startDateCalendar.set(Calendar.YEAR, year);
+                startDateCalendar.set(Calendar.MONTH, month);
+                startDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date birthDate = DateUtils.toDate(startDateCalendar);
+                start_date_et.setText(DateUtils.getStringDate("dd-MMM-yyyy", birthDate));
+            }, startDateCalendar.get(Calendar.YEAR), startDateCalendar.get(Calendar.MONTH), startDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        EditText end_date_et = dialog.findViewById(R.id.end_date_et);
+        endDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        end_date_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                endDateCalendar.set(Calendar.YEAR, year);
+                endDateCalendar.set(Calendar.MONTH, month);
+                endDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date birthDate = DateUtils.toDate(endDateCalendar);
+                end_date_et.setText(DateUtils.getStringDate("dd-MMM-yyyy", birthDate));
+            }, endDateCalendar.get(Calendar.YEAR), endDateCalendar.get(Calendar.MONTH), endDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+        CheckBox is_current_company = dialog.findViewById(R.id.is_current_company);
+
+        EditText description_et = dialog.findViewById(R.id.description_et);
+        //set work experience data
+        CommonFunction.PleaseWaitShow(context);
+        HashMap hashMapSelect = new HashMap();
+        hashMapSelect.put("user_master_id", sessionPref.getUserMasterId());
+        hashMapSelect.put("apiKey", sessionPref.getApiKey());
+        hashMapSelect.put("user_experience_id", userExperienceId);
+        hashMapSelect.put("device", "ANDROID");
+        apiInterface.GET_WORK_EXPERIENCE_ITEM(hashMapSelect).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        WorkExperienceItemResponse workExperienceItemResponse = (WorkExperienceItemResponse) response.body();
+                        if (workExperienceItemResponse.status) {
+                            if (workExperienceItemResponse.dt.jobTitle != null)
+                                job_title.setText(workExperienceItemResponse.dt.jobTitle);
+
+                            if (workExperienceItemResponse.dt.jobCompany != null)
+                                company_et.setText(workExperienceItemResponse.dt.jobCompany);
+
+                            if (workExperienceItemResponse.dt.startDate != null) {
+                                start_date_et.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd-MMM-yyyy", workExperienceItemResponse.dt.startDate));
+                                startDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", workExperienceItemResponse.dt.startDate));
+                            }
+                            if (workExperienceItemResponse.dt.endDate != null) {
+                                end_date_et.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd-MMM-yyyy", workExperienceItemResponse.dt.endDate));
+                                endDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", workExperienceItemResponse.dt.endDate));
+                            }
+
+                            if (workExperienceItemResponse.dt.isCurrentCompany != null && workExperienceItemResponse.dt.isCurrentCompany.equals("1"))
+                                is_current_company.setChecked(true);
+
+                            if (workExperienceItemResponse.dt.jobDesc != null)
+                                description_et.setText(workExperienceItemResponse.dt.jobDesc);
+                        } else {
+                            Toast.makeText(context, workExperienceItemResponse.msg, Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    }
+                }
+            }
+        });
+
+        MaterialButton remove_mbtn = dialog.findViewById(R.id.remove_mbtn);
+        remove_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMapRemove = new HashMap();
+            hashMapRemove.put("user_master_id", sessionPref.getUserMasterId());
+            hashMapRemove.put("apiKey", sessionPref.getApiKey());
+            hashMapSelect.put("user_experience_id", userExperienceId);
+
+            apiInterface.WORK_EXPERIENCE_ITEM_REMOVE(hashMapRemove).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
+        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
+        save_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+            hashMap.put("job_title", job_title.getText().toString());
+            hashMap.put("job_company", company_et.getText().toString());
+            hashMap.put("start_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", start_date_et.getText().toString()));
+            hashMap.put("end_date", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", end_date_et.getText().toString()));
+            hashMap.put("is_current_company", is_current_company.isChecked() ? "1" : "0");
+            hashMap.put("job_desc", description_et.getText().toString());
+            apiInterface.WORK_EXPERIENCE_ITEM_ADD_EDIT(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
+
+        dialog.show();
     }
 
     private void openEditAboutDialog() {
@@ -536,6 +1291,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             });
         });
+        dialog.show();
     }
 
     String gender = "Male";
