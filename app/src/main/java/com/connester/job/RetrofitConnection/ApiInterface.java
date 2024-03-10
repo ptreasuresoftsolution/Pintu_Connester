@@ -5,6 +5,7 @@ import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.GetLinkMetaDataResponse;
 import com.connester.job.RetrofitConnection.jsontogson.JobsEventMasterResponse;
+import com.connester.job.RetrofitConnection.jsontogson.MyPagesListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
@@ -101,6 +102,7 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/homeFeedsJson")
     Call<FeedsMasterResponse> HOME_FEEDS_LIST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedMasterJson")
     Call<FeedsMasterResponse> FEED_MASTER_JSON_LIST(@FieldMap Map<String, String> params);
@@ -212,6 +214,7 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/removeExperienceItem")
     Call<NormalCommonResponse> WORK_EXPERIENCE_ITEM_REMOVE(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getEducation")
     Call<EducationListResponse> EDUCATION_LIST(@FieldMap Map<String, String> params);
@@ -227,6 +230,7 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/removeEducationItem")
     Call<NormalCommonResponse> EDUCATION_ITEM_REMOVE(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getSkillTbl")
     Call<NormalCommonResponse> GET_SKILL_TBL(@FieldMap Map<String, String> params);
@@ -241,4 +245,11 @@ public interface ApiInterface {
 
     @POST(PRE_FIX + "UserMange/changeProfilePic")
     Call<NormalCommonResponse> EDIT_PROFILE_CHANGE_PROFILE_PIC_BANNER(@Body RequestBody body);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/getMyPages")
+    Call<MyPagesListResponse> GET_MY_PAGES_LIST(@FieldMap Map<String, String> params);
+
+    @POST(PRE_FIX + "UserMange/mangeMyBusinessPage")
+    Call<NormalCommonResponse> PAGE_CREATE_MANAGE_CALL(@Body RequestBody body);
 }

@@ -28,6 +28,10 @@ public class NormalCommonResponse {
     @SerializedName("feed_master_id")
     @Expose
     public Integer feedMasterId;
+    //Business page create / edit submit
+    @SerializedName("business_page_id")
+    @Expose
+    public Integer businessPageId;
 
     //job Work experiences
     @SerializedName("position")

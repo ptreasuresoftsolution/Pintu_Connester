@@ -40,6 +40,9 @@
         tools:ignore="HardcodedDebugMode"
         tools:targetApi="s">
         <activity
+            android:name=".activity.businesspage.ManageMyPageActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.ShowPortfolioApplyJobActivity"
             android:exported="false" />
         <activity
@@ -55,15 +58,14 @@
             android:name=".activity.MyCommunityActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.BusinessPageActivity"
+            android:name=".activity.businesspage.BusinessPageActivity"
             android:exported="false" />
         <activity
             android:name=".activity.Activity_Activity"
             android:exported="false" />
         <activity
             android:name=".activity.UserMenuActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".activity.JobsEvents_Activity"
             android:exported="false" />
@@ -93,9 +95,7 @@
             android:exported="false" />
         <activity
             android:name=".activity.EditProfileActivity"
-            android:exported="false">
-
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".activity.StepActivity"
             android:exported="false" />
@@ -127,7 +127,6 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

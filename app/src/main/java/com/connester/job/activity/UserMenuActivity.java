@@ -20,6 +20,7 @@ import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
+import com.connester.job.activity.businesspage.BusinessPageActivity;
 import com.connester.job.activity.mysaveditem.MySavedItemActivity;
 import com.connester.job.activity.settingActivity.Blocking_PersonActivity;
 import com.connester.job.activity.settingActivity.ChangePasswordActivity;

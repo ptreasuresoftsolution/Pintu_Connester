@@ -236,9 +236,14 @@ public class FeedsMaster {
     ScrollView scrollView;
     public String feedListBy = "common";
     String feedForForward = "USER";
+    String feedForIdForward = "0";
 
     public void setFeedForForward(String feedForForward) {
         this.feedForForward = feedForForward;
+    }
+
+    public void setFeedForIdForward(String feedForIdForward) {
+        this.feedForIdForward = feedForIdForward;
     }
 
     long totalRow = 0;
@@ -1123,7 +1128,7 @@ public class FeedsMaster {
                         hashMap.put("apiKey", sessionPref.getApiKey());
                         hashMap.put("feed_master_id", feedsRow.feedMasterId);
                         hashMap.put("feed_for", feedForForward);
-                        hashMap.put("feed_for_id", feedForId);
+                        hashMap.put("feed_for_id", feedForIdForward);
                         apiInterface.FEEDS_SHARE_FORWARD(hashMap).enqueue(new MyApiCallback() {
                             @Override
                             public void onResponse(Call call, Response response) {

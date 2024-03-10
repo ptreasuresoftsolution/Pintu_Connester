@@ -1507,7 +1507,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
 
-    private void setDialogFullScreenSetting(Dialog dialog) {
+    public static void setDialogFullScreenSetting(Dialog dialog) {
         Window window = dialog.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.gravity = Gravity.CENTER;

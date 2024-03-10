@@ -1344,7 +1344,7 @@ public class NetworkActivity extends AppCompatActivity {
 
     //connectReqUsersMaster / connectUsers / followReqUsers / followerUsers / followingUsers / userCommunitys / userBusinessPages / userEvents /
     //suggestedCityUser / suggestedIndustryUser / suggestedGroup / suggestedBusPages
-    enum SeeAllFnName {
+    public static enum SeeAllFnName {
         connectReqUsersMaster("connectReqUsersMaster"), connectUsers("connectUsers"), followReqUsers("followReqUsers"), followerUsers("followerUsers"), followingUsers("followingUsers"), userCommunitys("userCommunitys"), userBusinessPages("userBusinessPages"), userEvents("userEvents"), suggestedCityUser("suggestedCityUser"), suggestedIndustryUser("suggestedIndustryUser"), suggestedGroup("suggestedGroup"), suggestedBusPages("suggestedBusPages");
         String val;
 
