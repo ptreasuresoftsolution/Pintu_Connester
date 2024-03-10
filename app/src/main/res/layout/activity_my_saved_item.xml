@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             app:tabGravity="fill"
-            android:background="#2DFFFFFF"
+            android:background="@color/default_white"
             app:tabTextAppearance="@style/TextAppearance.AppCompat.Subhead"
             app:tabIndicatorFullWidth="true"
             app:tabIndicatorHeight="1.5dp">
