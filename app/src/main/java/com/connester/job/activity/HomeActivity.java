@@ -48,8 +48,9 @@ public class HomeActivity extends AppCompatActivity {
 
 
         feedsMaster = new FeedsMaster(context, activity);
-        feedsMaster.setNeedCloseBtn(true);
+        feedsMaster.setChkClose(true);
         feedsMaster.setProgressBar(progressBar);
+        feedsMaster.setFeedForForward("USER");
         feedsMaster.loadHomeFeeds(feeds_mainList, scrollView);
 
         setTopBottomBar.setTopBar();

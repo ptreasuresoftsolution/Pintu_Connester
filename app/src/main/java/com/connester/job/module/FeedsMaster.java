@@ -87,27 +87,140 @@ public class FeedsMaster {
     LayoutInflater layoutInflater;
     SessionPref sessionPref;
     UserRowResponse.Dt loginUserRow;
-    boolean isNeedCloseBtn = true;
 
     String imgPath = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/upload/images/auto/"; //overwrite on api call
     String feedImgPath = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/upload/images/feeds/"; //overwrite on api call
 
-    String feedFor = "USER";//USER/COMMUNITY/BUSINESS
-    String feedForId = "0";
+    //master call define ----------- start -------//
+    String feedsIds = "";//get some of feeds with ids(pass 1,2,3,4)
+    String feedForId = "-1";//Feed for value send then use the id of feed_for
+    String feedFor = "";//USER/COMMUNITY/BUSINESS(accept only one)
+    String tblName = "";//MEDIA/EVENT/JOB/POST(accept Single and multiple with comma)
+    boolean isChkClose = true;//check with user close feeds(not include in json) true/false
+    String extraWhr = "";//pass special whr in sql syntax(passWith Base64Encode)
+    int start = 0;//start list (0/10/20/30 Like pagenation);
+    int limitGap = 5;//sepecific page limit
 
-    public void setNeedCloseBtn(boolean needCloseBtn) {
-        isNeedCloseBtn = needCloseBtn;
+    public void setFeedFor(String feedFor) {
+        this.feedFor = feedFor;
     }
+
+    public void setFeedForId(String feedForId) {
+        this.feedForId = feedForId;
+    }
+
+    public void setFeedsIds(String feedsIds) {
+        this.feedsIds = feedsIds;
+    }
+
+    public void setTblName(String tblName) {
+        this.tblName = tblName;
+    }
+
+    public void setChkClose(boolean chkClose) {
+        isChkClose = chkClose;
+    }
+
+    public void setExtraWhr(String extraWhr) {
+        this.extraWhr = extraWhr;
+    }
+
+    public void setStart(int start) {
+        this.start = start;
+    }
+
+    public void setLimitGap(int limitGap) {
+        this.limitGap = limitGap;
+    }
+
+    public void loadFeedMaster(LinearLayout mainLinearLayout, ScrollView scrollView) {
+        this.mainLinearLayout = mainLinearLayout;
+        this.scrollView = scrollView;
+        //pagination
+        this.scrollView = CommonFunction.OnScrollSetBottomListener(scrollView, new ScrollBottomListener() {
+            @Override
+            public void onScrollBottom() {
+                if (mainLinearLayout.getChildCount() > 0) {
+                    //set loading check
+                    if (start < totalRow) {
+                        callFeedMaster();
+                    }
+                }
+            }
+        });
+        //video play/pause
+        this.scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                for (FeedStorage feedStorage : feedsViews) {
+                    if (feedStorage.isVideoFeeds) {
+                        if (feedStorage.styledPlayerView.getTag().equals("play")) {
+                            if (CommonFunction.verticallyTopBottomShowInView(mainLinearLayout.getChildAt(feedStorage.viewIndex), scrollView.getScrollY(), context)) {
+                                Log.e(LogTag.TMP_LOG, "PLAY " + feedStorage.feedsRow.feedMasterId);
+                                if (!feedStorage.player.isPlaying() && !feedStorage.player.isLoading()) {
+                                    feedStorage.player.play();
+                                    feedStorage.styledPlayerView.hideController();
+                                }
+                            } else {
+                                Log.e(LogTag.TMP_LOG, "PAUSE " + feedStorage.feedsRow.feedMasterId);
+                                if (feedStorage.player != null && feedStorage.player.isPlaying()) {
+                                    feedStorage.player.pause();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        resetList();
+        callFeedMaster();
+    }
+
+    private void callFeedMaster() {
+        if (isLoading) return;
+        isLoading = true;
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        else CommonFunction.PleaseWaitShow(context);
+
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+        hashMap.put("apiKey", sessionPref.getApiKey());
+        Toast.makeText(context, "feedsIds " + feedsIds, Toast.LENGTH_SHORT).show();
+        hashMap.put("feedsIds", feedsIds);
+        hashMap.put("feed_for_id", feedForId);
+        hashMap.put("feed_for", feedFor);
+        hashMap.put("tbl_name", tblName);
+        hashMap.put("isChkClose", isChkClose);
+        hashMap.put("extraWhr", extraWhr);
+        hashMap.put("start", start);
+        hashMap.put("limitGap", limitGap);
+        apiInterface.FEED_MASTER_JSON_LIST(hashMap).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                isLoading = false;
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        FeedsMasterResponse feedsMasterResponse = (FeedsMasterResponse) response.body();
+                        if (feedsMasterResponse.status) {
+                            imgPath = feedsMasterResponse.imgPath;
+                            feedImgPath = feedsMasterResponse.feedImgPath;
+                            totalRow = Long.parseLong(feedsMasterResponse.totalRow);
+                            Toast.makeText(context, "Row " + totalRow, Toast.LENGTH_SHORT).show();
+                            start += limitGap;
+                            listToView(feedsMasterResponse.feedsRows);
+                        } else
+                            Toast.makeText(context, feedsMasterResponse.msg, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+    }
+    //master call define ----------- End -------//
 
     public FeedsMaster(Context context, Activity activity) {
-        this(context, activity, "USER", "0");
-    }
-
-    public FeedsMaster(Context context, Activity activity, String feedFor, String feedForId) {
         this.context = context;
         this.activity = activity;
-        this.feedFor = feedFor;
-        this.feedForId = feedForId;
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
         sessionPref = new SessionPref(context);
         loginUserRow = sessionPref.getUserMasterRowInObject();
@@ -120,10 +233,15 @@ public class FeedsMaster {
     LinearLayout mainLinearLayout;
     ScrollView scrollView;
     String feedListBy = "common";
-    int start = 0, pageLimit = 5;
+    String feedForForward = "USER";
+
+    public void setFeedForForward(String feedForForward) {
+        this.feedForForward = feedForForward;
+    }
+
     long totalRow = 0;
     int viewIndex = 0;
-    boolean isLoading = false;
+    boolean isLoading = false, loadOnSavePage = false;
     View progressBar;
 
     public void setProgressBar(View progressBar) {
@@ -194,9 +312,9 @@ public class FeedsMaster {
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
         hashMap.put("tbl_name", "MEDIA,POST");
-        hashMap.put("isChkClose", isNeedCloseBtn);
+        hashMap.put("isChkClose", isChkClose);
         hashMap.put("type", "home");
-        hashMap.put("limitGap", pageLimit);
+        hashMap.put("limitGap", limitGap);
         hashMap.put("start", start);
         apiInterface.HOME_FEEDS_LIST(hashMap).enqueue(new MyApiCallback() {
             @Override
@@ -210,7 +328,7 @@ public class FeedsMaster {
                             imgPath = feedsMasterResponse.imgPath;
                             feedImgPath = feedsMasterResponse.feedImgPath;
                             totalRow = Long.parseLong(feedsMasterResponse.totalRow);
-                            start += pageLimit;
+                            start += limitGap;
                             listToView(feedsMasterResponse.feedsRows);
                         } else
                             Toast.makeText(context, feedsMasterResponse.msg, Toast.LENGTH_SHORT).show();
@@ -220,9 +338,6 @@ public class FeedsMaster {
         });
     }
 
-    public void callCommonFeeds() {
-
-    }
 
     public void callSuggestedJobsEventsFeeds(LinearLayout mainLinearLayout, ScrollView scrollView) {
         this.mainLinearLayout = mainLinearLayout;
@@ -408,8 +523,8 @@ public class FeedsMaster {
     public View getFeedsPhotoView(FeedsRow feedsRow) {
         View view = layoutInflater.inflate(R.layout.feeds_photos_layout, null);
         view.setTag(feedsRow.feedMasterId);
-        setFeedsTitleCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
-        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        setFeedsTitleCommon(view, loginUserRow, feedsRow, isChkClose);
+        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isChkClose);
         TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
         feeds_content_txt.setText(feedsRow.tblMediaPost.ptTitle);
 
@@ -424,8 +539,8 @@ public class FeedsMaster {
     public View getFeedsMultiplePhotosView(FeedsRow feedsRow) {
         View view = layoutInflater.inflate(R.layout.feeds_multi_photos_layout, null);
         view.setTag(feedsRow.feedMasterId);
-        setFeedsTitleCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
-        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        setFeedsTitleCommon(view, loginUserRow, feedsRow, isChkClose);
+        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isChkClose);
         TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
         feeds_content_txt.setText(feedsRow.tblMediaPost.ptTitle);
         //set multiple images
@@ -484,8 +599,8 @@ public class FeedsMaster {
     public View getFeedsVideoView(FeedsRow feedsRow) {
         View view = layoutInflater.inflate(R.layout.feeds_video_layout, null);
         view.setTag(feedsRow.feedMasterId);
-        setFeedsTitleCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
-        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        setFeedsTitleCommon(view, loginUserRow, feedsRow, isChkClose);
+        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isChkClose);
         TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
         feeds_content_txt.setText(feedsRow.tblMediaPost.ptTitle);
         //set player
@@ -528,8 +643,8 @@ public class FeedsMaster {
     public View getFeedsContentView(FeedsRow feedsRow) {
         View view = layoutInflater.inflate(R.layout.feeds_content_layout, null);
         view.setTag(feedsRow.feedMasterId);
-        setFeedsTitleCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
-        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        setFeedsTitleCommon(view, loginUserRow, feedsRow, isChkClose);
+        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isChkClose);
         TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
         feeds_content_txt.setText(feedsRow.tblTextPost.ptTitle);
         return view;
@@ -538,8 +653,8 @@ public class FeedsMaster {
     public View getFeedsContentLinkView(FeedsRow feedsRow) {
         View view = layoutInflater.inflate(R.layout.feeds_content_link_layout, null);
         view.setTag(feedsRow.feedMasterId);
-        setFeedsTitleCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
-        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        setFeedsTitleCommon(view, loginUserRow, feedsRow, isChkClose);
+        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isChkClose);
         TextView feeds_content_txt = view.findViewById(R.id.feeds_content_txt);
         feeds_content_txt.setText(feedsRow.tblTextPost.ptTitle);
 
@@ -585,8 +700,8 @@ public class FeedsMaster {
     public View getFeedsLinkView(FeedsRow feedsRow) {
         View view = layoutInflater.inflate(R.layout.feeds_link_layout, null);
         view.setTag(feedsRow.feedMasterId);
-        setFeedsTitleCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
-        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isNeedCloseBtn);
+        setFeedsTitleCommon(view, loginUserRow, feedsRow, isChkClose);
+        setFeedsLikeCommentShareCommon(view, loginUserRow, feedsRow, isChkClose);
 
         String linkMetaArr = feedsRow.tblTextPost.ptHashDesc;
 //        String linkMetaArr = "{\"link\":\"https://getbootstrap.com/\",
@@ -1002,7 +1117,7 @@ public class FeedsMaster {
                         hashMap.put("user_master_id", sessionPref.getUserMasterId());
                         hashMap.put("apiKey", sessionPref.getApiKey());
                         hashMap.put("feed_master_id", feedsRow.feedMasterId);
-                        hashMap.put("feed_for", feedFor);
+                        hashMap.put("feed_for", feedForForward);
                         hashMap.put("feed_for_id", feedForId);
                         apiInterface.FEEDS_SHARE_FORWARD(hashMap).enqueue(new MyApiCallback() {
                             @Override
@@ -1269,6 +1384,9 @@ public class FeedsMaster {
                                                 feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
                                             } else {
                                                 feed_save_unsave_icon.setImageResource(R.drawable.feed_save_blank);
+                                                if (loadOnSavePage) {
+                                                    removeFeedsInList(view);
+                                                }
                                             }
                                             feedsOptionDialog.dismiss();
                                         } else
@@ -1354,7 +1472,7 @@ public class FeedsMaster {
             if (feedListBy.equalsIgnoreCase("home")) {
                 callHomeFeeds();
             } else {
-                callCommonFeeds();
+                callFeedMaster();
             }
         } else {
             //optional add feeds on top

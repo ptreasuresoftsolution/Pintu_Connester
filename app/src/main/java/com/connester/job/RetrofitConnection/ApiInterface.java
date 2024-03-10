@@ -101,6 +101,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/homeFeedsJson")
     Call<FeedsMasterResponse> HOME_FEEDS_LIST(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/feedMasterJson")
+    Call<FeedsMasterResponse> FEED_MASTER_JSON_LIST(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "Network/networkDefaultData")
