@@ -20,6 +20,7 @@ import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
+import com.connester.job.activity.mysaveditem.MySavedItemActivity;
 import com.connester.job.activity.settingActivity.Blocking_PersonActivity;
 import com.connester.job.activity.settingActivity.ChangePasswordActivity;
 import com.connester.job.function.CommonFunction;
@@ -191,6 +192,7 @@ public class UserMenuActivity extends AppCompatActivity {
         Switch notification_onoff_switch = findViewById(R.id.notification_onoff_switch);
         notification_onoff_switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             //call code function for notification on / off
+            sessionPref.setNotificationOFF(true);
         });
 
         privacy_ll = findViewById(R.id.privacy_ll);

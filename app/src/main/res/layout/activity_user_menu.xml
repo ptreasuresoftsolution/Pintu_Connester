@@ -346,6 +346,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/bell_notification"
+                        android:drawablePadding="10dp"
                         android:text="Notification"
                         android:textColor="@color/secondary_3"
                         android:textSize="@dimen/small" />
@@ -397,6 +399,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/shield_privacy"
+                        android:drawablePadding="10dp"
                         android:text="Privacy"
                         android:textColor="@color/secondary_3"
                         android:textSize="@dimen/small" />
@@ -445,6 +449,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/person_exclamation_user_agreement"
+                        android:drawablePadding="10dp"
                         android:text="User Agreement"
                         android:textColor="@color/secondary_3"
                         android:textSize="@dimen/small" />
@@ -500,6 +506,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/lock_password"
+                        android:drawablePadding="10dp"
                         android:text="Change Password"
                         android:textColor="@color/secondary_3"
                         android:textSize="@dimen/small" />
@@ -548,6 +556,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/person_slash_block_user"
+                        android:drawablePadding="10dp"
                         android:text="Blocked User"
                         android:textColor="@color/secondary_3"
                         android:textSize="@dimen/small" />
@@ -596,6 +606,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/log_out"
+                        android:drawablePadding="10dp"
                         android:text="LogOut all devices"
                         android:textColor="@color/secondary_3"
                         android:textSize="@dimen/small" />
@@ -644,6 +656,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/log_out"
+                        android:drawablePadding="10dp"
                         android:text="LogOut"
                         android:textColor="@color/secondary_3"
                         android:textSize="@dimen/small" />
@@ -694,6 +708,8 @@
                         android:layout_height="wrap_content"
                         android:text="Close account"
                         android:textColor="@color/secondary_3"
+                        android:drawablePadding="10dp"
+                        android:drawableLeft="@drawable/power_close_ac"
                         android:textSize="@dimen/small" />
 
                     <TextView

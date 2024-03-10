@@ -43,7 +43,7 @@
             android:name=".activity.ShowPortfolioApplyJobActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.MySavedItemActivity"
+            android:name=".activity.mysaveditem.MySavedItemActivity"
             android:exported="false" />
         <activity
             android:name=".activity.settingActivity.Blocking_PersonActivity"
@@ -62,7 +62,13 @@
             android:exported="false" />
         <activity
             android:name=".activity.UserMenuActivity"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activity.JobsEvents_Activity"
             android:exported="false" />
@@ -92,12 +98,8 @@
             android:exported="false" />
         <activity
             android:name=".activity.EditProfileActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="false">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activity.StepActivity"
