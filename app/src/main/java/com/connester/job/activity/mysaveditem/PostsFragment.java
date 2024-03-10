@@ -37,8 +37,7 @@ public class PostsFragment extends Fragment {
         feedsMaster.setChkClose(false);
         feedsMaster.setFeedsIds(sessionPref.getUserMasterRowInObject().saveFeeds);
         feedsMaster.setTblName("MEDIA,POST");
-        feedsMaster.setLimitGap(2);//issue in scroll
-        feedsMaster.loadFeedMaster(feeds_save_post_list, scrollView);
+        feedsMaster.loadFeedMaster(feeds_save_post_list, scrollView, 25);
 
         return view;
     }

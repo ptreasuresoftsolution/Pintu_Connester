@@ -419,11 +419,15 @@ public class CommonFunction {
     }
 
     public static ScrollView OnScrollSetBottomListener(final ScrollView scrollView, final ScrollBottomListener scrollBottomListener) {
+        return OnScrollSetBottomListener(scrollView, scrollBottomListener, 0);
+    }
+
+    public static ScrollView OnScrollSetBottomListener(final ScrollView scrollView, final ScrollBottomListener scrollBottomListener, int scrollViewExtraHeight) {
         scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
                 if (scrollView.getChildAt(0).getBottom()
-                        <= (scrollView.getHeight() + scrollView.getScrollY())) {
+                        <= (scrollView.getHeight() + scrollView.getScrollY() + scrollViewExtraHeight)) {
                     //scroll view is at bottom
                     scrollBottomListener.onScrollBottom();
                 }

@@ -11,6 +11,8 @@ import android.widget.ScrollView;
 import androidx.fragment.app.Fragment;
 
 import com.connester.job.R;
+import com.connester.job.function.SessionPref;
+import com.connester.job.module.FeedsMaster;
 
 public class JobFragment extends Fragment {
 
@@ -18,6 +20,8 @@ public class JobFragment extends Fragment {
     LinearLayout feeds_job_list;
     FrameLayout progressBar;
 
+    FeedsMaster feedsMaster;
+    SessionPref sessionPref;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -27,6 +31,15 @@ public class JobFragment extends Fragment {
         scrollView = view.findViewById(R.id.scrollView);
         feeds_job_list = view.findViewById(R.id.feeds_job_list);
         progressBar = view.findViewById(R.id.progressBar);
+
+        sessionPref = new SessionPref(getContext());
+        feedsMaster = new FeedsMaster(getContext(), getActivity());
+        feedsMaster.feedListBy = "SAVED";
+        feedsMaster.setProgressBar(progressBar);
+        feedsMaster.setFeedsIds(sessionPref.getUserMasterRowInObject().saveFeeds);
+        feedsMaster.setTblName("JOB");
+        feedsMaster.setChkClose(false);
+        feedsMaster.loadFeedMaster(feeds_job_list, scrollView, 25);
 
         return view;
     }

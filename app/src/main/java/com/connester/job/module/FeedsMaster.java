@@ -134,6 +134,10 @@ public class FeedsMaster {
     }
 
     public void loadFeedMaster(LinearLayout mainLinearLayout, ScrollView scrollView) {
+        loadFeedMaster(mainLinearLayout, scrollView, 0);
+    }
+
+    public void loadFeedMaster(LinearLayout mainLinearLayout, ScrollView scrollView, int scrollViewExtraHeight) {
         this.mainLinearLayout = mainLinearLayout;
         this.scrollView = scrollView;
         //pagination
@@ -147,7 +151,7 @@ public class FeedsMaster {
                     }
                 }
             }
-        });
+        }, scrollViewExtraHeight);
         //video play/pause
         this.scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
@@ -185,7 +189,6 @@ public class FeedsMaster {
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
-        Toast.makeText(context, "feedsIds " + feedsIds, Toast.LENGTH_SHORT).show();
         hashMap.put("feedsIds", feedsIds);
         hashMap.put("feed_for_id", feedForId);
         hashMap.put("feed_for", feedFor);
@@ -206,7 +209,6 @@ public class FeedsMaster {
                             imgPath = feedsMasterResponse.imgPath;
                             feedImgPath = feedsMasterResponse.feedImgPath;
                             totalRow = Long.parseLong(feedsMasterResponse.totalRow);
-                            Toast.makeText(context, "Row " + totalRow, Toast.LENGTH_SHORT).show();
                             start += limitGap;
                             listToView(feedsMasterResponse.feedsRows);
                         } else
@@ -232,7 +234,7 @@ public class FeedsMaster {
     HashMap<String, StyledPlayerView> styledPlayerViewHashMap = new HashMap<>();
     LinearLayout mainLinearLayout;
     ScrollView scrollView;
-    String feedListBy = "common";
+    public String feedListBy = "common";
     String feedForForward = "USER";
 
     public void setFeedForForward(String feedForForward) {
@@ -919,6 +921,9 @@ public class FeedsMaster {
             }
         });
         ImageView feed_close_icon = view.findViewById(R.id.feed_close_icon);
+        if (!feedListBy.equalsIgnoreCase("JobsEvent") && !isChkClose) {
+            feed_close_icon.setVisibility(View.GONE);
+        }
         feed_close_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1248,7 +1253,7 @@ public class FeedsMaster {
         }
 
         boolean unFollowShow = true;
-        if (feedsRow.userMasterId == loginUserRow.userMasterId && feedsRow.feedFor.equalsIgnoreCase("USER")) {
+        if (feedsRow.userMasterId.equalsIgnoreCase(loginUserRow.userMasterId) && feedsRow.feedFor.equalsIgnoreCase("USER")) {
             unFollowShow = false;
         }
         String unFollowName = feedsProName;
