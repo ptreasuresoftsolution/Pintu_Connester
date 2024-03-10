@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.activity.settingActivity.Blocking_PersonActivity;
 import com.connester.job.activity.settingActivity.ChangePasswordActivity;
 import com.connester.job.function.CommonFunction;
+import com.connester.job.function.Constant;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 
@@ -36,7 +38,7 @@ public class UserMenuActivity extends AppCompatActivity {
     SessionPref sessionPref;
     TextView top_userFullName_txt, userFullName_txt;
     ImageView back_iv, top_user_pic, user_pic;
-    LinearLayout edit_profile_ll, save_item_ll, post_activity_ll, pages_ll, groups_ll, change_password_ll, blocking_person_ll, log_out_all_devices_ll, close_account_ll;
+    LinearLayout edit_profile_ll, save_item_ll, post_activity_ll, pages_ll, groups_ll, change_password_ll, blocking_person_ll, log_out_all_devices_ll, log_out_single_devices_ll, close_account_ll, privacy_ll, user_agreement_ll;
     ApiInterface apiInterface;
 
     @Override
@@ -133,6 +135,13 @@ public class UserMenuActivity extends AppCompatActivity {
                 }
             });
         });
+
+        log_out_single_devices_ll = findViewById(R.id.log_out_single_devices_ll);
+        log_out_single_devices_ll.setOnClickListener(v -> {
+            sessionPref.logOutPref();
+            ActivityCompat.finishAffinity(activity);
+            startActivity(new Intent(context, SplashActivity.class));
+        });
         close_account_ll = findViewById(R.id.close_account_ll);
         close_account_ll.setOnClickListener(v -> {
             //show confirmation dialog and call api
@@ -177,6 +186,23 @@ public class UserMenuActivity extends AppCompatActivity {
                 }
             });
             alertDialog.show();
+        });
+
+        Switch notification_onoff_switch = findViewById(R.id.notification_onoff_switch);
+        notification_onoff_switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            //call code function for notification on / off
+        });
+
+        privacy_ll = findViewById(R.id.privacy_ll);
+        privacy_ll.setOnClickListener(v -> {
+            String urlPrivacy = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/" + "Privacy-Policy";
+            CommonFunction._OpenLink(context, urlPrivacy);
+        });
+
+        user_agreement_ll = findViewById(R.id.user_agreement_ll);
+        user_agreement_ll.setOnClickListener(v -> {
+            String urlUserAgreement = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/" + "User-Agreement";
+            CommonFunction._OpenLink(context, urlUserAgreement);
         });
     }
 }

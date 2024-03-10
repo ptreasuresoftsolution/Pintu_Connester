@@ -56,6 +56,7 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -325,39 +326,32 @@ public class EditProfileActivity extends AppCompatActivity {
                     if (response.body() != null) {
                         NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                         if (normalCommonResponse.status) {
+
                             selectedLanguage = new boolean[normalCommonResponse.dt.size()];
-                            String LanguageDt[] = new String[normalCommonResponse.dt.size()];
-                            String dt[] = normalCommonResponse.dt.toArray(LanguageDt);
+                            String languageDt[] = new String[normalCommonResponse.dt.size()];
+                            String dt[] = normalCommonResponse.dt.toArray(languageDt);
                             if (userDt.language != null)
-                                for (String skill : userDt.language.split(",")) {
-                                    int ind = normalCommonResponse.dt.indexOf(skill);
-                                    if (ind > 0) {
-                                        selectedSkill[ind - 1] = true;
+                                for (String language : userDt.language.split(",")) {
+                                    int ind = normalCommonResponse.dt.indexOf(language);
+                                    if (ind >= 0) {
+                                        selectedLanguage[ind] = true;
+                                        languageList.add(ind);
                                     }
                                 }
                             language_selected.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    // Initialize alert dialog
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                    // set title
-                                    builder.setTitle("Select Language");
-                                    // set dialog non cancelable
+                                    builder.setTitle("Select language");
                                     builder.setCancelable(false);
 
                                     builder.setMultiChoiceItems(dt, selectedLanguage, new DialogInterface.OnMultiChoiceClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                                            // check condition
                                             if (b) {
-                                                // when checkbox selected
-                                                // Add position  in lang list
                                                 languageList.add(i);
-                                                // Sort array list
                                                 Collections.sort(languageList);
                                             } else {
-                                                // when checkbox unselected
-                                                // Remove position from langList
                                                 languageList.remove(Integer.valueOf(i));
                                             }
                                         }
@@ -366,17 +360,10 @@ public class EditProfileActivity extends AppCompatActivity {
                                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                            // Initialize string builder
                                             StringBuilder stringBuilder = new StringBuilder();
-                                            // use for loop
                                             for (int j = 0; j < languageList.size(); j++) {
-                                                // concat array value
                                                 stringBuilder.append(dt[languageList.get(j)]);
-                                                // check condition
                                                 if (j != languageList.size() - 1) {
-                                                    // When j value  not equal
-                                                    // to lang list size - 1
-                                                    // add comma
                                                     stringBuilder.append(", ");
                                                 }
                                             }
@@ -396,13 +383,8 @@ public class EditProfileActivity extends AppCompatActivity {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             // use for loop
-                                            for (int j = 0; j < selectedLanguage.length; j++) {
-                                                // remove all selection
-                                                selectedLanguage[j] = false;
-                                            }
-                                            // clear language list
+                                            Arrays.fill(selectedLanguage, false);
                                             languageList.clear();
-                                            // clear text view value
                                             language_selected.setText("");
                                         }
                                     });
@@ -479,33 +461,25 @@ public class EditProfileActivity extends AppCompatActivity {
                             if (userDt.skill != null)
                                 for (String skill : userDt.skill.split(",")) {
                                     int ind = normalCommonResponse.dt.indexOf(skill);
-                                    if (ind > 0) {
-                                        selectedSkill[ind - 1] = true;
+                                    if (ind >= 0) {
+                                        selectedSkill[ind] = true;
+                                        skillList.add(ind);
                                     }
                                 }
                             skills_selected.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    // Initialize alert dialog
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                    // set title
                                     builder.setTitle("Select Skills");
-                                    // set dialog non cancelable
                                     builder.setCancelable(false);
 
                                     builder.setMultiChoiceItems(dt, selectedSkill, new DialogInterface.OnMultiChoiceClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                                            // check condition
                                             if (b) {
-                                                // when checkbox selected
-                                                // Add position  in lang list
                                                 skillList.add(i);
-                                                // Sort array list
                                                 Collections.sort(skillList);
                                             } else {
-                                                // when checkbox unselected
-                                                // Remove position from langList
                                                 skillList.remove(Integer.valueOf(i));
                                             }
                                         }
@@ -514,17 +488,10 @@ public class EditProfileActivity extends AppCompatActivity {
                                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                            // Initialize string builder
                                             StringBuilder stringBuilder = new StringBuilder();
-                                            // use for loop
                                             for (int j = 0; j < skillList.size(); j++) {
-                                                // concat array value
                                                 stringBuilder.append(dt[skillList.get(j)]);
-                                                // check condition
                                                 if (j != skillList.size() - 1) {
-                                                    // When j value  not equal
-                                                    // to lang list size - 1
-                                                    // add comma
                                                     stringBuilder.append(", ");
                                                 }
                                             }
@@ -544,13 +511,8 @@ public class EditProfileActivity extends AppCompatActivity {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             // use for loop
-                                            for (int j = 0; j < selectedSkill.length; j++) {
-                                                // remove all selection
-                                                selectedSkill[j] = false;
-                                            }
-                                            // clear language list
+                                            Arrays.fill(selectedSkill, false);
                                             skillList.clear();
-                                            // clear text view value
                                             skills_selected.setText("");
                                         }
                                     });

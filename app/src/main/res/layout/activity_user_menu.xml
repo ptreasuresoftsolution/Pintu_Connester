@@ -124,12 +124,11 @@
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:rotationY="180"
-                    android:src="@drawable/arrow_back" />
+                    android:src="@drawable/arrow_right_go" />
             </LinearLayout>
 
             <View
@@ -161,6 +160,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -171,18 +171,19 @@
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:rotationY="180"
-                    android:src="@drawable/arrow_back" />
+                    android:src="@drawable/arrow_right_go" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+
                 android:background="@color/secondary_6" />
+
             <LinearLayout
                 android:id="@+id/post_activity_ll"
                 android:layout_width="match_parent"
@@ -207,6 +208,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -217,16 +219,16 @@
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:rotationY="180"
-                    android:src="@drawable/arrow_back" />
+                    android:src="@drawable/arrow_right_go" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
+
                 android:layout_height="1dp"
                 android:background="@color/secondary_6" />
 
@@ -258,23 +260,24 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
                         android:layout_marginTop="1dp"
+
                         android:gravity="center"
                         android:text="Your created business pages" />
                 </LinearLayout>
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:rotationY="180"
-                    android:src="@drawable/arrow_back" />
+                    android:src="@drawable/arrow_right_go" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+
                 android:background="@color/secondary_6" />
 
             <LinearLayout
@@ -301,6 +304,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -311,17 +315,170 @@
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:rotationY="180"
-                    android:src="@drawable/arrow_back" />
+                    android:src="@drawable/arrow_right_go" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:background="@color/secondary_6" />
+
+            <LinearLayout
+                android:id="@+id/notification_onoff_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Notification"
+                        android:textColor="@color/secondary_3"
+                        android:textSize="@dimen/small" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginTop="1dp"
+                        android:gravity="center"
+                        android:text="Notification on/off in this device"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <Switch
+                    android:id="@+id/notification_onoff_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:checked="true"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:thumbTint="@color/primary"
+                    android:trackTint="@color/primary_dark" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/secondary_6"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/privacy_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Privacy"
+                        android:textColor="@color/secondary_3"
+                        android:textSize="@dimen/small" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginTop="1dp"
+                        android:gravity="center"
+                        android:text="Closing your account means you'll lose update"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:src="@drawable/arrow_right_go" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/secondary_6"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/user_agreement_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="User Agreement"
+                        android:textColor="@color/secondary_3"
+                        android:textSize="@dimen/small" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginTop="1dp"
+                        android:gravity="center"
+                        android:text="Closing your account means you'll lose update"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:src="@drawable/arrow_right_go" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/secondary_6"
+                android:visibility="gone" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="6dp"
                 android:background="@color/secondary_6" />
 
             <LinearLayout
@@ -344,8 +501,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Change Password"
-                        android:textSize="@dimen/label"
-                        android:textStyle="bold" />
+                        android:textColor="@color/secondary_3"
+                        android:textSize="@dimen/small" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -353,23 +510,24 @@
                         android:layout_gravity="bottom"
                         android:layout_marginTop="1dp"
                         android:gravity="center"
-                        android:text="Secure account with logout devices" />
+                        android:text="Secure account with logout devices"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:rotationY="180"
-                    android:src="@drawable/arrow_back" />
+                    android:src="@drawable/arrow_right_go" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/secondary_6" />
+                android:background="@color/secondary_6"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/blocking_person_ll"
@@ -390,9 +548,9 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Blocking"
-                        android:textSize="@dimen/label"
-                        android:textStyle="bold" />
+                        android:text="Blocked User"
+                        android:textColor="@color/secondary_3"
+                        android:textSize="@dimen/small" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -400,23 +558,24 @@
                         android:layout_gravity="bottom"
                         android:layout_marginTop="1dp"
                         android:gravity="center"
-                        android:text="You've blocked the person" />
+                        android:text="You've blocked the person"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:rotationY="180"
-                    android:src="@drawable/arrow_back" />
+                    android:src="@drawable/arrow_right_go" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/secondary_6" />
+                android:background="@color/secondary_6"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/log_out_all_devices_ll"
@@ -438,8 +597,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="LogOut all devices"
-                        android:textSize="@dimen/label"
-                        android:textStyle="bold" />
+                        android:textColor="@color/secondary_3"
+                        android:textSize="@dimen/small" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -447,23 +606,72 @@
                         android:layout_gravity="bottom"
                         android:layout_marginTop="1dp"
                         android:gravity="center"
-                        android:text="Secure all data with all devices logout" />
+                        android:text="Secure all data with all devices logout"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:rotationY="180"
-                    android:src="@drawable/arrow_back" />
+                    android:src="@drawable/arrow_right_go" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/secondary_6" />
+                android:background="@color/secondary_6"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/log_out_single_devices_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="LogOut"
+                        android:textColor="@color/secondary_3"
+                        android:textSize="@dimen/small" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginTop="1dp"
+                        android:gravity="center"
+                        android:text="Secure all data with all devices logout"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:src="@drawable/arrow_right_go" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/secondary_6"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/close_account_ll"
@@ -485,8 +693,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Close account"
-                        android:textSize="@dimen/label"
-                        android:textStyle="bold" />
+                        android:textColor="@color/secondary_3"
+                        android:textSize="@dimen/small" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -494,23 +702,20 @@
                         android:layout_gravity="bottom"
                         android:layout_marginTop="1dp"
                         android:gravity="center"
-                        android:text="Closing your account means you'll lose update" />
+                        android:text="Closing your account means you'll lose update"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:rotationY="180"
-                    android:src="@drawable/arrow_back" />
+                    android:src="@drawable/arrow_right_go" />
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/secondary_6" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
