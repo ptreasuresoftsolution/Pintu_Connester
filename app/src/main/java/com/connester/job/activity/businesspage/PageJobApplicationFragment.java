@@ -6,11 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 import com.connester.job.R;
 
 public class PageJobApplicationFragment extends Fragment {
 
+
+    public PageJobApplicationFragment(String businessPageId, ViewPager view_pager) {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

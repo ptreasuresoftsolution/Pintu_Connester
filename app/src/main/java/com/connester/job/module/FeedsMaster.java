@@ -257,6 +257,8 @@ public class FeedsMaster {
 
     private void resetList() {
         this.mainLinearLayout.removeAllViews();
+        if (mainLinearLayoutChange != null)
+            mainLinearLayoutChange.itemAddEditChange(mainLinearLayout);
         feedsViews.clear();
         playerHashMap.clear();
         styledPlayerViewHashMap.clear();
@@ -403,6 +405,8 @@ public class FeedsMaster {
                             FeedStorage feedStorage = new FeedStorage(frameLayout, viewIndex, null);
                             feedsViews.add(viewIndex, feedStorage);
                             mainLinearLayout.addView(frameLayout, viewIndex);
+                            if (mainLinearLayoutChange != null)
+                                mainLinearLayoutChange.itemAddEditChange(mainLinearLayout);
                             viewIndex++;
                             listToView(jobsEventMasterResponse.feedsRows);
                             if (!seeAll) {
@@ -475,6 +479,8 @@ public class FeedsMaster {
                             FeedStorage feedStorage = new FeedStorage(frameLayout, viewIndex, null);
                             feedsViews.add(viewIndex, feedStorage);
                             mainLinearLayout.addView(frameLayout, viewIndex);
+                            if (mainLinearLayoutChange != null)
+                                mainLinearLayoutChange.itemAddEditChange(mainLinearLayout);
                             viewIndex++;
                             listToView(jobsEventMasterResponse.feedsRows);
                         } else
@@ -525,6 +531,8 @@ public class FeedsMaster {
             feedStorage.setVideoResource(player, styledPlayerView);
         feedsViews.add(vIndex, feedStorage);
         mainLinearLayout.addView(view, vIndex);
+        if (mainLinearLayoutChange != null)
+            mainLinearLayoutChange.itemAddEditChange(mainLinearLayout);
     }
 
     public View getFeedsPhotoView(FeedsRow feedsRow) {
@@ -1524,6 +1532,8 @@ public class FeedsMaster {
                 if (feedStorage.feedsRow.feedMasterId.equalsIgnoreCase(feedMasterId)) {
                     if (mainLinearLayout.getChildAt(feedStorage.viewIndex) != null) {
                         mainLinearLayout.removeViewAt(feedStorage.viewIndex);
+                        if (mainLinearLayoutChange != null)
+                            mainLinearLayoutChange.itemAddEditChange(mainLinearLayout);
                         feedsViews.remove(feedStorage.viewIndex);
                         updateViewIndexInFeedStorage();
                     }
@@ -1577,6 +1587,16 @@ public class FeedsMaster {
             this.styledPlayerView = styledPlayerView;
             isVideoFeeds = true;
         }
+    }
+
+    public interface MainLinearLayoutChange {
+        void itemAddEditChange(LinearLayout linearLayout);
+    }
+
+    MainLinearLayoutChange mainLinearLayoutChange;
+
+    public void setMainLinearLayoutChange(MainLinearLayoutChange mainLinearLayoutChange) {
+        this.mainLinearLayoutChange = mainLinearLayoutChange;
     }
 
     public ArrayList<FeedStorage> getFeedsViews() {

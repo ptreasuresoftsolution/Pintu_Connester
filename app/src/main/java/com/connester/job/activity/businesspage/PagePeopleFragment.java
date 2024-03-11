@@ -7,12 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ScrollView;
 
 import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 import com.connester.job.R;
 
 public class PagePeopleFragment extends Fragment {
-ScrollView scrollView;
-    public PagePeopleFragment(ScrollView scrollView) {
+    ScrollView scrollView;
+
+    public PagePeopleFragment(ScrollView scrollView, String business_page_id, ViewPager view_pager) {
         this.scrollView = scrollView;
     }
 

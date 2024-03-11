@@ -254,6 +254,11 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/getPageDetailsRow")
     Call<BusinessPageRowResponse> BUSINESS_PAGE_ROW(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/closeMyBusinessPageByPageAdminUser")
+    Call<NormalCommonResponse> BUSINESS_PAGE_CLOSED(@FieldMap Map<String, String> params);
+
     @POST(PRE_FIX + "UserMange/mangeMyBusinessPage")
     Call<NormalCommonResponse> PAGE_CREATE_MANAGE_CALL(@Body RequestBody body);
 }

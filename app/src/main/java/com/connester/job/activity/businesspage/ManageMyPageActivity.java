@@ -156,14 +156,15 @@ public class ManageMyPageActivity extends AppCompatActivity {
         tab_layout = findViewById(R.id.tab_layout);
         tab_layout.setupWithViewPager(view_pager);
 
-        fragments.add(new PagePostFragment(scrollView));
+        fragments.add(new PagePostFragment(scrollView, business_page_id, view_pager));
         fragmentsTitle.add("Posts");
-        fragments.add(new PageAnalyticsFragment());
+        fragments.add(new PageAnalyticsFragment(business_page_id, view_pager));
         fragmentsTitle.add("Analytics");
-        fragments.add(new PageJobApplicationFragment());
+        fragments.add(new PageJobApplicationFragment(business_page_id, view_pager));
         fragmentsTitle.add("Job Application");
-        fragments.add(new PagePeopleFragment(scrollView));
+        fragments.add(new PagePeopleFragment(scrollView, business_page_id, view_pager));
         fragmentsTitle.add("People");
+        view_pager.setOffscreenPageLimit(1);
         view_pager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Nullable
             @Override
@@ -190,7 +191,30 @@ public class ManageMyPageActivity extends AppCompatActivity {
         LinearLayout page_close_LL = settingDialog.findViewById(R.id.page_close_LL);
         page_close_LL.setVisibility(View.VISIBLE);
         page_close_LL.setOnClickListener(v -> {
-
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+            hashMap.put("business_page_id", business_page_id);
+            apiInterface.BUSINESS_PAGE_CLOSED(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                Intent intent = new Intent(context, PageDisableActivity.class);
+                                intent.putExtra("business_page_id", business_page_id);
+                                intent.putExtra("BusinessPageRowResponse", new Gson().toJson(businessPageRowResponse));
+                                startActivity(intent);
+                                finish();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
         });
 
         settingDialog.show();
@@ -436,6 +460,7 @@ public class ManageMyPageActivity extends AppCompatActivity {
     }
 
     BusinessPageRowResponse.BusinessPageRow businessPageRow;
+    BusinessPageRowResponse businessPageRowResponse;
     String imgPath = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/upload/images/auto/"; //overwrite on api call
 
     private void setData() {
@@ -452,8 +477,9 @@ public class ManageMyPageActivity extends AppCompatActivity {
                 super.onResponse(call, response);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        BusinessPageRowResponse businessPageRowResponse = (BusinessPageRowResponse) response.body();
+                        businessPageRowResponse = (BusinessPageRowResponse) response.body();
                         if (businessPageRowResponse.status) {
+                            businessPageRow = businessPageRowResponse.businessPageRow;
                             //handling redirect for page is not active
                             if (!businessPageRow.pageStatus.equalsIgnoreCase("ACTIVE")) {
                                 Intent intent = new Intent(context, PageDisableActivity.class);
@@ -462,7 +488,6 @@ public class ManageMyPageActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 finish();
                             } else {
-                                businessPageRow = businessPageRowResponse.businessPageRow;
                                 imgPath = businessPageRowResponse.imgPath;
                                 Glide.with(context).load(imgPath + businessPageRow.banner).centerCrop().placeholder(R.drawable.user_default_banner).into(page_banner_iv);
                                 Glide.with(context).load(imgPath + businessPageRow.logo).centerCrop().placeholder(R.drawable.default_business_pic).into(page_logo_iv);
