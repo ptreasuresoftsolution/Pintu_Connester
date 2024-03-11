@@ -1,5 +1,6 @@
 package com.connester.job.RetrofitConnection;
 
+import com.connester.job.RetrofitConnection.jsontogson.BusinessPageRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.EducationListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
@@ -250,6 +251,9 @@ public interface ApiInterface {
     @POST(PRE_FIX + "Business/getMyPages")
     Call<MyPagesListResponse> GET_MY_PAGES_LIST(@FieldMap Map<String, String> params);
 
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/getPageDetailsRow")
+    Call<BusinessPageRowResponse> BUSINESS_PAGE_ROW(@FieldMap Map<String, String> params);
     @POST(PRE_FIX + "UserMange/mangeMyBusinessPage")
     Call<NormalCommonResponse> PAGE_CREATE_MANAGE_CALL(@Body RequestBody body);
 }

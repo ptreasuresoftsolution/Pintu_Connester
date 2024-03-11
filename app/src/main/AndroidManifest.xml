@@ -40,6 +40,12 @@
         tools:ignore="HardcodedDebugMode"
         tools:targetApi="s">
         <activity
+            android:name=".activity.businesspage.PageEventMangeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.businesspage.PageJobMangeActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.businesspage.ManageMyPageActivity"
             android:exported="false" />
         <activity
@@ -70,7 +76,8 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter></activity>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activity.JobsEvents_Activity"
             android:exported="false" />
@@ -100,7 +107,7 @@
             android:exported="false" />
         <activity
             android:name=".activity.EditProfileActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".activity.StepActivity"
             android:exported="false" />
@@ -131,8 +138,7 @@
             android:name=".activity.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".activity.HomeActivity"
             android:exported="false"
