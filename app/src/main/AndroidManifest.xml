@@ -40,6 +40,9 @@
         tools:ignore="HardcodedDebugMode"
         tools:targetApi="s">
         <activity
+            android:name=".activity.businesspage.PageDisableActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.businesspage.PageEventMangeActivity"
             android:exported="false" />
         <activity

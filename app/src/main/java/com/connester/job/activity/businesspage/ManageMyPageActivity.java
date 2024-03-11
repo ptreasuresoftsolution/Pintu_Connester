@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,9 +40,11 @@ import com.connester.job.function.FilePath;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -146,6 +149,7 @@ public class ManageMyPageActivity extends AppCompatActivity {
         setting_open_mbtn.setOnClickListener(v -> {
             openPageSettingDialog();
         });
+
         setData();
 
         view_pager = findViewById(R.id.view_pager);
@@ -181,6 +185,15 @@ public class ManageMyPageActivity extends AppCompatActivity {
     }
 
     private void openPageSettingDialog() {
+        BottomSheetDialog settingDialog = new BottomSheetDialog(context);
+        settingDialog.setContentView(R.layout.common_option_dialog_layout);
+        LinearLayout page_close_LL = settingDialog.findViewById(R.id.page_close_LL);
+        page_close_LL.setVisibility(View.VISIBLE);
+        page_close_LL.setOnClickListener(v -> {
+
+        });
+
+        settingDialog.show();
     }
 
     ActivityResultLauncher activityResultLauncherForPageBanner, activityResultLauncherForPageLogo;
@@ -274,6 +287,14 @@ public class ManageMyPageActivity extends AppCompatActivity {
                         if (normalCommonResponse.status) {
                             selectedSkill = new boolean[normalCommonResponse.dt.size()];
                             String dt[] = normalCommonResponse.dt.toArray(new String[normalCommonResponse.dt.size()]);
+                            if (businessPageRow.skills != null)
+                                for (String skill : businessPageRow.skills.split(",")) {
+                                    int ind = normalCommonResponse.dt.indexOf(skill);
+                                    if (ind >= 0) {
+                                        selectedSkill[ind] = true;
+                                        skillList.add(ind);
+                                    }
+                                }
                             skills_selected.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -433,18 +454,27 @@ public class ManageMyPageActivity extends AppCompatActivity {
                     if (response.body() != null) {
                         BusinessPageRowResponse businessPageRowResponse = (BusinessPageRowResponse) response.body();
                         if (businessPageRowResponse.status) {
-                            businessPageRow = businessPageRowResponse.businessPageRow;
-                            imgPath = businessPageRowResponse.imgPath;
-                            Glide.with(context).load(imgPath + businessPageRow.banner).centerCrop().placeholder(R.drawable.user_default_banner).into(page_banner_iv);
-                            Glide.with(context).load(imgPath + businessPageRow.logo).centerCrop().placeholder(R.drawable.default_business_pic).into(page_logo_iv);
+                            //handling redirect for page is not active
+                            if (!businessPageRow.pageStatus.equalsIgnoreCase("ACTIVE")) {
+                                Intent intent = new Intent(context, PageDisableActivity.class);
+                                intent.putExtra("business_page_id", business_page_id);
+                                intent.putExtra("BusinessPageRowResponse", new Gson().toJson(businessPageRowResponse));
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                businessPageRow = businessPageRowResponse.businessPageRow;
+                                imgPath = businessPageRowResponse.imgPath;
+                                Glide.with(context).load(imgPath + businessPageRow.banner).centerCrop().placeholder(R.drawable.user_default_banner).into(page_banner_iv);
+                                Glide.with(context).load(imgPath + businessPageRow.logo).centerCrop().placeholder(R.drawable.default_business_pic).into(page_logo_iv);
 
-                            page_title_txt.setText(businessPageRow.busName);
-                            tagline_bio_tv.setText(businessPageRow.bio);
-                            industry_tv.setText(businessPageRow.industry);
-                            address_tv.setText(businessPageRow.address);
-                            founded_yr_tv.setText(businessPageRow.foundedYear);
-                            followers_tv.setText(businessPageRow.members + " followers");
-                            no_employee_tv.setText(businessPageRow.orgSize);
+                                page_title_txt.setText(businessPageRow.busName);
+                                tagline_bio_tv.setText(businessPageRow.bio);
+                                industry_tv.setText(businessPageRow.industry);
+                                address_tv.setText(businessPageRow.address);
+                                founded_yr_tv.setText(businessPageRow.foundedYear);
+                                followers_tv.setText(businessPageRow.members + " followers");
+                                no_employee_tv.setText(businessPageRow.orgSize);
+                            }
                         } else {
                             businessPageRow = null;
                             Toast.makeText(context, businessPageRowResponse.msg, Toast.LENGTH_SHORT).show();
