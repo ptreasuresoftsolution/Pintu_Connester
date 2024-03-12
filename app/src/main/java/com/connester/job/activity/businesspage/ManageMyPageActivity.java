@@ -10,9 +10,9 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -21,12 +21,8 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -67,7 +63,6 @@ public class ManageMyPageActivity extends AppCompatActivity {
     Activity activity;
     SessionPref sessionPref;
     MaterialCardView back_cv;
-    ViewPager view_pager;
     TabLayout tab_layout;
     List<Fragment> fragments = new ArrayList<>();
     List<String> fragmentsTitle = new ArrayList<>();
@@ -77,6 +72,7 @@ public class ManageMyPageActivity extends AppCompatActivity {
     TextView page_title_txt, tagline_bio_tv, industry_tv, address_tv, founded_yr_tv, followers_tv, no_employee_tv;
     MaterialButton jobs_mbtn, events_mbtn, setting_open_mbtn;
     ScrollView scrollView;
+    FrameLayout progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +98,7 @@ public class ManageMyPageActivity extends AppCompatActivity {
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         scrollView = findViewById(R.id.scrollView);
+        progressBar = findViewById(R.id.progressBar);
         back_cv = findViewById(R.id.back_cv);
         back_cv.setOnClickListener(v -> {
             onBackPressed();
@@ -153,103 +150,38 @@ public class ManageMyPageActivity extends AppCompatActivity {
 
         setData();
 
-        view_pager = findViewById(R.id.view_pager);
         tab_layout = findViewById(R.id.tab_layout);
-        tab_layout.setupWithViewPager(view_pager);
 
-        fragments.add(new PagePostFragment(scrollView, business_page_id, view_pager));
+        fragments.add(new PagePostFragment(scrollView, business_page_id, progressBar));
         fragmentsTitle.add("Posts");
-        fragments.add(new PageAnalyticsFragment(business_page_id, view_pager));
+        fragments.add(new PageAnalyticsFragment(business_page_id, progressBar));
         fragmentsTitle.add("Analytics");
-        fragments.add(new PageJobApplicationFragment(business_page_id, view_pager));
+        fragments.add(new PageJobApplicationFragment(business_page_id, progressBar));
         fragmentsTitle.add("Job Application");
-        fragments.add(new PagePeopleFragment(scrollView, business_page_id, view_pager));
+        fragments.add(new PagePeopleFragment(scrollView, business_page_id, progressBar));
         fragmentsTitle.add("People");
-        view_pager.setOffscreenPageLimit(1);
-        view_pager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
-            @Nullable
+
+        tab_layout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public CharSequence getPageTitle(int position) {
-                return fragmentsTitle.get(position);
+            public void onTabSelected(TabLayout.Tab tab) {
+                Fragment fragment = fragments.get(tab.getPosition());
+                CommonFunction._LoadFirstFragment(ManageMyPageActivity.this, R.id.container, fragment);
             }
 
             @Override
-            public int getCount() {
-                return fragments.size();
-            }
-
-            @NonNull
-            @Override
-            public Fragment getItem(int position) {
-                return fragments.get(position);
-            }
-        });
-        view_pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void onTabUnselected(TabLayout.Tab tab) {
 
             }
 
             @Override
-            public void onPageSelected(int position) {
-                if (position != 0) {
-                    ViewGroup.LayoutParams params = view_pager.getLayoutParams();
-                    params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                    view_pager.setLayoutParams(params);
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
+            public void onTabReselected(TabLayout.Tab tab) {
 
             }
         });
+        CommonFunction._LoadFirstFragment(ManageMyPageActivity.this, R.id.container, fragments.get(0));
     }
 
-    /*
-        @Override
-        public boolean onTouchEvent(MotionEvent event) {
-            super.onTouchEvent(event);
-            int dragthreshold = 30;
 
-            int downX = 0;
-
-            int downY = 0;
-
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    downX = (int) event.getRawX();
-
-                    downY = (int) event.getRawY();
-
-                    break;
-
-                case MotionEvent.ACTION_MOVE:
-                    int distanceX = Math.abs((int) event.getRawX() - downX);
-
-                    int distanceY = Math.abs((int) event.getRawY() - downY);
-
-                    if (distanceY > distanceX && distanceY > dragthreshold) {
-                        view_pager.getParent().requestDisallowInterceptTouchEvent(false);
-
-                        scrollView.getParent().requestDisallowInterceptTouchEvent(true);
-                    } else if (distanceX > distanceY && distanceX > dragthreshold) {
-                        view_pager.getParent().requestDisallowInterceptTouchEvent(true);
-
-                        scrollView.getParent().requestDisallowInterceptTouchEvent(false);
-                    }
-
-                    break;
-                case MotionEvent.ACTION_UP:
-                    scrollView.getParent().requestDisallowInterceptTouchEvent(false);
-
-                    view_pager.getParent().requestDisallowInterceptTouchEvent(false);
-
-                    break;
-            }
-
-            return false;
-        }*/
     private void openPageSettingDialog() {
         BottomSheetDialog settingDialog = new BottomSheetDialog(context);
         settingDialog.setContentView(R.layout.common_option_dialog_layout);

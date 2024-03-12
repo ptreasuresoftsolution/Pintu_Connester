@@ -10,6 +10,9 @@ import com.connester.job.RetrofitConnection.jsontogson.MyPagesListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
+import com.connester.job.RetrofitConnection.jsontogson.PageAnalyticsResponse;
+import com.connester.job.RetrofitConnection.jsontogson.PageJobApplicationResponse;
+import com.connester.job.RetrofitConnection.jsontogson.PageMembersResponse;
 import com.connester.job.RetrofitConnection.jsontogson.ProjectItemResponse;
 import com.connester.job.RetrofitConnection.jsontogson.ProjectListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.SignUpOtpResponse;
@@ -254,6 +257,23 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/getPageDetailsRow")
     Call<BusinessPageRowResponse> BUSINESS_PAGE_ROW(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/getPageAnalytics")
+    Call<PageAnalyticsResponse> BUSINESS_PAGE_ANALYTICS(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/jobApplicationTab")
+    Call<PageJobApplicationResponse> BUSINESS_PAGE_JOB_APPLICATION(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/changeJobApplicationStatus")
+    Call<NormalCommonResponse> PAGES_JOB_APPLICATION_CHANGE_STATUS(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/getPageMembers")
+    Call<PageMembersResponse> PAGES_MEMBERS_LIST(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/unFollowBusinessPage")
+    Call<NormalCommonResponse> PAGES_MEMBERS_REMOVE(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/closeMyBusinessPageByPageAdminUser")
