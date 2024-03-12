@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -183,8 +184,72 @@ public class ManageMyPageActivity extends AppCompatActivity {
                 return fragments.get(position);
             }
         });
+        view_pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position != 0) {
+                    ViewGroup.LayoutParams params = view_pager.getLayoutParams();
+                    params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                    view_pager.setLayoutParams(params);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
+    /*
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            super.onTouchEvent(event);
+            int dragthreshold = 30;
+
+            int downX = 0;
+
+            int downY = 0;
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    downX = (int) event.getRawX();
+
+                    downY = (int) event.getRawY();
+
+                    break;
+
+                case MotionEvent.ACTION_MOVE:
+                    int distanceX = Math.abs((int) event.getRawX() - downX);
+
+                    int distanceY = Math.abs((int) event.getRawY() - downY);
+
+                    if (distanceY > distanceX && distanceY > dragthreshold) {
+                        view_pager.getParent().requestDisallowInterceptTouchEvent(false);
+
+                        scrollView.getParent().requestDisallowInterceptTouchEvent(true);
+                    } else if (distanceX > distanceY && distanceX > dragthreshold) {
+                        view_pager.getParent().requestDisallowInterceptTouchEvent(true);
+
+                        scrollView.getParent().requestDisallowInterceptTouchEvent(false);
+                    }
+
+                    break;
+                case MotionEvent.ACTION_UP:
+                    scrollView.getParent().requestDisallowInterceptTouchEvent(false);
+
+                    view_pager.getParent().requestDisallowInterceptTouchEvent(false);
+
+                    break;
+            }
+
+            return false;
+        }*/
     private void openPageSettingDialog() {
         BottomSheetDialog settingDialog = new BottomSheetDialog(context);
         settingDialog.setContentView(R.layout.common_option_dialog_layout);

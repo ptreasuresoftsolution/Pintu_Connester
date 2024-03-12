@@ -144,12 +144,13 @@ public class FeedsMaster {
         this.scrollView = CommonFunction.OnScrollSetBottomListener(scrollView, new ScrollBottomListener() {
             @Override
             public void onScrollBottom() {
-                if (mainLinearLayout.getChildCount() > 0) {
-                    //set loading check
-                    if (start < totalRow) {
-                        callFeedMaster();
+                if (!viewDisable)
+                    if (mainLinearLayout.getChildCount() > 0) {
+                        //set loading check
+                        if (start < totalRow) {
+                            callFeedMaster();
+                        }
                     }
-                }
             }
         }, scrollViewExtraHeight);
         //video play/pause
@@ -177,7 +178,8 @@ public class FeedsMaster {
             }
         });
         resetList();
-        callFeedMaster();
+        if (!viewDisable)
+            callFeedMaster();
     }
 
     private void callFeedMaster() {
@@ -1597,6 +1599,12 @@ public class FeedsMaster {
 
     public void setMainLinearLayoutChange(MainLinearLayoutChange mainLinearLayoutChange) {
         this.mainLinearLayoutChange = mainLinearLayoutChange;
+    }
+
+    boolean viewDisable = false;
+
+    public void setViewDisable(boolean viewDisable) {
+        this.viewDisable = viewDisable;
     }
 
     public ArrayList<FeedStorage> getFeedsViews() {

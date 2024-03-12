@@ -14,8 +14,8 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.connester.job.R;
 import com.connester.job.activity.nonslug.AddFeedsActivity;
-import com.connester.job.function.CommonFunction;
 import com.connester.job.function.LogTag;
+import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 import com.google.android.material.card.MaterialCardView;
 
@@ -26,6 +26,7 @@ public class PagePostFragment extends Fragment {
     MaterialCardView feeds_add_ly;
     FeedsMaster feedsMaster;
     ViewPager view_pager;
+    SessionPref sessionPref;
 
     public PagePostFragment(ScrollView scrollView, String business_page_id, ViewPager view_pager) {
         this.scrollView = scrollView;
@@ -47,58 +48,46 @@ public class PagePostFragment extends Fragment {
             startActivity(intent);
         });
 
+        sessionPref = new SessionPref(getContext());
         feedsMaster = new FeedsMaster(getContext(), getActivity());
-        feedsMaster.setFeedForForward("BUSINESS");
-        feedsMaster.setFeedForIdForward(business_page_id);
+//        feedsMaster.setFeedForForward("BUSINESS");
+//        feedsMaster.setFeedForIdForward(business_page_id);
 //        feedsMaster.setLimitGap(1);
-        feedsMaster.setFeedForId(business_page_id);
-        feedsMaster.setFeedFor("BUSINESS");
+//        feedsMaster.setFeedForId(business_page_id);
+
+
+        feedsMaster.setFeedForId(sessionPref.getUserMasterId());
+
+        feedsMaster.setFeedFor("USER");
         feedsMaster.setTblName("MEDIA,POST");
-        feedsMaster.setMainLinearLayoutChange(new FeedsMaster.MainLinearLayoutChange() {
-            @Override
-            public void itemAddEditChange(LinearLayout linearLayout) {
-                int scal[] = CommonFunction.getScreenResolution(getContext());
-                if (isVisibleToUser) {
-                    linearLayout.measure(0, 0);
-//                    if (lastHeight + scal[1] < linearLayout.getMeasuredHeight())
-//                        lastHeight = linearLayout.getMeasuredHeight() - 500;
-//                    else
-                    lastHeight = linearLayout.getMeasuredHeight();
-                    Log.e(LogTag.TMP_LOG, lastHeight + " sc " + scal[1] + " get " + linearLayout.getMeasuredHeight() + " x " + linearLayout.getChildCount());
-//                    if ((linearLayout.getMeasuredHeight() - 200) < (scal[1])) {
-//                        lastHeight = linearLayout.getMeasuredHeight() - 500;
-//                    }
-//                    lastHeight = linearLayout.getMeasuredHeight() - 500;
-
-                    if (linearLayout.getChildCount() > 2) {
-                        lastHeight = linearLayout.getMeasuredHeight() - 500;
-
-                    }
-
-                    ViewGroup.LayoutParams params = view_pager.getLayoutParams();
-                    params.height = lastHeight;
-                    view_pager.setLayoutParams(params);
-                }
-            }
-        });
         feedsMaster.loadFeedMaster(main_ll, scrollView);
 
+        if (isVisibleToUser) {
+            feedsMaster.setViewDisable(false);
+        } else {
+            feedsMaster.setViewDisable(true);
+        }
 
         return view;
     }
 
-    int lastHeight = 0;
+
     boolean isVisibleToUser = false;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         this.isVisibleToUser = isVisibleToUser;
+        if (feedsMaster != null)
+            feedsMaster.setViewDisable(true);
         if (isVisibleToUser) {
-            ViewGroup.LayoutParams params = view_pager.getLayoutParams();
+            if (feedsMaster != null)
+                feedsMaster.setViewDisable(false);
+          /*  ViewGroup.LayoutParams params = view_pager.getLayoutParams();
             params.height = lastHeight;
-            view_pager.setLayoutParams(params);
+            view_pager.setLayoutParams(params);*/
         }
+        Log.e(LogTag.TMP_LOG, "bb " + isVisibleToUser + " fed " + (feedsMaster != null));
     }
 
 }

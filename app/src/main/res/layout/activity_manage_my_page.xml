@@ -256,12 +256,11 @@
                                 app:iconTint="@color/primary" />
                         </LinearLayout>
 
-                        <androidx.viewpager.widget.ViewPager
+                        <com.connester.job.function.WrapContentHeightViewPager
                             android:id="@+id/view_pager"
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_weight="1">
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp">
 
                             <com.google.android.material.tabs.TabLayout
                                 android:id="@+id/tab_layout"
@@ -297,7 +296,7 @@
 
                             </com.google.android.material.tabs.TabLayout>
 
-                        </androidx.viewpager.widget.ViewPager>
+                        </com.connester.job.function.WrapContentHeightViewPager>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 

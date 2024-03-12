@@ -24,7 +24,9 @@ public class PageAnalyticsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_page_analytics, container, false);
-
+        ViewGroup.LayoutParams params = view_pager.getLayoutParams();
+        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        view_pager.setLayoutParams(params);
         return view;
     }
 
