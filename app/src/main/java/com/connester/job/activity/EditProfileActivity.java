@@ -146,6 +146,8 @@ public class EditProfileActivity extends AppCompatActivity {
                             if (response.body() != null) {
                                 NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                 if (normalCommonResponse.status) {
+                                    imgFile.delete();
+
                                     setData();
                                 }
                                 Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
@@ -198,6 +200,8 @@ public class EditProfileActivity extends AppCompatActivity {
                             if (response.body() != null) {
                                 NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                 if (normalCommonResponse.status) {
+                                    imgFile.delete();
+
                                     setData();
                                 }
                                 Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();

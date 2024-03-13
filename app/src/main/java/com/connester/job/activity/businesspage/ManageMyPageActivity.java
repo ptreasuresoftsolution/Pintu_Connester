@@ -439,6 +439,9 @@ public class ManageMyPageActivity extends AppCompatActivity {
                                 if (response.body() != null) {
                                     NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                     if (normalCommonResponse.status) {
+                                        imgFileLogo.delete();
+                                        imgFileBanner.delete();
+
                                         setData();
                                         dialog.dismiss();
                                     }

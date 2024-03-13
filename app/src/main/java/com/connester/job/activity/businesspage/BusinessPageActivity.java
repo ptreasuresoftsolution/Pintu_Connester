@@ -302,6 +302,9 @@ public class BusinessPageActivity extends AppCompatActivity {
                                 if (response.body() != null) {
                                     NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                     if (normalCommonResponse.status) {
+                                        imgFileBanner.delete();
+                                        imgFileLogo.delete();
+
                                         Intent intent = new Intent(context, BusinessActivity.class);
                                         intent.putExtra("business_page_id", normalCommonResponse.businessPageId);
                                         startActivity(intent);

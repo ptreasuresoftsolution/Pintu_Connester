@@ -10,6 +10,8 @@ import com.connester.job.RetrofitConnection.jsontogson.MyPagesListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
+import com.connester.job.RetrofitConnection.jsontogson.OurEventPostRow;
+import com.connester.job.RetrofitConnection.jsontogson.OurJobPostRow;
 import com.connester.job.RetrofitConnection.jsontogson.PageAnalyticsResponse;
 import com.connester.job.RetrofitConnection.jsontogson.PageJobApplicationResponse;
 import com.connester.job.RetrofitConnection.jsontogson.PageMembersResponse;
@@ -265,12 +267,15 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/jobApplicationTab")
     Call<PageJobApplicationResponse> BUSINESS_PAGE_JOB_APPLICATION(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/changeJobApplicationStatus")
     Call<NormalCommonResponse> PAGES_JOB_APPLICATION_CHANGE_STATUS(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/getPageMembers")
     Call<PageMembersResponse> PAGES_MEMBERS_LIST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/unFollowBusinessPage")
     Call<NormalCommonResponse> PAGES_MEMBERS_REMOVE(@FieldMap Map<String, String> params);
@@ -281,4 +286,27 @@ public interface ApiInterface {
 
     @POST(PRE_FIX + "UserMange/mangeMyBusinessPage")
     Call<NormalCommonResponse> PAGE_CREATE_MANAGE_CALL(@Body RequestBody body);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/getOurJobPostRow")
+    Call<OurJobPostRow> PAGES_OUR_JOB_POST_ROW(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/mangeOurPostedJob")
+    Call<NormalCommonResponse> PAGES_MANAGE_OUR_JOB_POST(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/removeOurJobPost")
+    Call<NormalCommonResponse> PAGES_REMOVE_OUR_JOB_POST(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/getOurJobPostEvent")
+    Call<OurEventPostRow> PAGES_OUR_EVENT_POST_ROW(@FieldMap Map<String, String> params);
+
+    @POST(PRE_FIX + "Business/mangeOurPostedEvent")
+    Call<NormalCommonResponse> PAGES_MANAGE_OUR_EVENT_POST(@Body RequestBody body);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Business/removeOurJobEvent")
+    Call<NormalCommonResponse> PAGES_REMOVE_OUR_EVENT_POST(@FieldMap Map<String, String> params);
 }

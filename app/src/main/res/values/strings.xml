@@ -3,4 +3,25 @@
     <string name="sign_bullet">\u2022</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="job_type">
+        <item>On-site</item>
+        <item>Remote</item>
+    </string-array>
+    <string-array name="job_time">
+        <item>Part-Time</item>
+        <item>Full-Time</item>
+    </string-array>
+    <string-array name="job_payroll">
+        <item>Monthly</item>
+        <item>Yearly</item>
+        <item>Hourly</item>
+        <item>Weekly</item>
+    </string-array>
+
+
+    <string-array name="event_type">
+        <item>ONLINE</item>
+        <item>WALK-IN</item>
+    </string-array>
 </resources>

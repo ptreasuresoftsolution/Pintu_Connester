@@ -2,24 +2,34 @@ package com.connester.job.module;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
@@ -34,15 +44,19 @@ import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsRow;
 import com.connester.job.RetrofitConnection.jsontogson.JobsEventMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
+import com.connester.job.RetrofitConnection.jsontogson.OurEventPostRow;
+import com.connester.job.RetrofitConnection.jsontogson.OurJobPostRow;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.connester.job.activity.BusinessActivity;
 import com.connester.job.activity.CommunityActivity;
+import com.connester.job.activity.EditProfileActivity;
 import com.connester.job.activity.FeedFullViewActivity;
 import com.connester.job.activity.ProfileActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.CustomPager;
 import com.connester.job.function.DateUtils;
+import com.connester.job.function.FilePath;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.MyListRowSet;
@@ -71,11 +85,18 @@ import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import id.zelory.compressor.Compressor;
 import me.relex.circleindicator.CircleIndicator;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -870,6 +891,19 @@ public class FeedsMaster {
                         //send report data
                     }
                 });
+
+                if (isJobEventEdit) {
+                    feed_save_unsave.setVisibility(View.GONE);
+                    feed_link_copy.setVisibility(View.GONE);
+                    feed_report.setVisibility(View.GONE);
+
+                    LinearLayout edit_event = feedsOptionDialog.findViewById(R.id.edit_event);
+                    edit_event.setVisibility(View.VISIBLE);
+                    edit_event.setOnClickListener(v1 -> {
+                        openEditEventDialog(feedsRow.tblJobEvent.jobEventId, view);
+                    });
+                }
+
                 feedsOptionDialog.show();
             }
         });
@@ -1006,6 +1040,14 @@ public class FeedsMaster {
                         }
                     });
                 }
+            });
+        }
+        if (isJobEventEdit) {
+            job_apply_btn.setEnabled(true);
+            job_apply_btn.setText("Edit");
+            job_apply_btn.setOnClickListener(v -> {
+                //open edit popup
+                openEditJobDialog(feedsRow.tblJobPost.jobPostId, view);
             });
         }
         FlexboxLayout job_skill_tag_fbl = view.findViewById(R.id.job_skill_tag_fbl);
@@ -1479,6 +1521,576 @@ public class FeedsMaster {
     }
 
     /**
+     * job / event edit popup dialog
+     **/
+
+    public ActivityResultLauncher activityResultLauncherForEventBanner;
+    public ActivityResultCallback activityResultCallbackForEventBanner = new ActivityResultCallback<Uri>() {
+        @Override
+        public void onActivityResult(Uri photoUri) {
+            if (photoUri != null && event_banner_iv != null) {
+                eventBannerFile = new File(FilePath.getPath2(context, photoUri));
+                Glide.with(context).load(eventBannerFile).centerCrop().placeholder(R.drawable.user_default_banner).into(event_banner_iv);
+            }
+        }
+    };
+    File eventBannerFile;
+    String oldEventImage = null;
+    ImageView event_banner_iv;
+    private Calendar startTimeCalendar, endTimeCalendar;
+
+    private void openEditEventDialog(String jobEventId, View feedView) {
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.event_add_edit_manage_dialog);
+        EditProfileActivity.setDialogFullScreenSetting(dialog);
+        String[] eventType = context.getResources().getStringArray(R.array.event_type);
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        TextView title = dialog.findViewById(R.id.title);
+        title.setText("Create a event");
+
+        MaterialCardView event_banner_edit = dialog.findViewById(R.id.event_banner_edit);
+        event_banner_edit.setOnClickListener(v -> {
+            if (activityResultLauncherForEventBanner != null)
+                activityResultLauncherForEventBanner.launch(("image/*"));
+        });
+        event_banner_iv = dialog.findViewById(R.id.event_banner_iv);
+
+
+        EditText event_title_et = dialog.findViewById(R.id.event_title_et);
+
+        EditText start_time_et = dialog.findViewById(R.id.start_time_et);
+        startTimeCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", DateUtils.TODAYDATETIMEforDB()));
+        start_time_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                new TimePickerDialog(context, (view1, hourOfDay, minute) -> {
+                    startTimeCalendar.set(Calendar.YEAR, year);
+                    startTimeCalendar.set(Calendar.MONTH, month);
+                    startTimeCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                    startTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    startTimeCalendar.set(Calendar.MINUTE, minute);
+
+                    Date date = DateUtils.toDate(startTimeCalendar);
+                    start_time_et.setText(DateUtils.getStringDate("dd-MMM-yyyy hh:mm a", date));
+                }, startTimeCalendar.get(Calendar.HOUR_OF_DAY), startTimeCalendar.get(Calendar.MINUTE), false).show();
+
+            }, startTimeCalendar.get(Calendar.YEAR), startTimeCalendar.get(Calendar.MONTH), startTimeCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+
+        EditText end_time_et = dialog.findViewById(R.id.end_time_et);
+        endTimeCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", DateUtils.TODAYDATETIMEforDB()));
+        end_time_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                new TimePickerDialog(context, (view1, hourOfDay, minute) -> {
+                    endTimeCalendar.set(Calendar.YEAR, year);
+                    endTimeCalendar.set(Calendar.MONTH, month);
+                    endTimeCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                    endTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    endTimeCalendar.set(Calendar.MINUTE, minute);
+
+                    Date date = DateUtils.toDate(endTimeCalendar);
+                    end_time_et.setText(DateUtils.getStringDate("dd-MMM-yyyy hh:mm a", date));
+                }, endTimeCalendar.get(Calendar.HOUR_OF_DAY), endTimeCalendar.get(Calendar.MINUTE), false).show();
+
+            }, endTimeCalendar.get(Calendar.YEAR), endTimeCalendar.get(Calendar.MONTH), endTimeCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        EditText time_zone_et = dialog.findViewById(R.id.time_zone_et);
+
+        LinearLayout broadcast_link_ll = dialog.findViewById(R.id.broadcast_link_ll);
+        EditText broadcast_link_et = dialog.findViewById(R.id.broadcast_link_et);
+
+        LinearLayout address_ll = dialog.findViewById(R.id.address_ll);
+        address_ll.setVisibility(View.GONE);
+        EditText address_et = dialog.findViewById(R.id.address_et);
+
+        LinearLayout city_ll = dialog.findViewById(R.id.city_ll);
+        city_ll.setVisibility(View.GONE);
+        EditText city_et = dialog.findViewById(R.id.city_et);
+
+        LinearLayout country_region_ll = dialog.findViewById(R.id.country_region_ll);
+        country_region_ll.setVisibility(View.GONE);
+        EditText country_region_et = dialog.findViewById(R.id.country_region_et);
+
+        Spinner event_type_sp = dialog.findViewById(R.id.event_type_sp);
+        event_type_sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                broadcast_link_ll.setVisibility(View.VISIBLE);
+                address_ll.setVisibility(View.GONE);
+                city_ll.setVisibility(View.GONE);
+                country_region_ll.setVisibility(View.GONE);
+                if (position != 0) {
+                    broadcast_link_ll.setVisibility(View.GONE);
+                    address_ll.setVisibility(View.VISIBLE);
+                    city_ll.setVisibility(View.VISIBLE);
+                    country_region_ll.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        EditText description_et = dialog.findViewById(R.id.description_et);
+        MaterialButton remove_mbtn = dialog.findViewById(R.id.remove_mbtn);
+        remove_mbtn.setVisibility(View.GONE);
+
+        if (jobEventId != null) {
+            title.setText("Edit a job");
+            remove_mbtn.setVisibility(View.VISIBLE);
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+            hashMap.put("job_event_id", jobEventId);
+            apiInterface.PAGES_OUR_EVENT_POST_ROW(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful())
+                        if (response.body() != null) {
+                            OurEventPostRow ourEventPostRow = (OurEventPostRow) response.body();
+                            if (ourEventPostRow.status) {
+                                if (ourEventPostRow.dt.eventImg != null) {
+                                    Glide.with(context).load(ourEventPostRow.imgPath + ourEventPostRow.dt.eventImg).centerCrop().placeholder(R.drawable.user_default_banner).into(event_banner_iv);
+                                    oldEventImage = ourEventPostRow.dt.eventImg;
+                                }
+
+                                if (ourEventPostRow.dt.title != null)
+                                    event_title_et.setText(ourEventPostRow.dt.title);
+
+                                if (ourEventPostRow.dt.eventType != null) {
+                                    event_type_sp.setSelection(Arrays.asList(eventType).indexOf(ourEventPostRow.dt.eventType));
+                                    broadcast_link_ll.setVisibility(View.VISIBLE);
+                                    address_ll.setVisibility(View.GONE);
+                                    city_ll.setVisibility(View.GONE);
+                                    country_region_ll.setVisibility(View.GONE);
+                                    if (!ourEventPostRow.dt.eventType.equalsIgnoreCase("ONLINE")) {
+                                        broadcast_link_ll.setVisibility(View.GONE);
+                                        address_ll.setVisibility(View.VISIBLE);
+                                        city_ll.setVisibility(View.VISIBLE);
+                                        country_region_ll.setVisibility(View.VISIBLE);
+                                    }
+                                }
+
+                                if (ourEventPostRow.dt.startDate != null) {
+                                    start_time_et.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd-MMM-yyyy hh:mm a", ourEventPostRow.dt.startDate));
+                                    startTimeCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", ourEventPostRow.dt.startDate));
+                                }
+                                if (ourEventPostRow.dt.endDate != null) {
+                                    end_time_et.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd-MMM-yyyy hh:mm a", ourEventPostRow.dt.endDate));
+                                    endTimeCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", ourEventPostRow.dt.endDate));
+                                }
+
+                                if (ourEventPostRow.dt.timeZone != null)
+                                    time_zone_et.setText(ourEventPostRow.dt.timeZone);
+
+                                if (ourEventPostRow.dt.contactNumber != null)
+                                    broadcast_link_et.setText(ourEventPostRow.dt.contactNumber);
+
+                                if (ourEventPostRow.dt.addressJson != null) {
+                                    OurEventPostRow.Dt.AddressJson addressJson = new Gson().fromJson(ourEventPostRow.dt.addressJson, OurEventPostRow.Dt.AddressJson.class);
+
+                                    if (addressJson.address != null)
+                                        address_et.setText(addressJson.address);
+                                    if (addressJson.city != null)
+                                        city_et.setText(addressJson.city);
+                                    if (addressJson.regionCountry != null)
+                                        country_region_et.setText(addressJson.regionCountry);
+                                }
+
+                                if (ourEventPostRow.dt.jobDescription != null)
+                                    description_et.setText(ourEventPostRow.dt.jobDescription);
+                            }
+                        }
+                }
+            });
+
+            remove_mbtn.setOnClickListener(v -> {
+                CommonFunction.PleaseWaitShow(context);
+                HashMap hashMap2 = new HashMap();
+                hashMap2.put("user_master_id", sessionPref.getUserMasterId());
+                hashMap2.put("apiKey", sessionPref.getApiKey());
+                hashMap2.put("job_event_id", jobEventId);
+                hashMap2.put("business_page_id", feedForId);//pass by setFeedForId
+                apiInterface.PAGES_REMOVE_OUR_EVENT_POST(hashMap2).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status) {
+                                    dialog.dismiss();
+                                    if (feedView != null)
+                                        removeFeedsInList(feedView);
+                                }
+                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
+        save_mbtn.setOnClickListener(v -> {
+            //add or edit call
+            CommonFunction.PleaseWaitShow(context);
+            CommonFunction.PleaseWaitShowMessage("Files is compressing...");
+            try {
+                if (eventBannerFile == null) {
+                    Toast.makeText(context, "Please select logo!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                File imgFileEvent = new Compressor(context)
+                        .setMaxWidth(1080)
+                        .setMaxWidth(800)
+                        .setQuality(50)
+                        .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                        .setDestinationDirectoryPath(context.getFilesDir().getAbsolutePath())
+                        .compressToFile(eventBannerFile);
+
+                CommonFunction.PleaseWaitShowMessage("Files is compressed completed");
+
+                MultipartBody.Builder builder = new MultipartBody.Builder();
+                builder.setType(MultipartBody.FORM)
+                        .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
+                        .addFormDataPart("apiKey", "RBqtNuh+0qdrKn+Bb9WafA==")
+
+                        .addFormDataPart("frm_business_page_id", feedForId)//pass by setFeedForId
+                        .addFormDataPart("title", event_title_et.getText().toString())
+                        .addFormDataPart("event_type", Arrays.asList(eventType).get(event_type_sp.getSelectedItemPosition()))
+                        .addFormDataPart("start_date", DateUtils.getStringDate("dd-MMM-yyyy hh:mm a", "yyyy-MM-dd HH:mm:ss", start_time_et.getText().toString()))
+                        .addFormDataPart("end_date", DateUtils.getStringDate("dd-MMM-yyyy hh:mm a", "yyyy-MM-dd HH:mm:ss", end_time_et.getText().toString()))
+                        .addFormDataPart("time_zone", time_zone_et.getText().toString())
+                        .addFormDataPart("contact_number", broadcast_link_et.getText().toString())
+                        .addFormDataPart("address", address_et.getText().toString())
+                        .addFormDataPart("city", city_et.getText().toString())
+                        .addFormDataPart("region_country", country_region_et.getText().toString())
+                        .addFormDataPart("job_description", description_et.getText().toString());
+
+
+                if (jobEventId != null) {
+                    builder.addFormDataPart("job_event_id", jobEventId);
+                    if (oldEventImage != null)
+                        builder.addFormDataPart("old_event_img", oldEventImage);
+                }
+
+                builder.addFormDataPart("event_img", imgFileEvent.getName(),
+                        RequestBody.create(MediaType.parse(FilePath.getMimeType(imgFileEvent)), imgFileEvent));
+
+                RequestBody body = builder.build();
+                CommonFunction.PleaseWaitShowMessage("Please wait, data upload on server...");
+                apiInterface.PAGES_MANAGE_OUR_EVENT_POST(body).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status) {
+                                    imgFileEvent.delete();
+                                    dialog.dismiss();
+                                    reloadOrAddTopFeeds();
+                                }
+                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(LogTag.EXCEPTION, "Image Compress from Business page create Exception", e);
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void openAddEventDialog() {
+        openEditEventDialog(null, null);
+    }
+
+    private Calendar expireDateCalendar;
+    private boolean[] selectedSkill;
+    private List<Integer> skillList = new ArrayList<>();
+    private List<String> fullSkills = null;
+    private String slSkill = null;
+
+    private void openEditJobDialog(String jobPostId, View feedView) {
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.job_add_edit_manage_dialog);
+        EditProfileActivity.setDialogFullScreenSetting(dialog);
+
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        String[] jobType = context.getResources().getStringArray(R.array.job_type),
+                jobTime = context.getResources().getStringArray(R.array.job_time),
+                payRoll = context.getResources().getStringArray(R.array.job_payroll);
+
+        TextView title = dialog.findViewById(R.id.title);
+        title.setText("Create a job");
+        EditText job_position_et = dialog.findViewById(R.id.job_position_et);
+        Spinner job_type_sp = dialog.findViewById(R.id.job_type_sp);
+        Spinner job_time_sp = dialog.findViewById(R.id.job_time_sp);
+        EditText location_et = dialog.findViewById(R.id.location_et);
+        EditText currency_et = dialog.findViewById(R.id.currency_et);
+        Spinner payroll_sp = dialog.findViewById(R.id.payroll_sp);
+        EditText job_salary_et = dialog.findViewById(R.id.job_salary_et);
+        EditText experience_et = dialog.findViewById(R.id.experience_et);
+        TextView skills_selected = dialog.findViewById(R.id.skills_selected);
+        HashMap hashMapDefault = new HashMap();
+        hashMapDefault.put("user_master_id", sessionPref.getUserMasterId());
+        hashMapDefault.put("apiKey", sessionPref.getApiKey());
+        CommonFunction.PleaseWaitShow(context);
+        apiInterface.GET_SKILL_TBL(hashMapDefault).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                        if (normalCommonResponse.status) {
+                            fullSkills = normalCommonResponse.dt;
+
+                            selectedSkill = new boolean[normalCommonResponse.dt.size()];
+                            String dt[] = normalCommonResponse.dt.toArray(new String[normalCommonResponse.dt.size()]);
+                            setSelectedSkills(fullSkills, slSkill);
+                            skills_selected.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
+                                    builder.setTitle("Select Skills");
+                                    builder.setCancelable(false);
+
+                                    builder.setMultiChoiceItems(dt, selectedSkill, new DialogInterface.OnMultiChoiceClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                                            if (b) {
+                                                skillList.add(i);
+                                                Collections.sort(skillList);
+                                            } else {
+                                                skillList.remove(Integer.valueOf(i));
+                                            }
+                                        }
+                                    });
+
+                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            StringBuilder stringBuilder = new StringBuilder();
+                                            for (int j = 0; j < skillList.size(); j++) {
+                                                stringBuilder.append(dt[skillList.get(j)]);
+                                                if (j != skillList.size() - 1) {
+                                                    stringBuilder.append(", ");
+                                                }
+                                            }
+                                            // set text on textView
+                                            skills_selected.setText(stringBuilder.toString());
+                                        }
+                                    });
+
+                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            // dismiss dialog
+                                            dialogInterface.dismiss();
+                                        }
+                                    });
+                                    builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            // use for loop
+                                            Arrays.fill(selectedSkill, false);
+                                            skillList.clear();
+                                            skills_selected.setText("");
+                                        }
+                                    });
+                                    // show dialog
+                                    builder.show();
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        });
+
+        EditText expire_et = dialog.findViewById(R.id.expire_et);
+        expireDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd", DateUtils.TODAYDATEforDB()));
+        expire_et.setOnClickListener(v -> {
+            new DatePickerDialog(context, (view, year, month, dayOfMonth) -> {
+                expireDateCalendar.set(Calendar.YEAR, year);
+                expireDateCalendar.set(Calendar.MONTH, month);
+                expireDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date birthDate = DateUtils.toDate(expireDateCalendar);
+                expire_et.setText(DateUtils.getStringDate("dd-MMM-yyyy", birthDate));
+            }, expireDateCalendar.get(Calendar.YEAR), expireDateCalendar.get(Calendar.MONTH), expireDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+        EditText description_et = dialog.findViewById(R.id.description_et);
+        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
+        MaterialButton remove_mbtn = dialog.findViewById(R.id.remove_mbtn);
+        remove_mbtn.setVisibility(View.GONE);
+        if (jobPostId != null) {
+            //edit job
+            title.setText("Edit a job");
+            remove_mbtn.setVisibility(View.VISIBLE);
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+            hashMap.put("job_post_id", jobPostId);
+            apiInterface.PAGES_OUR_JOB_POST_ROW(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful())
+                        if (response.body() != null) {
+                            OurJobPostRow ourJobPostRow = (OurJobPostRow) response.body();
+                            if (ourJobPostRow.status) {
+                                if (ourJobPostRow.dt.titlePost != null)
+                                    job_position_et.setText(ourJobPostRow.dt.titlePost);
+
+                                if (ourJobPostRow.dt.jobType != null)
+                                    job_type_sp.setSelection(Arrays.asList(jobType).indexOf(ourJobPostRow.dt.jobType));
+
+                                if (ourJobPostRow.dt.jobTime != null)
+                                    job_time_sp.setSelection(Arrays.asList(jobTime).indexOf(ourJobPostRow.dt.jobTime));
+
+                                if (ourJobPostRow.dt.jobLocation != null)
+                                    location_et.setText(ourJobPostRow.dt.jobLocation);
+
+                                if (ourJobPostRow.dt.salaryCurrency != null)
+                                    currency_et.setText(ourJobPostRow.dt.salaryCurrency);
+
+                                if (ourJobPostRow.dt.salaryPayroll != null)
+                                    payroll_sp.setSelection(Arrays.asList(payRoll).indexOf(ourJobPostRow.dt.salaryPayroll));
+
+                                if (ourJobPostRow.dt.salary != null)
+                                    job_salary_et.setText(ourJobPostRow.dt.salary);
+
+                                if (ourJobPostRow.dt.requirements != null)
+                                    experience_et.setText(ourJobPostRow.dt.requirements);
+
+                                if (ourJobPostRow.dt.skills != null) {
+                                    slSkill = ourJobPostRow.dt.skills;
+                                    setSelectedSkills(fullSkills, slSkill);
+                                    skills_selected.setText(ourJobPostRow.dt.skills.replace(",", ", "));
+                                }
+
+                                if (ourJobPostRow.dt.postExpire != null) {
+                                    expire_et.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd-MMM-yyyy", ourJobPostRow.dt.postExpire));
+                                    expireDateCalendar = DateUtils.toCalendar(DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", ourJobPostRow.dt.postExpire));
+                                }
+
+                                if (ourJobPostRow.dt.salaryCurrency != null)
+                                    description_et.setText(ourJobPostRow.dt.jobDescription);
+                            }
+                        }
+                }
+            });
+        }
+        save_mbtn.setOnClickListener(v -> {
+            //add or edit call
+            CommonFunction.PleaseWaitShow(context);
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+
+            if (jobPostId != null)
+                hashMap.put("job_post_id", jobPostId);
+
+            hashMap.put("frm_business_page_id", feedForId);//pass by setFeedForId
+            hashMap.put("title_post", job_position_et.getText().toString());
+            hashMap.put("job_type", Arrays.asList(jobType).get(job_type_sp.getSelectedItemPosition()));
+            hashMap.put("job_time", Arrays.asList(jobTime).get(job_time_sp.getSelectedItemPosition()));
+            hashMap.put("job_location", location_et.getText().toString());
+            hashMap.put("salary_currency", currency_et.getText().toString());
+            hashMap.put("salary_payroll", Arrays.asList(payRoll).get(payroll_sp.getSelectedItemPosition()));
+            hashMap.put("salary", job_salary_et.getText().toString());
+            hashMap.put("requirements", experience_et.getText().toString());//experience
+            hashMap.put("skills", skills_selected.getText().toString().replace(", ", ","));
+            hashMap.put("post_expire", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", expire_et.getText().toString()));
+            hashMap.put("job_description", description_et.getText().toString());
+
+            apiInterface.PAGES_MANAGE_OUR_JOB_POST(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                dialog.dismiss();
+                                reloadOrAddTopFeeds();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
+        if (jobPostId != null)
+            remove_mbtn.setOnClickListener(v -> {
+                CommonFunction.PleaseWaitShow(context);
+                HashMap hashMap = new HashMap();
+                hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                hashMap.put("apiKey", sessionPref.getApiKey());
+                hashMap.put("job_post_id", jobPostId);
+                hashMap.put("business_page_id", feedForId);//pass by setFeedForId
+                apiInterface.PAGES_REMOVE_OUR_JOB_POST(hashMap).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status) {
+                                    dialog.dismiss();
+                                    if (feedView != null)
+                                        removeFeedsInList(feedView);
+                                }
+                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+            });
+
+        dialog.show();
+    }
+
+    private void setSelectedSkills(List<String> fullList, String selectedSkills) {
+        if (fullList != null && selectedSkills != null) {
+            for (String skill : selectedSkills.split(",")) {
+                int ind = fullList.indexOf(skill);
+                if (ind >= 0) {
+                    selectedSkill[ind] = true;
+                    skillList.add(ind);
+                }
+            }
+        }
+    }
+
+    public void openAddJobDialog() {
+        openEditJobDialog(null, null);
+    }
+
+    /**
      * common function for feeds
      **/
     private void reloadOrAddTopFeeds() {
@@ -1569,6 +2181,10 @@ public class FeedsMaster {
         }
     }
 
+    public ArrayList<FeedStorage> getFeedsViews() {
+        return feedsViews;
+    }
+
     public class FeedStorage {
         public View view; // getTag to given is feedMasterId
         public int viewIndex;
@@ -1607,7 +2223,10 @@ public class FeedsMaster {
         this.viewDisable = viewDisable;
     }
 
-    public ArrayList<FeedStorage> getFeedsViews() {
-        return feedsViews;
+    boolean isJobEventEdit = false;
+
+    public void setJobEventEdit(boolean jobEventEdit) {
+        isJobEventEdit = jobEventEdit;
     }
+
 }
