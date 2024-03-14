@@ -36,9 +36,7 @@ import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.GroupBlockedMembersListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.GroupRowResponse;
-import com.connester.job.RetrofitConnection.jsontogson.MyGroupListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
-import com.connester.job.activity.CommunityActivity;
 import com.connester.job.activity.EditProfileActivity;
 import com.connester.job.activity.ProfileActivity;
 import com.connester.job.function.CommonFunction;
@@ -174,6 +172,32 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
             }
         });
         CommonFunction._LoadFirstFragment(ManageMyCommunityActivity.this, R.id.container, fragments.get(0));
+    }
+
+    private void openGroupDetailsDialog() {
+        CommonFunction.PleaseWaitShow(context);
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.group_create_manage_dialog);
+        EditProfileActivity.setDialogFullScreenSetting(dialog);
+
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        TextView description_tv = dialog.findViewById(R.id.description_tv);
+        description_tv.setText(groupRow.bio);
+        TextView member_tv = dialog.findViewById(R.id.member_tv);
+        member_tv.setText("+" + groupRow.members + " Members");
+        TextView industry_tv = dialog.findViewById(R.id.industry_tv);
+        industry_tv.setText(groupRow.industry);
+        TextView rules_tv = dialog.findViewById(R.id.rules_tv);
+        rules_tv.setText(groupRow.rules);
+        TextView group_type_tv = dialog.findViewById(R.id.group_type_tv);
+        group_type_tv.setText(groupRow.type);
+
+        dialog.show();
     }
 
 
