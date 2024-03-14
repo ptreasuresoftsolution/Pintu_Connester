@@ -406,7 +406,7 @@ public class CommonFunction {
         return manufacturer + "-" + model + "-" + id + "-" + time + "-" + android_id;
     }
 
-    private static String capitalize(String s) {
+    public static String capitalize(String s) {
         if (s == null || s.length() == 0) {
             return "";
         }
@@ -545,6 +545,7 @@ public class CommonFunction {
         if (matcher.matches()) return true;
         else return false;
     }
+
 
 
     public static String getMimietype(Context context, Uri uri) {

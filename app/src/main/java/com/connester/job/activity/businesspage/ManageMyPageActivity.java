@@ -404,33 +404,10 @@ public class ManageMyPageActivity extends AppCompatActivity {
         save_mbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 CommonFunction.PleaseWaitShow(context);
                 CommonFunction.PleaseWaitShowMessage("Files is compressing...");
                 try {
-                    if (pageLogoFile == null) {
-                        Toast.makeText(context, "Please select logo!", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if (pageBannerFile == null) {
-                        Toast.makeText(context, "Please select banner!", Toast.LENGTH_SHORT).show();
-                    }
-                    File imgFileLogo = new Compressor(context)
-                            .setMaxWidth(1080)
-                            .setMaxWidth(800)
-                            .setQuality(50)
-                            .setCompressFormat(Bitmap.CompressFormat.JPEG)
-                            .setDestinationDirectoryPath(context.getFilesDir().getAbsolutePath())
-                            .compressToFile(pageLogoFile);
-                    File imgFileBanner = new Compressor(context)
-                            .setMaxWidth(1080)
-                            .setMaxWidth(800)
-                            .setQuality(50)
-                            .setCompressFormat(Bitmap.CompressFormat.JPEG)
-                            .setDestinationDirectoryPath(context.getFilesDir().getAbsolutePath())
-                            .compressToFile(pageBannerFile);
-
-                    CommonFunction.PleaseWaitShowMessage("Files is compressed completed");
-
                     MultipartBody.Builder builder = new MultipartBody.Builder();
                     builder.setType(MultipartBody.FORM)
                             .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
@@ -447,14 +424,38 @@ public class ManageMyPageActivity extends AppCompatActivity {
                             .addFormDataPart("address", location_input.getText().toString())
                             .addFormDataPart("description", description_et.getText().toString())
                             .addFormDataPart("skills", skills_selected.getText().toString());
+                    File imgFileLogo = null;
+                    if (pageLogoFile != null) {
+                        imgFileLogo = new Compressor(context)
+                                .setMaxWidth(1080)
+                                .setMaxWidth(800)
+                                .setQuality(50)
+                                .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                                .setDestinationDirectoryPath(context.getFilesDir().getAbsolutePath())
+                                .compressToFile(pageLogoFile);
+                        builder.addFormDataPart("logo", imgFileLogo.getName(),
+                                RequestBody.create(MediaType.parse(FilePath.getMimeType(imgFileLogo)), imgFileLogo));
+                    }
+                    File imgFileBanner = null;
+                    if (pageBannerFile != null) {
+                        imgFileBanner = new Compressor(context)
+                                .setMaxWidth(1080)
+                                .setMaxWidth(800)
+                                .setQuality(50)
+                                .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                                .setDestinationDirectoryPath(context.getFilesDir().getAbsolutePath())
+                                .compressToFile(pageBannerFile);
+                        builder.addFormDataPart("banner", imgFileBanner.getName(),
+                                RequestBody.create(MediaType.parse(FilePath.getMimeType(imgFileBanner)), imgFileBanner));
+                    }
 
-                    builder.addFormDataPart("logo", imgFileLogo.getName(),
-                            RequestBody.create(MediaType.parse(FilePath.getMimeType(imgFileLogo)), imgFileLogo));
 
-                    builder.addFormDataPart("banner", imgFileBanner.getName(),
-                            RequestBody.create(MediaType.parse(FilePath.getMimeType(imgFileBanner)), imgFileBanner));
+                    CommonFunction.PleaseWaitShowMessage("Files is compressed completed");
+
                     RequestBody body = builder.build();
                     CommonFunction.PleaseWaitShowMessage("Please wait, data upload on server...");
+                    File finalImgFileLogo = imgFileLogo;
+                    File finalImgFileBanner = imgFileBanner;
                     apiInterface.PAGE_CREATE_MANAGE_CALL(body).enqueue(new MyApiCallback() {
                         @Override
                         public void onResponse(Call call, Response response) {
@@ -463,8 +464,8 @@ public class ManageMyPageActivity extends AppCompatActivity {
                                 if (response.body() != null) {
                                     NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                     if (normalCommonResponse.status) {
-                                        imgFileLogo.delete();
-                                        imgFileBanner.delete();
+                                        if (finalImgFileLogo != null) finalImgFileLogo.delete();
+                                        if (finalImgFileBanner != null) finalImgFileBanner.delete();
 
                                         setData();
                                         dialog.dismiss();

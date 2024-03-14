@@ -30,7 +30,6 @@ import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
-import com.connester.job.activity.BusinessActivity;
 import com.connester.job.activity.EditProfileActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.FilePath;
@@ -253,6 +252,7 @@ public class BusinessPageActivity extends AppCompatActivity {
                     }
                     if (pageBannerFile == null) {
                         Toast.makeText(context, "Please select banner!", Toast.LENGTH_SHORT).show();
+                        return;
                     }
                     File imgFileLogo = new Compressor(context)
                             .setMaxWidth(1080)
@@ -305,8 +305,8 @@ public class BusinessPageActivity extends AppCompatActivity {
                                         imgFileBanner.delete();
                                         imgFileLogo.delete();
 
-                                        Intent intent = new Intent(context, BusinessActivity.class);
-                                        intent.putExtra("business_page_id", normalCommonResponse.businessPageId);
+                                        Intent intent = new Intent(context, ManageMyPageActivity.class);
+                                        intent.putExtra("business_page_id", String.valueOf(normalCommonResponse.businessPageId));
                                         startActivity(intent);
                                         dialog.dismiss();
                                     }

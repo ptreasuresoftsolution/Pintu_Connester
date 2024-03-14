@@ -40,6 +40,12 @@
         tools:ignore="HardcodedDebugMode"
         tools:targetApi="s">
         <activity
+            android:name=".activity.mycommunity.GroupDisableActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.mycommunity.ManageMyCommunityActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.businesspage.JobApplicationListActivity"
             android:exported="false" />
         <activity
@@ -67,7 +73,7 @@
             android:name=".activity.settingActivity.ChangePasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.MyCommunityActivity"
+            android:name=".activity.mycommunity.MyCommunityActivity"
             android:exported="false" />
         <activity
             android:name=".activity.businesspage.BusinessPageActivity"

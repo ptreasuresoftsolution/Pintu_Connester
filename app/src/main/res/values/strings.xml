@@ -19,9 +19,13 @@
         <item>Weekly</item>
     </string-array>
 
-
     <string-array name="event_type">
         <item>ONLINE</item>
         <item>WALK-IN</item>
+    </string-array>
+
+    <string-array name="group_type">
+        <item>PUBLIC</item>
+        <item>PRIVATE</item>
     </string-array>
 </resources>

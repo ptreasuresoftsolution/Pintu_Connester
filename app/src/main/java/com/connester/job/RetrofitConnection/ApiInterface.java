@@ -5,7 +5,10 @@ import com.connester.job.RetrofitConnection.jsontogson.EducationListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.GetLinkMetaDataResponse;
+import com.connester.job.RetrofitConnection.jsontogson.GroupBlockedMembersListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.GroupRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.JobsEventMasterResponse;
+import com.connester.job.RetrofitConnection.jsontogson.MyGroupListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MyPagesListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
@@ -17,6 +20,7 @@ import com.connester.job.RetrofitConnection.jsontogson.PageJobApplicationRespons
 import com.connester.job.RetrofitConnection.jsontogson.PageMembersResponse;
 import com.connester.job.RetrofitConnection.jsontogson.ProjectItemResponse;
 import com.connester.job.RetrofitConnection.jsontogson.ProjectListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.RequestedGroupListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.SignUpOtpResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserLoginResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
@@ -288,7 +292,7 @@ public interface ApiInterface {
     @POST(PRE_FIX + "Business/reActivateMyBusinessPage")
     Call<NormalCommonResponse> BUSINESS_PAGE_REACTIVATE_CALL(@FieldMap Map<String, String> params);
 
-    @POST(PRE_FIX + "UserMange/mangeMyBusinessPage")
+    @POST(PRE_FIX + "Business/mangeMyBusinessPage")
     Call<NormalCommonResponse> PAGE_CREATE_MANAGE_CALL(@Body RequestBody body);
 
     @FormUrlEncoded
@@ -313,4 +317,31 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Business/removeOurJobEvent")
     Call<NormalCommonResponse> PAGES_REMOVE_OUR_EVENT_POST(@FieldMap Map<String, String> params);
+
+
+    @POST(PRE_FIX + "Community/mangeMyCreatedGroup")
+    Call<NormalCommonResponse> GROUP_CREATE_MANAGE_CALL(@Body RequestBody body);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/getMyCommunitys")
+    Call<MyGroupListResponse> GET_MY_GROUP_LIST(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/getRequestedCommunity")
+    Call<RequestedGroupListResponse> GET_MY_REQUESTED_GROUP_LIST(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/getCommunityDetailsRow")
+    Call<GroupRowResponse> GROUP_ROW(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/closeMyCreatedCommunity")
+    Call<NormalCommonResponse> GROUP_CLOSED(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/loadBlockedCommunityMembers")
+    Call<GroupBlockedMembersListResponse> GROUP_BLOCKED_MEMBERS_LIST(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/unBlockedCommunityMember")
+    Call<NormalCommonResponse> UN_BLOCKED_GROUP_MEMBERS_LIST(@FieldMap Map<String, String> params);
 }

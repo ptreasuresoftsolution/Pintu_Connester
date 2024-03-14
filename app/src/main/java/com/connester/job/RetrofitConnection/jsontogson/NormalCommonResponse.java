@@ -33,6 +33,12 @@ public class NormalCommonResponse {
     @Expose
     public Integer businessPageId;
 
+    //community group create / edit submit
+    @SerializedName("community_master_id")
+    @Expose
+    public Integer communityMasterId;
+
+
     //job Work experiences
     @SerializedName("position")
     @Expose

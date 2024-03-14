@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.mycommunity.ManageMyCommunityActivity">
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/group_banner_iv"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/user_default_banner" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/back_cv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginBottom="2dp"
+                        app:cardCornerRadius="5dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_margin="4dp"
+                            android:src="@drawable/arrow_back"
+                            app:tint="@color/primary" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/group_info_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginBottom="2dp"
+                        app:cardCornerRadius="5dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_margin="4dp"
+                            android:src="@drawable/edit_pencil"
+                            app:tint="@color/primary" />
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center|bottom"
+                    android:layout_marginTop="-70dp">
+
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="40dp"
+                        app:cardCornerRadius="25dp"
+                        app:strokeWidth="0dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="40dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/group_title_txt"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp"
+                                android:text="group title"
+                                android:textColor="@color/secondary_3"
+                                android:textSize="@dimen/label"
+                                android:textStyle="bold" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:gravity="center"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp">
+
+                                <ImageView
+                                    android:id="@+id/privacy_img"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingRight="8dp"
+                                    android:src="@drawable/people_fill_public"
+                                    app:tint="@color/primary" />
+
+                                <TextView
+                                    android:id="@+id/privacy_tv"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="tagline"
+                                    android:textSize="@dimen/small_lg" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="15dp"
+                                android:orientation="horizontal"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp">
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/details_mbtn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="40dp"
+                                    android:layout_marginRight="4dp"
+                                    android:layout_weight="1"
+                                    android:paddingLeft="10dp"
+                                    android:text="Details"
+                                    android:textColor="@color/primary"
+                                    app:backgroundTint="@color/secondary_6"
+                                    app:cornerRadius="4dp"
+                                    app:icon="@drawable/info_square_details"
+                                    app:iconTint="@color/primary" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/setting_open_mbtn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="40dp"
+                                    android:layout_marginLeft="4dp"
+                                    android:layout_weight="1"
+                                    android:paddingLeft="10dp"
+                                    android:text="SETTING"
+                                    android:textColor="@color/primary"
+                                    app:backgroundTint="@color/secondary_6"
+                                    app:cornerRadius="4dp"
+                                    app:icon="@drawable/setting_gear"
+                                    app:iconTint="@color/primary" />
+                            </LinearLayout>
+
+
+                            <com.google.android.material.tabs.TabLayout
+                                android:id="@+id/tab_layout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="top"
+                                android:background="@color/default_white"
+                                app:tabGravity="fill"
+                                app:tabIndicatorFullWidth="true"
+                                app:tabIndicatorHeight="1.5dp"
+                                app:tabMode="fixed">
+
+                                <com.google.android.material.tabs.TabItem
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Posts" />
+
+                                <com.google.android.material.tabs.TabItem
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Group Members" />
+
+
+                                <com.google.android.material.tabs.TabItem
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Member Request" />
+
+                            </com.google.android.material.tabs.TabLayout>
+
+                            <FrameLayout
+                                android:id="@+id/container"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|top">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="2dp"
+                            app:cardBackgroundColor="@color/secondary_2"
+                            app:cardCornerRadius="35dp"
+                            app:cardElevation="1dp"
+                            app:strokeColor="@color/white">
+
+                            <ImageView
+                                android:id="@+id/group_logo_iv"
+                                android:layout_width="70dp"
+                                android:layout_height="70dp"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/default_groups_pic" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </FrameLayout>
+                </FrameLayout>
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/progressBar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#95EFECFF"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+        </FrameLayout>
+    </ScrollView>
+</LinearLayout>

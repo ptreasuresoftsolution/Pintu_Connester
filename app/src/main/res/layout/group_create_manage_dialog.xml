@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/group_banner_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/user_default_banner" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/back_cv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginBottom="2dp"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_margin="4dp"
+                        android:src="@drawable/arrow_back"
+                        app:tint="@color/primary" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/group_banner_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="2dp"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:src="@drawable/edit_pencil"
+                        app:tint="@color/primary" />
+                </com.google.android.material.card.MaterialCardView>
+
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center|bottom"
+                android:layout_marginTop="-70dp">
+
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="40dp"
+                    app:cardCornerRadius="0dp"
+                    app:strokeWidth="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="40dp"
+                        android:orientation="vertical"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginBottom="4dp"
+                            android:text="Group name *" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="2dp"
+                            app:cardBackgroundColor="@color/secondary_7"
+                            app:cardCornerRadius="6dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="0dp">
+
+                            <EditText
+                                android:id="@+id/group_nm_input"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="@android:color/transparent"
+                                android:gravity="center_vertical"
+                                android:hint="Ex: Game of phones"
+                                android:singleLine="true"
+                                android:textSize="@dimen/small_lg" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginBottom="4dp"
+                            android:text="Description *" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="2dp"
+                            app:cardBackgroundColor="@color/secondary_7"
+                            app:cardCornerRadius="6dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="0dp">
+
+                            <EditText
+                                android:id="@+id/description_et"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="@android:color/transparent"
+                                android:gravity="start"
+                                android:hint="Abput group/what is the purpose of your group?"
+                                android:inputType="textMultiLine"
+                                android:lines="6"
+                                android:textSize="@dimen/small_lg" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginBottom="4dp"
+                            android:text="Industry *" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="2dp"
+                            app:cardBackgroundColor="@color/secondary_7"
+                            app:cardCornerRadius="6dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="0dp">
+
+                            <EditText
+                                android:id="@+id/industry_input"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="@android:color/transparent"
+                                android:gravity="center_vertical"
+                                android:hint="Ex: information technologies services"
+                                android:singleLine="true"
+                                android:textSize="@dimen/small_lg" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginBottom="4dp"
+                            android:text="Group Type *" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="2dp"
+                            app:cardBackgroundColor="@color/secondary_7"
+                            app:cardCornerRadius="6dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="0dp">
+
+                            <Spinner
+                                android:id="@+id/group_type_sp"
+                                android:layout_width="match_parent"
+                                android:layout_height="35dp"
+                                android:backgroundTint="@android:color/transparent"
+                                android:drawSelectorOnTop="true"
+                                android:entries="@array/group_type"
+                                android:gravity="center_vertical"
+                                android:textSize="@dimen/small_lg" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginBottom="4dp"
+                            android:text="Rules *" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="2dp"
+                            app:cardBackgroundColor="@color/secondary_7"
+                            app:cardCornerRadius="6dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="0dp">
+
+                            <EditText
+                                android:id="@+id/rules_et"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="@android:color/transparent"
+                                android:gravity="start"
+                                android:hint="Set the tone and expectations of your group"
+                                android:inputType="textMultiLine"
+                                android:lines="6"
+                                android:textSize="@dimen/small_lg" />
+                        </com.google.android.material.card.MaterialCardView>
+
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/save_mbtn"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:layout_marginTop="10dp"
+                                android:backgroundTint="@color/primary"
+                                android:text="SAVE"
+                                android:textColor="@color/white"
+                                app:cornerRadius="8dp" />
+                        </FrameLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|top">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        app:cardBackgroundColor="@color/secondary_2"
+                        app:cardCornerRadius="35dp"
+                        app:cardElevation="1dp"
+                        app:strokeColor="@color/white">
+
+                        <ImageView
+                            android:id="@+id/group_logo_iv"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/default_groups_pic" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/group_logo_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|bottom"
+                        android:layout_marginBottom="8dp"
+                        app:cardBackgroundColor="@color/primary"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp">
+
+                        <ImageView
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_margin="2dp"
+                            android:src="@drawable/edit_pencil"
+                            app:tint="@color/white" />
+                    </com.google.android.material.card.MaterialCardView>
+                </FrameLayout>
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

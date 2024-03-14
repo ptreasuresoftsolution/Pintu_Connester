@@ -67,6 +67,7 @@
                 android:text="Join"
                 app:backgroundTint="@color/primary"
                 app:icon="@drawable/people_group_solid" />
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </FrameLayout>

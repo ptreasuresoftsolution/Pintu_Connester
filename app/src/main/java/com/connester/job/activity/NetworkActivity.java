@@ -425,7 +425,7 @@ public class NetworkActivity extends AppCompatActivity {
 
                 NetworkSuggestedListResponse.JsonDt.SugUserIndustry.Dt row = getItem(position);
                 View.OnClickListener openUserProfile = v -> {
-                    Intent intent = new Intent(context, CommunityActivity.class);
+                    Intent intent = new Intent(context, ProfileActivity.class);
                     intent.putExtra("user_master_id", row.userMasterId);
                     startActivity(intent);
                 };
@@ -512,7 +512,7 @@ public class NetworkActivity extends AppCompatActivity {
 
                 NetworkSuggestedListResponse.JsonDt.SugUserCity.Dt row = getItem(position);
                 View.OnClickListener openUserProfile = v -> {
-                    Intent intent = new Intent(context, CommunityActivity.class);
+                    Intent intent = new Intent(context, ProfileActivity.class);
                     intent.putExtra("user_master_id", row.userMasterId);
                     startActivity(intent);
                 };
@@ -962,7 +962,7 @@ public class NetworkActivity extends AppCompatActivity {
 
                 NetworkSeeAllCommonResponse.FollowingsListResponse.Dt row = getItem(position);
                 View.OnClickListener openUserProfile = v -> {
-                    Intent intent = new Intent(context, CommunityActivity.class);
+                    Intent intent = new Intent(context, ProfileActivity.class);
                     intent.putExtra("user_master_id", row.userMasterId);
                     startActivity(intent);
                 };
@@ -1028,7 +1028,7 @@ public class NetworkActivity extends AppCompatActivity {
 
                 NetworkSeeAllCommonResponse.FollowerListResponse.Dt row = getItem(position);
                 View.OnClickListener openUserProfile = v -> {
-                    Intent intent = new Intent(context, CommunityActivity.class);
+                    Intent intent = new Intent(context, ProfileActivity.class);
                     intent.putExtra("user_master_id", row.userMasterId);
                     startActivity(intent);
                 };
@@ -1094,7 +1094,7 @@ public class NetworkActivity extends AppCompatActivity {
 
                 NetworkSeeAllCommonResponse.FollowReqListResponse.Dt row = getItem(position);
                 View.OnClickListener openUserProfile = v -> {
-                    Intent intent = new Intent(context, CommunityActivity.class);
+                    Intent intent = new Intent(context, ProfileActivity.class);
                     intent.putExtra("user_master_id", row.userMasterId);
                     startActivity(intent);
                 };
@@ -1172,7 +1172,7 @@ public class NetworkActivity extends AppCompatActivity {
 
                 NetworkSeeAllCommonResponse.ConnectionListResponse.Dt row = getItem(position);
                 View.OnClickListener openUserProfile = v -> {
-                    Intent intent = new Intent(context, CommunityActivity.class);
+                    Intent intent = new Intent(context, ProfileActivity.class);
                     intent.putExtra("user_master_id", row.userMasterId);
                     startActivity(intent);
                 };
@@ -1257,7 +1257,7 @@ public class NetworkActivity extends AppCompatActivity {
 
                 NetworkSuggestedListResponse.JsonDt.ConnReq.Dt row = getItem(position);
                 View.OnClickListener openUserProfile = v -> {
-                    Intent intent = new Intent(context, CommunityActivity.class);
+                    Intent intent = new Intent(context, ProfileActivity.class);
                     intent.putExtra("user_master_id", row.userMasterId);
                     startActivity(intent);
                 };
