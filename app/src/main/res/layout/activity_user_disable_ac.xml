@@ -62,6 +62,20 @@
         android:text="off reason from db"
         android:textSize="@dimen/small_lg" />
 
+    <TextView
+        android:id="@+id/mail_req_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="Describe your reactive account request in mail."
+        android:textSize="@dimen/label"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/re_activate_ac_mbtn"
         android:layout_width="wrap_content"
@@ -76,11 +90,11 @@
         android:id="@+id/privacy_policy_txt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/transparent"
         android:layout_gravity="center"
-        android:layout_marginTop="25dp"
-        android:gravity="center"
         android:layout_marginLeft="14dp"
-        android:layout_marginRight="14dp"  />
+        android:layout_marginTop="25dp"
+        android:layout_marginRight="14dp"
+        android:backgroundTint="@android:color/transparent"
+        android:gravity="center" />
 
 </LinearLayout>

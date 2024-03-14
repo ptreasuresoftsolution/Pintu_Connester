@@ -99,6 +99,7 @@ public class ManageMyPageActivity extends AppCompatActivity {
 
         scrollView = findViewById(R.id.scrollView);
         progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
         back_cv = findViewById(R.id.back_cv);
         back_cv.setOnClickListener(v -> {
             onBackPressed();
@@ -187,33 +188,56 @@ public class ManageMyPageActivity extends AppCompatActivity {
         settingDialog.setContentView(R.layout.common_option_dialog_layout);
         LinearLayout page_close_LL = settingDialog.findViewById(R.id.page_close_LL);
         page_close_LL.setVisibility(View.VISIBLE);
+
         page_close_LL.setOnClickListener(v -> {
-            CommonFunction.PleaseWaitShow(context);
-            HashMap hashMap = new HashMap();
-            hashMap.put("user_master_id", sessionPref.getUserMasterId());
-            hashMap.put("apiKey", sessionPref.getApiKey());
-            hashMap.put("business_page_id", business_page_id);
-            apiInterface.BUSINESS_PAGE_CLOSED(hashMap).enqueue(new MyApiCallback() {
+
+            AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+            alertDialog.setTitle("Close Business page!");
+            alertDialog.setMessage("You’ll also lose any recommendations and endorsements you’ve given or received.\n" +
+                    "\n" +
+                    "So, You are confirm to the close this business page??\n" +
+                    "And if click on continue then closed your business page.");
+            alertDialog.setCancelable(false);
+            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Close", new DialogInterface.OnClickListener() {
                 @Override
-                public void onResponse(Call call, Response response) {
-                    super.onResponse(call, response);
-                    if (response.isSuccessful()) {
-                        if (response.body() != null) {
-                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                            if (normalCommonResponse.status) {
-                                Intent intent = new Intent(context, PageDisableActivity.class);
-                                intent.putExtra("business_page_id", business_page_id);
-                                intent.putExtra("BusinessPageRowResponse", new Gson().toJson(businessPageRowResponse));
-                                startActivity(intent);
-                                finish();
-                            }
-                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                public void onClick(DialogInterface dialog, int which) {
+                    alertDialog.dismiss();
                 }
             });
+            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Continue", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //call api close account
+                    CommonFunction.PleaseWaitShow(context);
+                    HashMap hashMap = new HashMap();
+                    hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                    hashMap.put("apiKey", sessionPref.getApiKey());
+                    hashMap.put("business_page_id", business_page_id);
+                    apiInterface.BUSINESS_PAGE_CLOSED(hashMap).enqueue(new MyApiCallback() {
+                        @Override
+                        public void onResponse(Call call, Response response) {
+                            super.onResponse(call, response);
+                            if (response.isSuccessful()) {
+                                if (response.body() != null) {
+                                    NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                    if (normalCommonResponse.status) {
+                                        alertDialog.dismiss();
+                                        settingDialog.dismiss();
+                                        Intent intent = new Intent(context, PageDisableActivity.class);
+                                        intent.putExtra("business_page_id", business_page_id);
+                                        intent.putExtra("BusinessPageRowResponse", new Gson().toJson(businessPageRowResponse));
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+            alertDialog.show();
         });
-
         settingDialog.show();
     }
 
@@ -475,6 +499,7 @@ public class ManageMyPageActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) {
                 super.onResponse(call, response);
+                progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         businessPageRowResponse = (BusinessPageRowResponse) response.body();

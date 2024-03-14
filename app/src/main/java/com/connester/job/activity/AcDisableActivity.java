@@ -34,7 +34,7 @@ public class AcDisableActivity extends AppCompatActivity {
     Activity activity;
     SessionPref sessionPref;
     ApiInterface apiInterface;
-    TextView close_type_tv, account_id_tv, close_reason_tv, close_reason_db;
+    TextView close_type_tv, account_id_tv, close_reason_tv, close_reason_db, mail_req_tv;
     WebView privacy_policy_txt;
     MaterialButton re_activate_ac_mbtn;
     UserRowResponse.Dt userDt;
@@ -89,31 +89,41 @@ public class AcDisableActivity extends AppCompatActivity {
         privacy_policy_txt.setBackgroundColor(Color.TRANSPARENT);
         privacy_policy_txt.loadData("<p style='background:transparent'>Check the <a style='color:darkred;text-decoration:none' href='" + Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/" + "User-Agreement'>User Agreement</a>, and <a style='color:darkred;text-decoration:none' href='" + Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/" + "Privacy-Policy'>Privacy Policy</a> you agree to Connester. Check of your violation or closed/Disabled Profile.</p>", "text/html; charset=UTF-8", null);
 
+        mail_req_tv = findViewById(R.id.mail_req_tv);
+        mail_req_tv.setVisibility(View.GONE);
         re_activate_ac_mbtn = findViewById(R.id.re_activate_ac_mbtn);
-        re_activate_ac_mbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CommonFunction.PleaseWaitShow(context);
-                HashMap hashMap = new HashMap();
-                hashMap.put("user_master_id", sessionPref.getUserMasterId());
-                hashMap.put("apiKey", sessionPref.getApiKey());
-                apiInterface.ACCOUNT_REACTIVATE_CALL(hashMap).enqueue(new MyApiCallback() {
-                    @Override
-                    public void onResponse(Call call, Response response) {
-                        super.onResponse(call, response);
-                        if (response.isSuccessful()) {
-                            if (response.body() != null) {
-                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                                if (normalCommonResponse.status) {
-                                    ActivityCompat.finishAffinity(activity);
-                                    startActivity(new Intent(context, SplashActivity.class));
-                                } else
-                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+        if (pisProfileOffReason[pisProfileOffReason.length - 1].equalsIgnoreCase("BY USER")) {
+            re_activate_ac_mbtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CommonFunction.PleaseWaitShow(context);
+                    HashMap hashMap = new HashMap();
+                    hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                    hashMap.put("apiKey", sessionPref.getApiKey());
+                    apiInterface.ACCOUNT_REACTIVATE_CALL(hashMap).enqueue(new MyApiCallback() {
+                        @Override
+                        public void onResponse(Call call, Response response) {
+                            super.onResponse(call, response);
+                            if (response.isSuccessful()) {
+                                if (response.body() != null) {
+                                    NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                    if (normalCommonResponse.status) {
+                                        ActivityCompat.finishAffinity(activity);
+                                        startActivity(new Intent(context, SplashActivity.class));
+                                    } else
+                                        Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        } else { // request approve in  mail
+            mail_req_tv.setVisibility(View.VISIBLE);
+            re_activate_ac_mbtn.setText("Mail - " + Constant.userEmail);
+            re_activate_ac_mbtn.setOnClickListener(v -> {
+                CommonFunction.mailInApp(context, Constant.userEmail);
+            });
+        }
     }
 }

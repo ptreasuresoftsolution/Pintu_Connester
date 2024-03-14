@@ -1,9 +1,320 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.businesspage.PageDisableActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/page_banner_iv"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/user_default_banner" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/back_cv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginBottom="2dp"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="4dp"
+                    android:src="@drawable/arrow_back"
+                    app:tint="@color/primary" />
+            </com.google.android.material.card.MaterialCardView>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|bottom"
+            android:layout_marginTop="-70dp">
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="40dp"
+                app:cardCornerRadius="25dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="40dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/page_title_txt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:text="page title"
+                        android:textColor="@color/secondary_3"
+                        android:textSize="@dimen/label"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tagline_bio_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:text="tagline"
+                        android:textSize="@dimen/small_lg" />
+
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        app:alignContent="center"
+                        app:alignItems="center"
+                        app:flexWrap="wrap">
+
+                        <TextView
+                            android:id="@+id/industry_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="industry"
+                            android:textColor="@color/secondary_4"
+                            android:textSize="@dimen/small_xs" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:text="@string/sign_bullet"
+                            android:textColor="@color/secondary_4"
+                            android:textSize="@dimen/small_lg" />
+
+                        <TextView
+                            android:id="@+id/address_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="address"
+                            android:textColor="@color/secondary_4"
+                            android:textSize="@dimen/small_xs" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:text="@string/sign_bullet"
+                            android:textColor="@color/secondary_4"
+                            android:textSize="@dimen/small_lg" />
+
+                        <TextView
+                            android:id="@+id/founded_yr_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="founded yr"
+                            android:textColor="@color/secondary_4"
+                            android:textSize="@dimen/small_xs" />
+                    </com.google.android.flexbox.FlexboxLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp">
+
+                        <TextView
+                            android:id="@+id/followers_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="followers"
+                            android:textColor="@color/primary"
+                            android:textSize="@dimen/small_lg" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:text="@string/sign_bullet"
+                            android:textColor="@color/primary"
+                            android:textSize="@dimen/small_lg" />
+
+                        <TextView
+                            android:id="@+id/no_employee_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="employee"
+                            android:textColor="@color/primary"
+                            android:textSize="@dimen/small_lg" />
+                    </LinearLayout>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="18dp"
+                        android:layout_marginRight="10dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/secondary"
+                        app:strokeWidth="0.5dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingTop="20dp"
+                            android:paddingBottom="20dp"
+                            tools:ignore="WebViewLayout">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="Your Business page is"
+                                android:textColor="@color/secondary_3" />
+
+                            <TextView
+                                android:id="@+id/close_type_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="Type"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/page_id_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="10dp"
+                                android:text="Business page Id - x"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/close_reason_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="15dp"
+                                android:gravity="center"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp"
+                                android:text="You no longer access your account! further reason of"
+                                android:textSize="@dimen/small_lg" />
+
+                            <TextView
+                                android:id="@+id/close_reason_db"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="4dp"
+                                android:gravity="center"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp"
+                                android:text="off reason from db"
+                                android:textSize="@dimen/small_lg" />
+
+                            <TextView
+                                android:id="@+id/mail_req_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="20dp"
+                                android:gravity="center"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp"
+                                android:text="Describe your reactive business page request in mail."
+                                android:textSize="@dimen/label"
+                                android:textStyle="bold" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/re_activate_page_mbtn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="14dp"
+                                android:text="Re-Activate Business Page"
+                                android:textColor="@color/white"
+                                app:backgroundTint="@color/success" />
+
+                            <WebView
+                                android:id="@+id/privacy_policy_txt"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginLeft="14dp"
+                                android:layout_marginTop="25dp"
+                                android:layout_marginRight="14dp"
+                                android:backgroundTint="@android:color/transparent"
+                                android:gravity="center" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|top">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    app:cardBackgroundColor="@color/secondary_2"
+                    app:cardCornerRadius="35dp"
+                    app:cardElevation="1dp"
+                    app:strokeColor="@color/white">
+
+                    <ImageView
+                        android:id="@+id/page_logo_iv"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/default_business_pic" />
+                </com.google.android.material.card.MaterialCardView>
+
+            </FrameLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/error_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/secondary_2"
+        android:gravity="center"
+        android:text="Somthing want wrong!!!"
+        android:textColor="@color/error"
+        android:textSize="@dimen/label"
+        android:visibility="gone" />
+</FrameLayout>
