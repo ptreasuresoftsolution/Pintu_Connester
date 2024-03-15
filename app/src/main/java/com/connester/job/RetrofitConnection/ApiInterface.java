@@ -8,6 +8,7 @@ import com.connester.job.RetrofitConnection.jsontogson.GetLinkMetaDataResponse;
 import com.connester.job.RetrofitConnection.jsontogson.GroupMembersListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.GroupRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.JobsEventMasterResponse;
+import com.connester.job.RetrofitConnection.jsontogson.MembersListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MyGroupListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MyPagesListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
@@ -186,6 +187,18 @@ public interface ApiInterface {
     Call<NormalCommonResponse> ACCOUNT_REACTIVATE_CALL(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/changePassword")
+    Call<NormalCommonResponse> CHANGE_PASSWORD_CALL(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/unBlockedUser")
+    Call<NormalCommonResponse> UN_BLOCKED_USER(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/loadBlockedUserList")
+    Call<MembersListResponse> BLOCKED_USER_LIST(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/logOutAllDevices")
     Call<NormalCommonResponse> LOG_OUT_ALL_DEVICES_CALL(@FieldMap Map<String, String> params);
 
@@ -337,6 +350,7 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/closeMyCreatedCommunity")
     Call<NormalCommonResponse> GROUP_CLOSED(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/reActivateMyCreatedCommunity")
     Call<NormalCommonResponse> GROUP_RE_ACTIVE(@FieldMap Map<String, String> params);
@@ -344,24 +358,31 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/loadBlockedCommunityMembers")
     Call<GroupMembersListResponse> GROUP_BLOCKED_MEMBERS_LIST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/unBlockedCommunityMember")
     Call<NormalCommonResponse> UN_BLOCKED_GROUP_MEMBERS_LIST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/getCommunityMembers")
     Call<GroupMembersListResponse> GROUP_MEMBERS_LIST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/blockedCommunityMember")
     Call<NormalCommonResponse> BLOCK_GROUP_MEMBERS(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/userCommunityExit")
     Call<NormalCommonResponse> REMOVE_GROUP_MEMBERS(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/getCommunityMemberRequest")
     Call<GroupMembersListResponse> GROUP_MEMBER_REQUEST_LIST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/userCommunityJoinRequestReject")
     Call<NormalCommonResponse> GROUP_MEMBER_REQUEST_REJECT(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/userCommunityJoinRequestAccept")
     Call<NormalCommonResponse> GROUP_MEMBER_REQUEST_ACCEPT(@FieldMap Map<String, String> params);
