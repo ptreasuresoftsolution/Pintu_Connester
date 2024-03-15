@@ -31,6 +31,7 @@ import com.connester.job.RetrofitConnection.jsontogson.NetworkSeeAllCommonRespon
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.activity.business.BusinessActivity;
+import com.connester.job.activity.community.CommunityActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;

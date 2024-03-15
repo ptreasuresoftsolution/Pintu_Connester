@@ -20,7 +20,7 @@ import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.RequestedGroupListResponse;
-import com.connester.job.activity.CommunityActivity;
+import com.connester.job.activity.community.CommunityActivity;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.google.android.material.button.MaterialButton;

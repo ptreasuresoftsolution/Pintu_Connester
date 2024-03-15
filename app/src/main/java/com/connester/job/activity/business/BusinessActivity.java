@@ -114,7 +114,7 @@ public class BusinessActivity extends AppCompatActivity {
         fragmentsTitle.add("About");
         fragments.add(new BusinessPostsFragment(scrollView, business_page_id, progressBar));
         fragmentsTitle.add("Posts");
-        fragments.add(new BusinessJobsFragment(scrollView,business_page_id, progressBar));
+        fragments.add(new BusinessJobsFragment(scrollView, business_page_id, progressBar));
         fragmentsTitle.add("Jobs");
         fragments.add(new BusinessPeopleFragment(scrollView, business_page_id, progressBar));
         fragmentsTitle.add("People");
@@ -148,6 +148,7 @@ public class BusinessActivity extends AppCompatActivity {
             if (businessPageRow != null) {
                 String urlLink = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/business/" + businessPageRow.cusLink;
                 CommonFunction.copyToClipBoard(context, urlLink);
+                optionDialog.dismiss();
             }
         });
 
@@ -188,7 +189,7 @@ public class BusinessActivity extends AppCompatActivity {
                             //handling redirect for page is not active
                             if (!businessPageRow.pageStatus.equalsIgnoreCase("ACTIVE")) {
                                 progressBar.setVisibility(View.VISIBLE);
-                                Toast.makeText(context, "Page not found! This page is deactivated!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, "Page not found! This page is deactivated! Pleas go back.", Toast.LENGTH_LONG).show();
                                 return;
                             } else {
                                 imgPath = businessPageRowResponse.imgPath;

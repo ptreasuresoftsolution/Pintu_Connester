@@ -78,7 +78,7 @@ public class GroupMembersFragment extends Fragment {
 
 
                                 ImageView member_profile_pic = jobApplicationView.findViewById(R.id.member_profile_pic);
-                                Glide.with(context).load(groupMembersListResponse.imgPath + dt.profilePic).centerCrop().placeholder(R.drawable.user_default_banner).into(member_profile_pic);
+                                Glide.with(context).load(groupMembersListResponse.imgPath + dt.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(member_profile_pic);
 
                                 TextView member_tv = jobApplicationView.findViewById(R.id.member_tv);
                                 member_tv.setText(dt.name);

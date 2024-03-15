@@ -112,7 +112,7 @@
             android:name=".activity.business.BusinessActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.CommunityActivity"
+            android:name=".activity.community.CommunityActivity"
             android:exported="false" />
         <activity
             android:name=".activity.ProfileActivity"

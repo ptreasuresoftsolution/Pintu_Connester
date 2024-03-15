@@ -11,6 +11,12 @@ public class GroupRowResponse {
     @SerializedName("msg")
     @Expose
     public String msg;
+    @SerializedName("isMember")
+    @Expose
+    public Boolean isMember;
+    @SerializedName("isRequested")
+    @Expose
+    public Boolean isRequested;
     @SerializedName("dt")
     @Expose
     public GroupRow groupRow;
