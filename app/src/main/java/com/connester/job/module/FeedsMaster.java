@@ -47,7 +47,7 @@ import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.OurEventPostRow;
 import com.connester.job.RetrofitConnection.jsontogson.OurJobPostRow;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
-import com.connester.job.activity.BusinessActivity;
+import com.connester.job.activity.business.BusinessActivity;
 import com.connester.job.activity.CommunityActivity;
 import com.connester.job.activity.EditProfileActivity;
 import com.connester.job.activity.FeedFullViewActivity;

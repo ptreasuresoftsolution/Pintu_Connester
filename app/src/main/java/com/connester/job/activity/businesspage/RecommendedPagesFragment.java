@@ -21,7 +21,7 @@ import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
-import com.connester.job.activity.BusinessActivity;
+import com.connester.job.activity.business.BusinessActivity;
 import com.connester.job.activity.NetworkActivity;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;

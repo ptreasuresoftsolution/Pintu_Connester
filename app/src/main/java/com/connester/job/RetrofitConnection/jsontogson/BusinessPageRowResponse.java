@@ -11,6 +11,9 @@ public class BusinessPageRowResponse {
     @Expose
     public String msg;
 
+    @SerializedName("isMember")
+    @Expose
+    public Boolean isMember;
     @SerializedName("imgPath")
     @Expose
     public String imgPath;

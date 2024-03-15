@@ -109,7 +109,7 @@
             android:name=".activity.FeedFullViewActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.BusinessActivity"
+            android:name=".activity.business.BusinessActivity"
             android:exported="false" />
         <activity
             android:name=".activity.CommunityActivity"
