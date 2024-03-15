@@ -5,7 +5,7 @@ import com.connester.job.RetrofitConnection.jsontogson.EducationListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.GetLinkMetaDataResponse;
-import com.connester.job.RetrofitConnection.jsontogson.GroupBlockedMembersListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.GroupMembersListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.GroupRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.JobsEventMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MyGroupListResponse;
@@ -340,8 +340,26 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/loadBlockedCommunityMembers")
-    Call<GroupBlockedMembersListResponse> GROUP_BLOCKED_MEMBERS_LIST(@FieldMap Map<String, String> params);
+    Call<GroupMembersListResponse> GROUP_BLOCKED_MEMBERS_LIST(@FieldMap Map<String, String> params);
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/unBlockedCommunityMember")
     Call<NormalCommonResponse> UN_BLOCKED_GROUP_MEMBERS_LIST(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/getCommunityMembers")
+    Call<GroupMembersListResponse> GROUP_MEMBERS_LIST(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/blockedCommunityMember")
+    Call<NormalCommonResponse> BLOCK_GROUP_MEMBERS(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/userCommunityExit")
+    Call<NormalCommonResponse> REMOVE_GROUP_MEMBERS(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/getCommunityMemberRequest")
+    Call<GroupMembersListResponse> GROUP_MEMBER_REQUEST_LIST(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/userCommunityJoinRequestReject")
+    Call<NormalCommonResponse> GROUP_MEMBER_REQUEST_REJECT(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/userCommunityJoinRequestAccept")
+    Call<NormalCommonResponse> GROUP_MEMBER_REQUEST_ACCEPT(@FieldMap Map<String, String> params);
 }

@@ -23,6 +23,7 @@ import com.connester.job.RetrofitConnection.jsontogson.PageMembersResponse;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.HashMap;
 
@@ -70,7 +71,7 @@ public class PagePeopleFragment extends Fragment {
                         PageMembersResponse pageMembersResponse = (PageMembersResponse) response.body();
                         if (pageMembersResponse.status) {
                             for (PageMembersResponse.Dt dt : pageMembersResponse.dt) {
-                                View jobApplicationView = getLayoutInflater().inflate(R.layout.job_application_list_item, null);
+                                View jobApplicationView = getLayoutInflater().inflate(R.layout.user_pic_two_btn_list_item, null);
 
 
                                 ImageView member_profile_pic = jobApplicationView.findViewById(R.id.member_profile_pic);
@@ -79,9 +80,9 @@ public class PagePeopleFragment extends Fragment {
                                 TextView member_tv = jobApplicationView.findViewById(R.id.member_tv);
                                 member_tv.setText(dt.name);
 
-                                TextView first_tv = jobApplicationView.findViewById(R.id.first_tv);
-                                first_tv.setText("Remove");
-                                first_tv.setOnClickListener(v -> {
+                                MaterialButton second_mbtn = jobApplicationView.findViewById(R.id.second_mbtn);
+                                second_mbtn.setText("Remove");
+                                second_mbtn.setOnClickListener(v -> {
                                     //call application add to active
                                     CommonFunction.PleaseWaitShow(context);
                                     HashMap hashMap = new HashMap();
@@ -105,10 +106,8 @@ public class PagePeopleFragment extends Fragment {
                                     });
                                 });
 
-                                LinearLayout second_line_ll = jobApplicationView.findViewById(R.id.second_line_ll);
-                                second_line_ll.setVisibility(View.GONE);
-                                TextView second_tv = jobApplicationView.findViewById(R.id.second_tv);
-                                second_tv.setVisibility(View.GONE);
+                                LinearLayout first_mbtn = jobApplicationView.findViewById(R.id.first_mbtn);
+                                first_mbtn.setVisibility(View.GONE);
 
                                 main_ll.addView(jobApplicationView);
                             }

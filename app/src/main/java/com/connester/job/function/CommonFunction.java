@@ -411,10 +411,11 @@ public class CommonFunction {
             return "";
         }
         char first = s.charAt(0);
-        if (Character.isUpperCase(first)) {
+        char second = s.charAt(1);
+        if (Character.isUpperCase(first) && Character.isLowerCase(second)) {
             return s;
         } else {
-            return Character.toUpperCase(first) + s.substring(1);
+            return Character.toUpperCase(first) + s.toLowerCase().substring(1);
         }
     }
 
@@ -545,7 +546,6 @@ public class CommonFunction {
         if (matcher.matches()) return true;
         else return false;
     }
-
 
 
     public static String getMimietype(Context context, Uri uri) {

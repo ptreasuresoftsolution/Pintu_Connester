@@ -34,7 +34,7 @@ import com.bumptech.glide.Glide;
 import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
-import com.connester.job.RetrofitConnection.jsontogson.GroupBlockedMembersListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.GroupMembersListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.GroupRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.activity.EditProfileActivity;
@@ -149,7 +149,7 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
 
         fragments.add(new GroupPostFragment(scrollView, community_master_id, progressBar));
         fragmentsTitle.add("Posts");
-        fragments.add(new GroupMembersFragment(community_master_id, progressBar));
+        fragments.add(new GroupMembersFragment(scrollView,community_master_id, progressBar));
         fragmentsTitle.add("Group Members");
         fragments.add(new MemberRequestFragment(scrollView, community_master_id, progressBar));
         fragmentsTitle.add("Member Request");
@@ -271,7 +271,7 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
         CommonFunction.PleaseWaitShow(context);
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.group_create_manage_dialog);
+        dialog.setContentView(R.layout.list_view_dialog);
         EditProfileActivity.setDialogFullScreenSetting(dialog);
 
         ImageView back_iv = dialog.findViewById(R.id.back_iv);
@@ -284,6 +284,7 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
         hashMap.put("device", "ANDROID");
+        hashMap.put("community_master_id", community_master_id);
 
         apiInterface.GROUP_BLOCKED_MEMBERS_LIST(hashMap).enqueue(new MyApiCallback(progressBar) {
             @Override
@@ -291,11 +292,11 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
                 super.onResponse(call, response);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        GroupBlockedMembersListResponse groupBlockedMembersListResponse = (GroupBlockedMembersListResponse) response.body();
-                        if (groupBlockedMembersListResponse.status) {
-                            list_lt.setAdapter(getBlockedMemberGroupAdapter(groupBlockedMembersListResponse));
+                        GroupMembersListResponse groupMembersListResponse = (GroupMembersListResponse) response.body();
+                        if (groupMembersListResponse.status) {
+                            list_lt.setAdapter(getBlockedMemberGroupAdapter(groupMembersListResponse));
                         } else
-                            Toast.makeText(context, groupBlockedMembersListResponse.msg, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, groupMembersListResponse.msg, Toast.LENGTH_SHORT).show();
 
                         progressBar.setVisibility(View.GONE);
                     }
@@ -305,17 +306,17 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private ListAdapter getBlockedMemberGroupAdapter(GroupBlockedMembersListResponse groupBlockedMembersListResponse) {
-        String imgPath = groupBlockedMembersListResponse.imgPath;
+    private ListAdapter getBlockedMemberGroupAdapter(GroupMembersListResponse groupMembersListResponse) {
+        String imgPath = groupMembersListResponse.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
             public int getCount() {
-                return groupBlockedMembersListResponse.dt.size();
+                return groupMembersListResponse.dt.size();
             }
 
             @Override
-            public GroupBlockedMembersListResponse.Dt getItem(int position) {
-                return groupBlockedMembersListResponse.dt.get(position);
+            public GroupMembersListResponse.Dt getItem(int position) {
+                return groupMembersListResponse.dt.get(position);
             }
 
             @Override
@@ -328,7 +329,7 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
                 if (view == null)
                     view = LayoutInflater.from(context).inflate(R.layout.user_pic_two_btn_list_item, parent, false);
 
-                GroupBlockedMembersListResponse.Dt row = getItem(position);
+                GroupMembersListResponse.Dt row = getItem(position);
                 View.OnClickListener openUser = v -> {
                     Intent intent = new Intent(context, ProfileActivity.class);
                     intent.putExtra("user_master_id", String.valueOf(row.userMasterId));
@@ -345,6 +346,7 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
                 first_mbtn.setVisibility(View.GONE);
 
                 MaterialButton second_mbtn = view.findViewById(R.id.second_mbtn);
+                second_mbtn.setText("Unblock");
                 second_mbtn.setOnClickListener(v1 -> {
                     CommonFunction.PleaseWaitShow(context);
                     HashMap hashMap = new HashMap();
@@ -374,7 +376,7 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
             }
 
             private void removeItem(int position) {
-                groupBlockedMembersListResponse.dt.remove(position);
+                groupMembersListResponse.dt.remove(position);
                 notifyDataSetChanged();
             }
         };
