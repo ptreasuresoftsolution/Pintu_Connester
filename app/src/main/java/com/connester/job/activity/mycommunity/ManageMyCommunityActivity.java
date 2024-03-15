@@ -178,7 +178,7 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
         CommonFunction.PleaseWaitShow(context);
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.group_create_manage_dialog);
+        dialog.setContentView(R.layout.group_details_view_dialog);
         EditProfileActivity.setDialogFullScreenSetting(dialog);
 
         ImageView back_iv = dialog.findViewById(R.id.back_iv);

@@ -210,18 +210,20 @@
                 android:textColor="@color/secondary_3"
                 android:textSize="@dimen/label" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/link_copy_LL"
             android:layout_width="match_parent"
             android:layout_height="26dp"
             android:layout_marginBottom="6dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="20dp"
-                android:src="@drawable/feed_add_text_link"
+                android:src="@drawable/copy_link"
                 app:tint="@color/secondary_3" />
 
             <TextView
@@ -232,18 +234,20 @@
                 android:textColor="@color/secondary_3"
                 android:textSize="@dimen/label" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/report_LL"
             android:layout_width="match_parent"
             android:layout_height="26dp"
             android:layout_marginBottom="6dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="20dp"
-                android:src="@drawable/power_close_ac"
+                android:src="@drawable/report_item"
                 app:tint="@color/secondary_3" />
 
             <TextView

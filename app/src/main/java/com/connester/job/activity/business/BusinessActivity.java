@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.tabs.TabLayout;
@@ -112,7 +114,7 @@ public class BusinessActivity extends AppCompatActivity {
         fragmentsTitle.add("About");
         fragments.add(new BusinessPostsFragment(scrollView, business_page_id, progressBar));
         fragmentsTitle.add("Posts");
-        fragments.add(new BusinessJobsFragment(business_page_id, progressBar));
+        fragments.add(new BusinessJobsFragment(scrollView,business_page_id, progressBar));
         fragmentsTitle.add("Jobs");
         fragments.add(new BusinessPeopleFragment(scrollView, business_page_id, progressBar));
         fragmentsTitle.add("People");
@@ -138,7 +140,26 @@ public class BusinessActivity extends AppCompatActivity {
     }
 
     private void openMoreOptionDialog() {
+        BottomSheetDialog optionDialog = new BottomSheetDialog(context);
+        optionDialog.setContentView(R.layout.common_option_dialog_layout);
+        LinearLayout link_copy_LL = optionDialog.findViewById(R.id.link_copy_LL);
+        link_copy_LL.setVisibility(View.VISIBLE);
+        link_copy_LL.setOnClickListener(v -> {
+            if (businessPageRow != null) {
+                String urlLink = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/business/" + businessPageRow.cusLink;
+                CommonFunction.copyToClipBoard(context, urlLink);
+            }
+        });
 
+        LinearLayout report_LL = optionDialog.findViewById(R.id.report_LL);
+        report_LL.setVisibility(View.VISIBLE);
+        report_LL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                optionDialog.dismiss();
+            }
+        });
+        optionDialog.show();
     }
 
     BusinessPageRowResponse.BusinessPageRow businessPageRow;
