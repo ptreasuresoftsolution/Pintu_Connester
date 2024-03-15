@@ -337,6 +337,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/closeMyCreatedCommunity")
     Call<NormalCommonResponse> GROUP_CLOSED(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Community/reActivateMyCreatedCommunity")
+    Call<NormalCommonResponse> GROUP_RE_ACTIVE(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/loadBlockedCommunityMembers")

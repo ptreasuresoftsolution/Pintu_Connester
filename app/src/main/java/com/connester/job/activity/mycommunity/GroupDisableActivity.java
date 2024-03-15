@@ -17,9 +17,8 @@ import com.bumptech.glide.Glide;
 import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
-import com.connester.job.RetrofitConnection.jsontogson.BusinessPageRowResponse;
+import com.connester.job.RetrofitConnection.jsontogson.GroupRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
-import com.connester.job.activity.businesspage.ManageMyPageActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.MyApiCallback;
@@ -34,19 +33,19 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class GroupDisableActivity extends AppCompatActivity {
-    String business_page_id, imgPath;
+    String community_master_id, imgPath;
     TextView error_text;
-    BusinessPageRowResponse businessPageRowResponse;
+    GroupRowResponse groupRowResponse;
     Context context;
     Activity activity;
     SessionPref sessionPref;
     ApiInterface apiInterface;
     MaterialCardView back_cv;
-    ImageView page_banner_iv, page_logo_iv;
-    TextView page_title_txt, tagline_bio_tv, industry_tv, address_tv, founded_yr_tv, followers_tv, no_employee_tv;
-    TextView close_type_tv, page_id_tv, close_reason_tv, close_reason_db, mail_req_tv;
+    ImageView group_banner_iv, group_logo_iv, privacy_img;
+    TextView close_type_tv, group_id_tv, close_reason_tv, close_reason_db, mail_req_tv, group_title_txt, privacy_tv;
     WebView privacy_policy_txt;
-    MaterialButton re_activate_page_mbtn;
+    MaterialButton re_activate_group_mbtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,10 +54,10 @@ public class GroupDisableActivity extends AppCompatActivity {
         error_text = findViewById(R.id.error_text);
         error_text.setVisibility(View.VISIBLE);
         if (getIntent() != null) {
-            business_page_id = getIntent().getStringExtra("business_page_id");
-            String businessPageRowResponseJson = getIntent().getStringExtra("BusinessPageRowResponse");
-            if (business_page_id != null && businessPageRowResponseJson != null) {
-                businessPageRowResponse = new Gson().fromJson(businessPageRowResponseJson, BusinessPageRowResponse.class);
+            community_master_id = getIntent().getStringExtra("community_master_id");
+            String GroupRowResponseJson = getIntent().getStringExtra("GroupRowResponse");
+            if (community_master_id != null && GroupRowResponseJson != null) {
+                groupRowResponse = new Gson().fromJson(GroupRowResponseJson, GroupRowResponse.class);
             } else return;
         } else return;
 
@@ -74,28 +73,26 @@ public class GroupDisableActivity extends AppCompatActivity {
             onBackPressed();
         });
 
-        page_banner_iv = findViewById(R.id.page_banner_iv);
-        page_logo_iv = findViewById(R.id.page_logo_iv);
+        group_banner_iv = findViewById(R.id.group_banner_iv);
+        group_logo_iv = findViewById(R.id.group_logo_iv);
 
-        page_title_txt = findViewById(R.id.page_title_txt);
-        tagline_bio_tv = findViewById(R.id.tagline_bio_tv);
-        industry_tv = findViewById(R.id.industry_tv);
-        address_tv = findViewById(R.id.address_tv);
-        founded_yr_tv = findViewById(R.id.founded_yr_tv);
-        followers_tv = findViewById(R.id.followers_tv);
-        no_employee_tv = findViewById(R.id.no_employee_tv);
+        group_title_txt = findViewById(R.id.group_title_txt);
+        privacy_img = findViewById(R.id.privacy_img);
+        privacy_tv = findViewById(R.id.privacy_tv);
 
-        imgPath = businessPageRowResponse.imgPath;
-        Glide.with(context).load(imgPath + businessPageRowResponse.businessPageRow.banner).centerCrop().placeholder(R.drawable.user_default_banner).into(page_banner_iv);
-        Glide.with(context).load(imgPath + businessPageRowResponse.businessPageRow.logo).centerCrop().placeholder(R.drawable.default_business_pic).into(page_logo_iv);
+        imgPath = groupRowResponse.imgPath;
+        Glide.with(context).load(imgPath + groupRowResponse.groupRow.banner).centerCrop().placeholder(R.drawable.user_default_banner).into(group_banner_iv);
+        Glide.with(context).load(imgPath + groupRowResponse.groupRow.logo).centerCrop().placeholder(R.drawable.default_business_pic).into(group_logo_iv);
 
-        page_title_txt.setText(businessPageRowResponse.businessPageRow.busName);
-        tagline_bio_tv.setText(businessPageRowResponse.businessPageRow.bio);
-        industry_tv.setText(businessPageRowResponse.businessPageRow.industry);
-        address_tv.setText(businessPageRowResponse.businessPageRow.address);
-        founded_yr_tv.setText(businessPageRowResponse.businessPageRow.foundedYear);
-        followers_tv.setText(businessPageRowResponse.businessPageRow.members + " followers");
-        no_employee_tv.setText(businessPageRowResponse.businessPageRow.orgSize);
+
+        group_title_txt.setText(groupRowResponse.groupRow.name);
+        privacy_tv.setText(CommonFunction.capitalize(groupRowResponse.groupRow.type));
+        //set icon
+        if (groupRowResponse.groupRow.type.equalsIgnoreCase("PUBLIC")) {
+            privacy_img.setImageResource(R.drawable.people_fill_public);
+        } else {
+            privacy_img.setImageResource(R.drawable.person_fill_lock_private);
+        }
 
         //disable data set
 
@@ -111,27 +108,27 @@ public class GroupDisableActivity extends AppCompatActivity {
         typeColorHashMap.put("SUSPENDED", R.color.error);
         typeColorHashMap.put("TEMPORARY_OFF", R.color.warning);
 
-        String pisPageOffReason[] = businessPageRowResponse.businessPageRow.pageOffReason.split("-");
+        String pisGroupOffReason[] = groupRowResponse.groupRow.groupOffReason.split("-");
         HashMap msgOffHashMap = new HashMap();
-        msgOffHashMap.put("BY USER", "Business page closed action by You.");
+        msgOffHashMap.put("BY USER", "Group closed action by You.");
         msgOffHashMap.put("BY ADMIN", "Disabled by admin.");
         msgOffHashMap.put("BY SYSTEM", "Disabled by automated system security.");
         msgOffHashMap.put("BY REPORT", "Suspended because other user report your profile.");
 
         close_type_tv = findViewById(R.id.close_type_tv);
-        close_type_tv.setText(typeHashMap.get(businessPageRowResponse.businessPageRow.pageStatus.toUpperCase()).toString());
-        close_type_tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, typeIconHashMap.get(businessPageRowResponse.businessPageRow.pageStatus.toUpperCase()), 0);
+        close_type_tv.setText(typeHashMap.get(groupRowResponse.groupRow.groupStatus.toUpperCase()).toString());
+        close_type_tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, typeIconHashMap.get(groupRowResponse.groupRow.groupStatus.toUpperCase()), 0);
         close_type_tv.setCompoundDrawablePadding(4);
-        close_type_tv.setTextColor(context.getColor(typeColorHashMap.get(businessPageRowResponse.businessPageRow.pageStatus.toUpperCase())));
+        close_type_tv.setTextColor(context.getColor(typeColorHashMap.get(groupRowResponse.groupRow.groupStatus.toUpperCase())));
 
-        page_id_tv = findViewById(R.id.page_id_tv);
-        page_id_tv.setText("Business page Id - " + String.format("%04d", Integer.parseInt(business_page_id)));
+        group_id_tv = findViewById(R.id.group_id_tv);
+        group_id_tv.setText("Group Id - " + String.format("%04d", Integer.parseInt(community_master_id)));
 
         close_reason_tv = findViewById(R.id.close_reason_tv);
-        close_reason_tv.setText("You no longer access your business page! further reason of " + msgOffHashMap.get(pisPageOffReason[pisPageOffReason.length - 1]));
+        close_reason_tv.setText("You no longer access your group! further reason of " + msgOffHashMap.get(pisGroupOffReason[pisGroupOffReason.length - 1]));
 
         close_reason_db = findViewById(R.id.close_reason_db);
-        close_reason_db.setText(businessPageRowResponse.businessPageRow.pageOffReason);
+        close_reason_db.setText(groupRowResponse.groupRow.groupOffReason);
 
         privacy_policy_txt = findViewById(R.id.privacy_policy_txt);
         privacy_policy_txt.setBackgroundColor(Color.TRANSPARENT);
@@ -139,17 +136,17 @@ public class GroupDisableActivity extends AppCompatActivity {
 
         mail_req_tv = findViewById(R.id.mail_req_tv);
         mail_req_tv.setVisibility(View.GONE);
-        re_activate_page_mbtn = findViewById(R.id.re_activate_page_mbtn);
-        if (pisPageOffReason[pisPageOffReason.length - 1].equalsIgnoreCase("BY USER")) {
-            re_activate_page_mbtn.setOnClickListener(new View.OnClickListener() {
+        re_activate_group_mbtn = findViewById(R.id.re_activate_group_mbtn);
+        if (pisGroupOffReason[pisGroupOffReason.length - 1].equalsIgnoreCase("BY USER")) {
+            re_activate_group_mbtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     CommonFunction.PleaseWaitShow(context);
                     HashMap hashMap = new HashMap();
                     hashMap.put("user_master_id", sessionPref.getUserMasterId());
                     hashMap.put("apiKey", sessionPref.getApiKey());
-                    hashMap.put("business_page_id", business_page_id);
-                    apiInterface.BUSINESS_PAGE_REACTIVATE_CALL(hashMap).enqueue(new MyApiCallback() {
+                    hashMap.put("community_master_id", community_master_id);
+                    apiInterface.GROUP_RE_ACTIVE(hashMap).enqueue(new MyApiCallback() {
                         @Override
                         public void onResponse(Call call, Response response) {
                             super.onResponse(call, response);
@@ -157,8 +154,8 @@ public class GroupDisableActivity extends AppCompatActivity {
                                 if (response.body() != null) {
                                     NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                     if (normalCommonResponse.status) {
-                                        Intent intent = new Intent(context, ManageMyPageActivity.class);
-                                        intent.putExtra("business_page_id", business_page_id);
+                                        Intent intent = new Intent(context, ManageMyCommunityActivity.class);
+                                        intent.putExtra("community_master_id", community_master_id);
                                         startActivity(intent);
                                         finish();
                                     } else
@@ -171,8 +168,8 @@ public class GroupDisableActivity extends AppCompatActivity {
             });
         } else { // request approve in  mail
             mail_req_tv.setVisibility(View.VISIBLE);
-            re_activate_page_mbtn.setText("Mail - " + Constant.userEmail);
-            re_activate_page_mbtn.setOnClickListener(v -> {
+            re_activate_group_mbtn.setText("Mail - " + Constant.userEmail);
+            re_activate_group_mbtn.setOnClickListener(v -> {
                 CommonFunction.mailInApp(context, Constant.userEmail);
             });
         }

@@ -76,105 +76,30 @@
                         android:textSize="@dimen/label"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/tagline_bio_tv"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:gravity="center"
                         android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:text="tagline"
-                        android:textSize="@dimen/small_lg" />
-
-                    <com.google.android.flexbox.FlexboxLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="10dp"
-                        android:gravity="center_vertical"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        app:alignContent="center"
-                        app:alignItems="center"
-                        app:flexWrap="wrap">
-
-                        <TextView
-                            android:id="@+id/industry_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="industry"
-                            android:textColor="@color/secondary_4"
-                            android:textSize="@dimen/small_xs" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="4dp"
-                            android:layout_marginRight="4dp"
-                            android:text="@string/sign_bullet"
-                            android:textColor="@color/secondary_4"
-                            android:textSize="@dimen/small_lg" />
-
-                        <TextView
-                            android:id="@+id/address_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="address"
-                            android:textColor="@color/secondary_4"
-                            android:textSize="@dimen/small_xs" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="4dp"
-                            android:layout_marginRight="4dp"
-                            android:text="@string/sign_bullet"
-                            android:textColor="@color/secondary_4"
-                            android:textSize="@dimen/small_lg" />
-
-                        <TextView
-                            android:id="@+id/founded_yr_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="founded yr"
-                            android:textColor="@color/secondary_4"
-                            android:textSize="@dimen/small_xs" />
-                    </com.google.android.flexbox.FlexboxLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal"
-                        android:paddingLeft="10dp"
                         android:paddingRight="10dp">
 
-                        <TextView
-                            android:id="@+id/followers_tv"
-                            android:layout_width="match_parent"
+                        <ImageView
+                            android:id="@+id/privacy_img"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="followers"
-                            android:textColor="@color/primary"
-                            android:textSize="@dimen/small_lg" />
+                            android:paddingRight="8dp"
+                            android:src="@drawable/people_fill_public"
+                            app:tint="@color/primary" />
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:id="@+id/privacy_tv"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="4dp"
-                            android:layout_marginRight="4dp"
-                            android:text="@string/sign_bullet"
-                            android:textColor="@color/primary"
+                            android:gravity="center"
+                            android:text="tagline"
                             android:textSize="@dimen/small_lg" />
 
-                        <TextView
-                            android:id="@+id/no_employee_tv"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="employee"
-                            android:textColor="@color/primary"
-                            android:textSize="@dimen/small_lg" />
                     </LinearLayout>
 
                     <com.google.android.material.card.MaterialCardView

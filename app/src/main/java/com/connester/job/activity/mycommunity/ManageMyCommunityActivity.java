@@ -552,7 +552,7 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
                             } else {
                                 imgPath = groupRowResponse.imgPath;
                                 Glide.with(context).load(imgPath + groupRow.banner).centerCrop().placeholder(R.drawable.user_default_banner).into(group_banner_iv);
-                                Glide.with(context).load(imgPath + groupRow.logo).centerCrop().placeholder(R.drawable.default_business_pic).into(group_logo_iv);
+                                Glide.with(context).load(imgPath + groupRow.logo).centerCrop().placeholder(R.drawable.default_groups_pic).into(group_logo_iv);
 
                                 group_title_txt.setText(groupRow.name);
                                 privacy_tv.setText(CommonFunction.capitalize(groupRow.type));
