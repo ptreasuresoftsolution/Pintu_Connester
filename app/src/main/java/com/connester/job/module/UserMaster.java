@@ -78,13 +78,23 @@ public class UserMaster {
             }
         });
     }
-    public void getUserClmData(CallBack callBack,String clmKey, boolean waitShow) {
+
+
+    public void getUserClmData(CallBack callBack, String clmKey, boolean waitShow) {
+        getUserClmData(callBack, clmKey, waitShow, null);
+    }
+
+    public void getUserClmData(CallBack callBack, String clmKey, boolean waitShow, String userMasterId) {
+
         if (waitShow)
             CommonFunction.PleaseWaitShow(context);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
         hashMap.put("key", clmKey);
+        if (userMasterId != null) {
+            hashMap.put("sl_user_master_id", userMasterId);
+        }
         apiInterface.GET_CLM_DATA_USER_ROW(hashMap).enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) {
@@ -116,19 +126,27 @@ public class UserMaster {
         });
     }
 
-    public static List<String> findMutualIds(String ids1,String ids2){
+    public static List<String> findMutualIds(String ids1, String ids2) {
         if (ids1 == null)
             ids1 = "";
         if (ids2 == null)
             ids2 = "";
         //split and filter (remove blank)
-        List<String> idA1 = Stream.of(ids1.split(",")).filter(item -> item!= null && !item.isEmpty() && !item.trim().equals("")).collect(Collectors.toList());
+        List<String> idA1 = Stream.of(ids1.split(",")).filter(item -> item != null && !item.isEmpty() && !item.trim().equals("")).collect(Collectors.toList());
         //unique item
         idA1 = new ArrayList<>(new HashSet<>(idA1));
-        List<String> idA2 = Stream.of(ids2.split(",")).filter(item -> item!= null && !item.isEmpty() && !item.trim().equals("")).collect(Collectors.toList());
+        List<String> idA2 = Stream.of(ids2.split(",")).filter(item -> item != null && !item.isEmpty() && !item.trim().equals("")).collect(Collectors.toList());
         idA2 = new ArrayList<>(new HashSet<>(idA2));
         //same item in both array
         idA1.retainAll(idA2);
         return idA1;
+    }
+
+    public static boolean findIdInIds(String id, String ids) {
+        //split and filter (remove blank)
+        List<String> idsList = Stream.of(ids.split(",")).filter(item -> item != null && !item.isEmpty() && !item.trim().equals("")).collect(Collectors.toList());
+        if (idsList.indexOf(id) >= 0)
+            return true;
+        return false;
     }
 }
