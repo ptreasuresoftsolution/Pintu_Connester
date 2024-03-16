@@ -84,7 +84,7 @@ public class UserMaster {
         getUserClmData(callBack, clmKey, waitShow, null);
     }
 
-    public void getUserClmData(CallBack callBack, String clmKey, boolean waitShow, String userMasterId) {
+    public void getUserClmData(CallBack callBack, String clmKey, boolean waitShow, String slUserMasterId) {
 
         if (waitShow)
             CommonFunction.PleaseWaitShow(context);
@@ -92,8 +92,8 @@ public class UserMaster {
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
         hashMap.put("key", clmKey);
-        if (userMasterId != null) {
-            hashMap.put("sl_user_master_id", userMasterId);
+        if (slUserMasterId != null) {
+            hashMap.put("sl_user_master_id", slUserMasterId);
         }
         apiInterface.GET_CLM_DATA_USER_ROW(hashMap).enqueue(new Callback() {
             @Override
@@ -104,12 +104,14 @@ public class UserMaster {
                     if (response.body() != null) {
                         UserRowResponse userRowResponse = (UserRowResponse) response.body();
                         if (userRowResponse.status) {
-                            sessionPref.setUserProfilePic(userRowResponse.imgPath + userRowResponse.dt.profilePic);
-                            sessionPref.setUserEmail(userRowResponse.dt.email);
-                            sessionPref.setUserPassword(userRowResponse.dt.password);
-                            sessionPref.setUserFullName(userRowResponse.dt.name);
-                            sessionPref.setUserName(userRowResponse.dt.userName);
-                            sessionPref.setUserMasterRow(new Gson().toJson(userRowResponse.dt));
+                            if (slUserMasterId == null) {
+                                sessionPref.setUserProfilePic(userRowResponse.imgPath + userRowResponse.dt.profilePic);
+                                sessionPref.setUserEmail(userRowResponse.dt.email);
+                                sessionPref.setUserPassword(userRowResponse.dt.password);
+                                sessionPref.setUserFullName(userRowResponse.dt.name);
+                                sessionPref.setUserName(userRowResponse.dt.userName);
+                                sessionPref.setUserMasterRow(new Gson().toJson(userRowResponse.dt));
+                            }
                         } else
                             Toast.makeText(context, userRowResponse.msg, Toast.LENGTH_SHORT).show();
                         callBack.DataCallBack(response);

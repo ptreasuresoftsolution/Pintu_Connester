@@ -43,7 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
     Activity activity;
     SessionPref sessionPref;
     ApiInterface apiInterface;
-    UserRowResponse.Dt userDt;
+    UserRowResponse.Dt userDt, loginUserDt;
     UserMaster userMaster;
     String imgPath = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/upload/images/auto/"; //overwrite on api call
     FlexboxLayout user_skill_tag_fbl, user_language_tag_fbl;
@@ -121,11 +121,12 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(new Intent(context, ShowPortfolioApplyJobActivity.class));
             });
             LinearLayout report_LL = profileOptionDialog.findViewById(R.id.report_LL);
-            report_LL.setVisibility(View.VISIBLE);
-            report_LL.setOnClickListener(v1 -> {
-                //call report this profile
-            });
-
+            if (!user_master_id.equalsIgnoreCase(sessionPref.getUserMasterId())) {
+                report_LL.setVisibility(View.VISIBLE);
+                report_LL.setOnClickListener(v1 -> {
+                    //call report this profile
+                });
+            }
             profileOptionDialog.show();
         });
 
@@ -139,47 +140,60 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     private void setData() {
-        userMaster.getUserClmData(new UserMaster.CallBack() {
+        //login User
+        userMaster.getLoginUserData(new UserMaster.CallBack() {
             @Override
             public void DataCallBack(Response response) {
-                UserRowResponse userRowResponse = (UserRowResponse) response.body();
-                if (userRowResponse.status) {
-                    userDt = userRowResponse.dt;
-                    imgPath = userRowResponse.imgPath;
-
-
-                    Glide.with(context).load(imgPath + userDt.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(user_pic);
-                    Glide.with(context).load(imgPath + userDt.profileBanner).centerCrop().placeholder(R.drawable.user_default_banner).into(user_banner_iv);
-                    userFullName_txt.setText(userDt.name);
-                    user_position_tv.setText(userDt.position);
-                    user_bio_tv.setText(userDt.bio);
-                    followers_tv.setText(userDt.followerIds + " followers");
-                    about_me_tv.setText(userDt.bio);
-
-                    loadWorkExperience();
-                    loadEducation();
-                    loadProjects();
-
-                    //skills set
-                    user_skill_tag_fbl.removeAllViews();
-                    for (String skill : userDt.skill.split(",")) {
-                        View skillItem = getLayoutInflater().inflate(R.layout.skill_tag_item, null);
-                        TextView skill_item = skillItem.findViewById(R.id.skill_item);
-                        skill_item.setText(skill);
-                        user_skill_tag_fbl.addView(skillItem);
-                    }
-
-                    //language set
-                    user_language_tag_fbl.removeAllViews();
-                    for (String language : userDt.language.split(",")) {
-                        View languageItem = getLayoutInflater().inflate(R.layout.skill_tag_item, null);
-                        TextView language_item = languageItem.findViewById(R.id.skill_item);
-                        language_item.setText(language);
-                        user_language_tag_fbl.addView(languageItem);
-                    }
+                UserRowResponse loginUserRowResponse = (UserRowResponse) response.body();
+                if (loginUserRowResponse.status) {
+                    loginUserDt = loginUserRowResponse.dt;
                 }
+                //view profile User
+                userMaster.getUserClmData(new UserMaster.CallBack() {
+                    @Override
+                    public void DataCallBack(Response response) {
+                        UserRowResponse userRowResponse = (UserRowResponse) response.body();
+                        if (userRowResponse.status) {
+                            userDt = userRowResponse.dt;
+                            imgPath = userRowResponse.imgPath;
+
+                            Glide.with(context).load(imgPath + userDt.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(user_pic);
+                            Glide.with(context).load(imgPath + userDt.profileBanner).centerCrop().placeholder(R.drawable.user_default_banner).into(user_banner_iv);
+                            userFullName_txt.setText(userDt.name);
+                            user_position_tv.setText(userDt.position);
+                            user_bio_tv.setText(userDt.bio);
+                            followers_tv.setText(userDt.followerIds + " followers");
+                            about_me_tv.setText(userDt.bio);
+
+                            loadWorkExperience();
+                            loadEducation();
+                            loadProjects();
+
+                            //skills set
+                            user_skill_tag_fbl.removeAllViews();
+                            for (String skill : userDt.skill.split(",")) {
+                                View skillItem = getLayoutInflater().inflate(R.layout.skill_tag_item, null);
+                                TextView skill_item = skillItem.findViewById(R.id.skill_item);
+                                skill_item.setText(skill);
+                                user_skill_tag_fbl.addView(skillItem);
+                            }
+
+                            //language set
+                            user_language_tag_fbl.removeAllViews();
+                            for (String language : userDt.language.split(",")) {
+                                View languageItem = getLayoutInflater().inflate(R.layout.skill_tag_item, null);
+                                TextView language_item = languageItem.findViewById(R.id.skill_item);
+                                language_item.setText(language);
+                                user_language_tag_fbl.addView(languageItem);
+                            }
+
+                            //set all button
+
+                        }
+                    }
+                }, "*", true, user_master_id);
             }
-        }, "*", true, user_master_id);
+        });
     }
 
     HashMap hashMapDefault = new HashMap<>();
