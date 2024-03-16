@@ -17,6 +17,7 @@ import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.EducationListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.ProjectListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.WorkExperienceListResponse;
@@ -99,6 +100,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         one_mbtn = findViewById(R.id.one_mbtn);
         two_mbtn = findViewById(R.id.two_mbtn);
+        if (user_master_id.equalsIgnoreCase(sessionPref.getUserMasterId())) {
+            one_mbtn.setVisibility(View.GONE);
+            two_mbtn.setVisibility(View.GONE);
+        }
 
         more_option_mbtn = findViewById(R.id.more_option_mbtn);
         more_option_mbtn.setOnClickListener(v -> {
@@ -188,7 +193,71 @@ public class ProfileActivity extends AppCompatActivity {
                             }
 
                             //set all button
+                            //one-first button
+                            if (UserMaster.findIdInIds(user_master_id, loginUserDt.followerIds)) {//is follower -> Unfollow
+                                one_mbtn.setText("UnFollow");
+                                one_mbtn.setIcon(getDrawable(R.drawable.person_dash_unfollow));
+                                one_mbtn.setEnabled(true);
+                                one_mbtn.setOnClickListener(v -> {
+                                    networkActionMange(new NetworkActivity.NetworkActionCallback() {
+                                        @Override
+                                        public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                            if (normalCommonResponse.status) setData();
+                                            else
+                                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }, NetworkActivity.ActionName.UnFollowFollowing, user_master_id);
+                                });
+                            } else if (UserMaster.findIdInIds(user_master_id, loginUserDt.sendFollowingReq)) {//is following -> Pending
+                                one_mbtn.setText("Pending");
+                                one_mbtn.setIcon(getDrawable(R.drawable.feeds_time));
+                                one_mbtn.setEnabled(false);
+                            } else {//default button -> Follow
+                                one_mbtn.setText("Follow");
+                                one_mbtn.setIcon(getDrawable(R.drawable.person_add_follow));
+                                one_mbtn.setEnabled(true);
+                                one_mbtn.setOnClickListener(v -> {
+                                    networkActionMange(new NetworkActivity.NetworkActionCallback() {
+                                        @Override
+                                        public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                            if (normalCommonResponse.status) setData();
+                                            else
+                                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }, NetworkActivity.ActionName.ReqFollow, user_master_id);
+                                });
+                            }
 
+                            //two-second button
+                            if (UserMaster.findIdInIds(user_master_id, loginUserDt.connectUser)) {//is connected -> Message
+                                two_mbtn.setText("Message");
+                                two_mbtn.setIcon(getDrawable(R.drawable.inbox_message_chat_send));
+                                two_mbtn.setEnabled(true);
+                                two_mbtn.setOnClickListener(v -> {
+                                    Intent intent = new Intent(context, MessageActivity.class);
+                                    intent.putExtra("action", "startChat");
+                                    intent.putExtra("userId", user_master_id);
+                                    startActivity(intent);
+                                });
+                            } else if (UserMaster.findIdInIds(user_master_id, loginUserDt.recConnectReq) || UserMaster.findIdInIds(user_master_id, loginUserDt.sendConnectReq)) {//connect requested -> Pending
+                                two_mbtn.setText("Pending");
+                                two_mbtn.setIcon(getDrawable(R.drawable.feeds_time));
+                                two_mbtn.setEnabled(false);
+                            } else {//default button -> Connect
+                                two_mbtn.setText("Connect");
+                                two_mbtn.setIcon(getDrawable(R.drawable.person_plus_fill_connect));
+                                two_mbtn.setEnabled(true);
+                                two_mbtn.setOnClickListener(v -> {
+                                    networkActionMange(new NetworkActivity.NetworkActionCallback() {
+                                        @Override
+                                        public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                            if (normalCommonResponse.status) setData();
+                                            else
+                                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }, NetworkActivity.ActionName.SendInvReq, user_master_id);
+                                });
+                            }
                         }
                     }
                 }, "*", true, user_master_id);
@@ -302,4 +371,25 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    void networkActionMange(NetworkActivity.NetworkActionCallback networkActionCallback, NetworkActivity.ActionName action, String userOpponentsId) {
+        CommonFunction.PleaseWaitShow(context);
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+        hashMap.put("apiKey", sessionPref.getApiKey());
+//      InvReqAccept / InvReqDecline / SendInvReq / RemoveConnection / RemoveFollower / UnFollowFollowing / ReqFollow / FollowReqAccept / FollowReqReject
+        hashMap.put("action", action.getVal());
+        hashMap.put("opponentsId", userOpponentsId);
+        apiInterface.NETWORK_ACTION_MANGE(hashMap).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                        networkActionCallback.apiCallBack(normalCommonResponse);
+                    }
+                }
+            }
+        });
+    }
 }

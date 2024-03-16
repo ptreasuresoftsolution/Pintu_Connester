@@ -151,7 +151,7 @@
                                 android:textColor="@color/primary"
                                 app:backgroundTint="@color/secondary_6"
                                 app:cornerRadius="4dp"
-                                app:icon="@drawable/person_exclamation_user_agreement"
+                                app:icon="@drawable/person_dash_unfollow"
                                 app:iconTint="@color/primary" />
 
                             <com.google.android.material.button.MaterialButton
