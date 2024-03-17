@@ -123,7 +123,9 @@ public class ProfileActivity extends AppCompatActivity {
             web_portfolio_option_LL.setVisibility(View.VISIBLE);
             web_portfolio_option_LL.setOnClickListener(v1 -> {
                 profileOptionDialog.dismiss();
-                startActivity(new Intent(context, ShowPortfolioApplyJobActivity.class));
+                Intent intent = new Intent(context, ShowPortfolioApplyJobActivity.class);
+                intent.putExtra("user_master_id", user_master_id);
+                startActivity(intent);
             });
             LinearLayout report_LL = profileOptionDialog.findViewById(R.id.report_LL);
             if (!user_master_id.equalsIgnoreCase(sessionPref.getUserMasterId())) {

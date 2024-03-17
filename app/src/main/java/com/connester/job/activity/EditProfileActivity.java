@@ -255,7 +255,9 @@ public class EditProfileActivity extends AppCompatActivity {
             web_portfolio_option_LL.setVisibility(View.VISIBLE);
             web_portfolio_option_LL.setOnClickListener(v1 -> {
                 profileOptionDialog.dismiss();
-                startActivity(new Intent(context, ShowPortfolioApplyJobActivity.class));
+                Intent intent = new Intent(context, ShowPortfolioApplyJobActivity.class);
+                intent.putExtra("user_master_id", sessionPref.getUserMasterId());
+                startActivity(intent);
             });
             LinearLayout edit_profile_option_LL = profileOptionDialog.findViewById(R.id.edit_profile_option_LL);
             edit_profile_option_LL.setVisibility(View.VISIBLE);
