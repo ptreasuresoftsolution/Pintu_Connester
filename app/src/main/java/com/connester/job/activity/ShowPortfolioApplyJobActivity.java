@@ -68,7 +68,7 @@ public class ShowPortfolioApplyJobActivity extends AppCompatActivity {
         setData();
     }
 
-    TextView userFullName_txt, birth_date_tv, phone_tv, email_tv, gender_tv, location_tv, about_me_tv,share_web_portfolio;
+    TextView userFullName_txt, birth_date_tv, phone_tv, email_tv, gender_tv, location_tv, about_me_tv, share_web_portfolio;
     ImageView back_iv, user_pic;
     LinearLayout work_experience_ll, education_ll, project_ll;
 
@@ -148,10 +148,11 @@ public class ShowPortfolioApplyJobActivity extends AppCompatActivity {
                     share_web_portfolio.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-//                            String url = '/show-portfolio-applyjob?open=web-portfolio&userId='.base64_encode($userInfo['user_master_id'])).'&isEncryMsg=true'
+                            String portFolioLink = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/show-portfolio-applyjob?open=web-portfolio&userId=" + CommonFunction.base64Encode(userDt.userMasterId);
                             Intent intent = new Intent(context, MessageActivity.class);
                             intent.putExtra("action", "pick");
-                            intent.putExtra("message", Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/profile/" + userDt.profileLink);
+                            intent.putExtra("isEncryMsg", true);
+                            intent.putExtra("message", CommonFunction.base64Encode(portFolioLink));
                             startActivity(intent);
                         }
                     });
