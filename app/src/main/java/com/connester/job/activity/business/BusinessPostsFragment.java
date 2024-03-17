@@ -14,6 +14,8 @@ import com.connester.job.R;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 
+import java.util.ArrayList;
+
 public class BusinessPostsFragment extends Fragment {
     ScrollView scrollView;
     String business_page_id;
@@ -45,5 +47,22 @@ public class BusinessPostsFragment extends Fragment {
         feedsMaster.setTblName("MEDIA,POST");
         feedsMaster.loadFeedMaster(main_ll, scrollView);
         return view;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (feedsMaster != null) {
+            ArrayList<FeedsMaster.FeedStorage> feedsViews = feedsMaster.getFeedsViews();
+            for (FeedsMaster.FeedStorage feedStorage : feedsViews) {
+                if (feedStorage.isVideoFeeds) {
+                    if (feedStorage.styledPlayerView.getTag().equals("play")) {
+                        if (feedStorage.player != null && feedStorage.player.isPlaying()) {
+                            feedStorage.player.pause();
+                        }
+                    }
+                }
+            }
+        }
     }
 }

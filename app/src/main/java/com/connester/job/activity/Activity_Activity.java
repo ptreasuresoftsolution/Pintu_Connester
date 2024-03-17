@@ -14,6 +14,8 @@ import com.connester.job.R;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 
+import java.util.ArrayList;
+
 public class Activity_Activity extends AppCompatActivity {
     SessionPref sessionPref;
     Context context;
@@ -46,6 +48,23 @@ public class Activity_Activity extends AppCompatActivity {
         feedsMaster.setFeedForId(sessionPref.getUserMasterId());
         feedsMaster.setFeedFor("USER");
         feedsMaster.setTblName("MEDIA,POST");
-        feedsMaster.loadFeedMaster(feeds_mainList, scrollView,25);
+        feedsMaster.loadFeedMaster(feeds_mainList, scrollView, 25);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (feedsMaster != null) {
+            ArrayList<FeedsMaster.FeedStorage> feedsViews = feedsMaster.getFeedsViews();
+            for (FeedsMaster.FeedStorage feedStorage : feedsViews) {
+                if (feedStorage.isVideoFeeds) {
+                    if (feedStorage.styledPlayerView.getTag().equals("play")) {
+                        if (feedStorage.player != null && feedStorage.player.isPlaying()) {
+                            feedStorage.player.pause();
+                        }
+                    }
+                }
+            }
+        }
     }
 }

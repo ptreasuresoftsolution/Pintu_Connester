@@ -24,6 +24,7 @@ import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 import com.google.android.material.card.MaterialCardView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import retrofit2.Call;
@@ -112,5 +113,22 @@ public class CommunityPostFragment extends Fragment {
         super.onResume();
         if (feedsMaster != null)
             feedsMaster.loadFeedMaster(main_ll, scrollView);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (feedsMaster != null) {
+            ArrayList<FeedsMaster.FeedStorage> feedsViews = feedsMaster.getFeedsViews();
+            for (FeedsMaster.FeedStorage feedStorage : feedsViews) {
+                if (feedStorage.isVideoFeeds) {
+                    if (feedStorage.styledPlayerView.getTag().equals("play")) {
+                        if (feedStorage.player != null && feedStorage.player.isPlaying()) {
+                            feedStorage.player.pause();
+                        }
+                    }
+                }
+            }
+        }
     }
 }
