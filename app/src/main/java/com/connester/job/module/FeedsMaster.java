@@ -1188,6 +1188,13 @@ public class FeedsMaster {
         TextView feed_time = view.findViewById(R.id.feed_time);
         feed_time.setText(feedTimeCount(feedsRow.createDate));
 
+        MaterialButton open_page_mbtn = view.findViewById(R.id.open_page_mbtn);
+        open_page_mbtn.setOnClickListener(v -> {
+            Intent intent = new Intent(context, BusinessActivity.class);
+            intent.putExtra("business_page_id", feedsRow.tblJobPost.businessPageId);
+            context.startActivity(intent);
+        });
+
         TextView description_tv = view.findViewById(R.id.description_tv);
         description_tv.setText(feedsRow.tblJobPost.jobDescription);
 
