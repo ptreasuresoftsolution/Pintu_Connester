@@ -30,14 +30,14 @@
                 app:strokeWidth="2.5dp">
 
                 <ImageView
-                    android:id="@+id/page_logo_iv"
+                    android:id="@+id/job_business_iv"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:src="@drawable/default_user_pic" />
+                    android:src="@drawable/default_business_pic" />
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
-                android:id="@+id/page_title_txt"
+                android:id="@+id/job_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -61,10 +61,10 @@
                 app:flexWrap="wrap">
 
                 <TextView
-                    android:id="@+id/industry_tv"
+                    android:id="@+id/job_business_page_nm_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="industry"
+                    android:text="page name"
                     android:textColor="@color/secondary_4"
                     android:textSize="@dimen/small_xs" />
 
@@ -78,7 +78,7 @@
                     android:textSize="@dimen/small_lg" />
 
                 <TextView
-                    android:id="@+id/address_tv"
+                    android:id="@+id/job_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="address"
@@ -95,7 +95,7 @@
                     android:textSize="@dimen/small_lg" />
 
                 <TextView
-                    android:id="@+id/founded_yr_tv"
+                    android:id="@+id/feed_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="founded yr"
@@ -249,7 +249,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/salary_tv"
+                android:id="@+id/job_salary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/transparent"
@@ -285,6 +285,7 @@
 
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/job_apply_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"

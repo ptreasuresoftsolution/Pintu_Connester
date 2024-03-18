@@ -557,14 +557,14 @@ public class FeedsMaster {
         StyledPlayerView styledPlayerView = null;
         View view;
         if (feedsRow.tblName.equalsIgnoreCase("MEDIA")) {
-            if (title != null){
+            if (title != null) {
                 title.setText("Photos");
             }
             if (feedsRow.tblMediaPost.type.equalsIgnoreCase("VIDEO")) {
                 view = getFeedsVideoView(feedsRow);
                 player = playerHashMap.get(feedsRow.feedMasterId);
                 styledPlayerView = styledPlayerViewHashMap.get(feedsRow.feedMasterId);
-                if (title != null){
+                if (title != null) {
                     title.setText("Video");
                 }
             } else if (feedsRow.tblMediaPost.type.equalsIgnoreCase("M-IMAGE")) {
@@ -573,7 +573,7 @@ public class FeedsMaster {
                 view = getFeedsPhotoView(feedsRow);
             }
         } else if (feedsRow.tblName.equalsIgnoreCase("POST")) {
-            if (title != null){
+            if (title != null) {
                 title.setText("Text/Content");
             }
             if (feedsRow.tblTextPost.type.equalsIgnoreCase("LINK")) {
@@ -584,7 +584,7 @@ public class FeedsMaster {
                 view = getFeedsContentView(feedsRow);
             }
         } else if (feedsRow.tblName.equalsIgnoreCase("EVENT")) {
-            if (title != null){
+            if (title != null) {
                 title.setText("Event");
             }
             if (isFeedsFullView) {
@@ -592,7 +592,7 @@ public class FeedsMaster {
             } else
                 view = getFeedsEventView(feedsRow);
         } else {//JOB
-            if (title != null){
+            if (title != null) {
                 title.setText("Job");
             }
             if (isFeedsFullView) {
@@ -972,17 +972,6 @@ public class FeedsMaster {
         TextView event_nm = view.findViewById(R.id.event_nm);
         event_nm.setText(feedsRow.tblJobEvent.title);
 
-        View.OnClickListener fullViewFeeds = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, FeedFullViewActivity.class);
-                intent.putExtra("feed_master_id", feedsRow.feedMasterId);
-                context.startActivity(intent);
-            }
-        };
-        event_img.setOnClickListener(fullViewFeeds);
-        event_nm.setOnClickListener(fullViewFeeds);
-
         LinearLayout event_finish_ll = view.findViewById(R.id.event_finish_ll);
         event_finish_ll.setVisibility(View.GONE);
         Date currDate = new Date();
@@ -994,6 +983,7 @@ public class FeedsMaster {
         String startTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "EE, MMM dd, hh:mma", feedsRow.tblJobEvent.startDate);
         String endTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "EE, MMM dd, hh:mma", feedsRow.tblJobEvent.endDate);
         event_time.setText(startTime + " - " + endTime);
+
         ImageView event_online_offline_iv = view.findViewById(R.id.event_online_offline_iv);
         TextView event_online_offline_txt = view.findViewById(R.id.event_online_offline_txt);
         if (feedsRow.tblJobEvent.eventType.equalsIgnoreCase("ONLINE")) {
@@ -1004,90 +994,26 @@ public class FeedsMaster {
         event_business_page_name_txt.setText("By " + feedsRow.tblBusinessPage.busName);
         TextView event_desc = view.findViewById(R.id.event_desc);
         event_desc.setText(feedsRow.tblJobEvent.jobDescription);
-        ImageView feeds_event_option_iv = view.findViewById(R.id.feeds_event_option_iv);
-        feeds_event_option_iv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //feeds option open in bottom sheet dialog
-                BottomSheetDialog feedsOptionDialog = new BottomSheetDialog(context);
-                feedsOptionDialog.setContentView(R.layout.feeds_option_dialog_layout);
-                LinearLayout feed_close = feedsOptionDialog.findViewById(R.id.feed_close);
-                feed_close.setVisibility(View.GONE);
-                LinearLayout feed_unfollow = feedsOptionDialog.findViewById(R.id.feed_unfollow);
-                feed_unfollow.setVisibility(View.GONE);
 
-                LinearLayout feed_save_unsave = feedsOptionDialog.findViewById(R.id.feed_save_unsave);
-                ImageView feed_save_unsave_icon = feedsOptionDialog.findViewById(R.id.feed_save_unsave_icon);
-                final boolean[] isSave = {Integer.parseInt(feedsRow.isSave) > 0};
-                if (isSave[0]) {
-                    feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
-                }
-                feed_save_unsave.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //call feeds save unsave api and set related icon (use feedMasterId / isSave)
-                        CommonFunction.PleaseWaitShow(context);
-                        HashMap hashMap = new HashMap();
-                        hashMap.put("user_master_id", sessionPref.getUserMasterId());
-                        hashMap.put("apiKey", sessionPref.getApiKey());
-                        hashMap.put("feed_master_id", feedsRow.feedMasterId);
-                        hashMap.put("isSave", isSave[0] ? 1 : 0);
-                        apiInterface.FEEDS_OPTION_SAVE_UNSAVE(hashMap).enqueue(new MyApiCallback() {
-                            @Override
-                            public void onResponse(Call call, Response response) {
-                                super.onResponse(call, response);
-                                if (response.isSuccessful()) {
-                                    if (response.body() != null) {
-                                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                                        if (normalCommonResponse.status) {
-                                            isSave[0] = normalCommonResponse.feedSave;
-                                            if (isSave[0]) {
-                                                feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
-                                            } else {
-                                                feed_save_unsave_icon.setImageResource(R.drawable.feed_save_blank);
-                                            }
-                                        } else
-                                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-                        });
-                    }
-                });
-
-                LinearLayout feed_link_copy = feedsOptionDialog.findViewById(R.id.feed_link_copy);
-                feed_link_copy.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //link copy set (use link)
-                        String link = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/feeds/" + feedsRow.feedLink;
-                        CommonFunction.copyToClipBoard(context, link);
-                    }
-                });
-
-                LinearLayout feed_report = feedsOptionDialog.findViewById(R.id.feed_report);
-                feed_report.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //send report data
-                    }
-                });
-
-                if (isJobEventEdit) {
-                    feed_save_unsave.setVisibility(View.GONE);
-                    feed_link_copy.setVisibility(View.GONE);
-                    feed_report.setVisibility(View.GONE);
-
-                    LinearLayout edit_event = feedsOptionDialog.findViewById(R.id.edit_event);
-                    edit_event.setVisibility(View.VISIBLE);
-                    edit_event.setOnClickListener(v1 -> {
-                        openEditEventDialog(feedsRow.tblJobEvent.jobEventId, view);
-                    });
-                }
-
-                feedsOptionDialog.show();
-            }
-        });
+        TextView location_or_broadcast_title_tv = view.findViewById(R.id.location_or_broadcast_title_tv);
+        TextView location_or_broadcast_tv = view.findViewById(R.id.location_or_broadcast_tv);
+        if (feedsRow.tblJobEvent.eventType.equalsIgnoreCase("ONLINE")) {
+            location_or_broadcast_title_tv.setText("Broadcast Link");
+            location_or_broadcast_tv.setText(feedsRow.tblJobEvent.contactNumber);
+        } else {//Offline
+            location_or_broadcast_title_tv.setText("Location");
+            Type type = new TypeToken<HashMap<String, String>>() {
+            }.getType();
+            HashMap<String, String> hashMap = new Gson().fromJson(feedsRow.tblJobEvent.addressJson, type);
+            String location = "";
+            if (hashMap.containsValue("address"))
+                location = hashMap.get("address");
+            if (hashMap.containsValue("city"))
+                location += location.equalsIgnoreCase("") ? hashMap.get("city") : ", " + hashMap.get("city");
+            if (hashMap.containsValue("region_country"))
+                location += location.equalsIgnoreCase("") ? hashMap.get("region_country") : ", " + hashMap.get("region_country");
+            location_or_broadcast_tv.setText(location);
+        }
         return view;
     }
 
@@ -1243,98 +1169,52 @@ public class FeedsMaster {
     }
 
     public View getFeedsJobFullView(FeedsRow feedsRow) {
-        View view = layoutInflater.inflate(R.layout.feeds_jobs_layout, null);
+        View view = layoutInflater.inflate(R.layout.feeds_job_full_layout, null);
         view.setTag(feedsRow.feedMasterId);
-        View.OnClickListener fullViewFeeds = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, FeedFullViewActivity.class);
-                intent.putExtra("feed_master_id", feedsRow.feedMasterId);
-                context.startActivity(intent);
-            }
-        };
+
         SimpleDraweeView job_business_iv = view.findViewById(R.id.job_business_iv);
         Glide.with(context).load(imgPath + feedsRow.tblBusinessPage.logo).into(job_business_iv);
 //        Uri uri = Uri.parse(feedImgPath + feedsRow.tblBusinessPage.logo);
 //        job_business_iv.setImageURI(uri);
         TextView job_title = view.findViewById(R.id.job_title);
         job_title.setText(feedsRow.tblJobPost.titlePost);
-        job_title.setOnClickListener(fullViewFeeds);
+
         TextView job_business_page_nm_txt = view.findViewById(R.id.job_business_page_nm_txt);
         job_business_page_nm_txt.setText(feedsRow.tblBusinessPage.busName);
+
         TextView job_location = view.findViewById(R.id.job_location);
         job_location.setText(feedsRow.tblJobPost.jobLocation);
-        ImageView feed_save_unsave_icon = view.findViewById(R.id.feed_save_unsave_icon);
-        final boolean[] isSave = {Integer.parseInt(feedsRow.isSave) > 0};
-        if (isSave[0]) {
-            feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
-        }
-        feed_save_unsave_icon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //call feeds save unsave api and set related icon (use feedMasterId / isSave)
-                CommonFunction.PleaseWaitShow(context);
-                HashMap hashMap = new HashMap();
-                hashMap.put("user_master_id", sessionPref.getUserMasterId());
-                hashMap.put("apiKey", sessionPref.getApiKey());
-                hashMap.put("feed_master_id", feedsRow.feedMasterId);
-                hashMap.put("isSave", isSave[0] ? 1 : 0);
-                apiInterface.FEEDS_OPTION_SAVE_UNSAVE(hashMap).enqueue(new MyApiCallback() {
-                    @Override
-                    public void onResponse(Call call, Response response) {
-                        super.onResponse(call, response);
-                        if (response.isSuccessful()) {
-                            if (response.body() != null) {
-                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                                if (normalCommonResponse.status) {
-                                    isSave[0] = normalCommonResponse.feedSave;
-                                    if (isSave[0]) {
-                                        feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
-                                    } else {
-                                        feed_save_unsave_icon.setImageResource(R.drawable.feed_save_blank);
-                                    }
-                                } else
-                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                });
-            }
-        });
-        ImageView feed_close_icon = view.findViewById(R.id.feed_close_icon);
-        if (!feedListBy.equalsIgnoreCase("JobsEvent") && !isChkClose) {
-            feed_close_icon.setVisibility(View.GONE);
-        }
-        feed_close_icon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //call close api and remove feeds in list (use feedMasterId)
-                CommonFunction.PleaseWaitShow(context);
-                HashMap hashMap = new HashMap();
-                hashMap.put("user_master_id", sessionPref.getUserMasterId());
-                hashMap.put("apiKey", sessionPref.getApiKey());
-                hashMap.put("feed_master_id", feedsRow.feedMasterId);
-                apiInterface.FEEDS_OPTION_CLOSE(hashMap).enqueue(new MyApiCallback() {
-                    @Override
-                    public void onResponse(Call call, Response response) {
-                        super.onResponse(call, response);
-                        if (response.isSuccessful()) {
-                            if (response.body() != null) {
-                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                                if (normalCommonResponse.status) {
-                                    removeFeedsInList(view);
-                                } else
-                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                });
-            }
-        });
+
+        TextView feed_time = view.findViewById(R.id.feed_time);
+        feed_time.setText(feedTimeCount(feedsRow.createDate));
+
+        TextView description_tv = view.findViewById(R.id.description_tv);
+        description_tv.setText(feedsRow.tblJobPost.jobDescription);
+
+        TextView location_tv = view.findViewById(R.id.location_tv);
+        location_tv.setText(feedsRow.tblJobPost.jobType.equalsIgnoreCase("On-Site") ? feedsRow.tblJobPost.jobLocation : "Remote");
+
+        TextView position_tv = view.findViewById(R.id.position_tv);
+        position_tv.setText(feedsRow.tblJobPost.titlePost);
+
+        TextView hour_time_tv = view.findViewById(R.id.hour_time_tv);
+        hour_time_tv.setText(feedsRow.tblJobPost.jobTime);
+
+        TextView experience_tv = view.findViewById(R.id.experience_tv);
+        experience_tv.setText(feedsRow.tblJobPost.requirements);
+
         TextView job_salary = view.findViewById(R.id.job_salary);
-        job_salary.setText(feedsRow.tblJobPost.salaryCurrency + " " + CommonFunction.convertAmountUnitForm(Double.parseDouble(feedsRow.tblJobPost.salary)));
-        TextView job_salary_payroll = view.findViewById(R.id.job_salary_payroll);
-        job_salary_payroll.setText("/ " + feedsRow.tblJobPost.salaryPayroll);
+        job_salary.setText(feedsRow.tblJobPost.salaryCurrency + " " + CommonFunction.convertAmountUnitForm(Double.parseDouble(feedsRow.tblJobPost.salary)) + "/ " + feedsRow.tblJobPost.salaryPayroll);
+
+        FlexboxLayout job_skill_tag_fbl = view.findViewById(R.id.job_skill_tag_fbl);
+        String skills[] = feedsRow.tblJobPost.skills.split(",");
+        for (String skill : skills) {
+            View skillLayout = layoutInflater.inflate(R.layout.skill_tag_item, null);
+            TextView skill_item = skillLayout.findViewById(R.id.skill_item);
+            skill_item.setText(skill);
+            job_skill_tag_fbl.addView(skillLayout);
+        }
+
         MaterialButton job_apply_btn = view.findViewById(R.id.job_apply_btn);
         Date currDate = new Date();
         Date endDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", feedsRow.tblJobPost.postExpire);
@@ -1374,22 +1254,7 @@ public class FeedsMaster {
                 }
             });
         }
-        if (isJobEventEdit) {
-            job_apply_btn.setEnabled(true);
-            job_apply_btn.setText("Edit");
-            job_apply_btn.setOnClickListener(v -> {
-                //open edit popup
-                openEditJobDialog(feedsRow.tblJobPost.jobPostId, view);
-            });
-        }
-        FlexboxLayout job_skill_tag_fbl = view.findViewById(R.id.job_skill_tag_fbl);
-        String skills[] = feedsRow.tblJobPost.skills.split(",");
-        for (String skill : skills) {
-            View skillLayout = layoutInflater.inflate(R.layout.skill_tag_item, null);
-            TextView skill_item = skillLayout.findViewById(R.id.skill_item);
-            skill_item.setText(skill);
-            job_skill_tag_fbl.addView(skillLayout);
-        }
+
         return view;
     }
 
