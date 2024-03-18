@@ -7,6 +7,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class FeedFullViewActivity extends AppCompatActivity {
     ScrollView scrollView;
     FrameLayout progressBar;
     ImageView back_iv;
+    TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,7 @@ public class FeedFullViewActivity extends AppCompatActivity {
         feedsMaster.setFeedsFullView(true);
         feedsMaster.setChkClose(false);
         feedsMaster.loadSingleFeeds(feeds_mainList, scrollView, feed_master_id);
+        feedsMaster.setTitleView(title);
     }
 
     @Override

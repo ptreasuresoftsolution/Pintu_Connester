@@ -2,141 +2,295 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginBottom="8dp"
-        android:orientation="vertical">
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="12dp"
-            app:cardBackgroundColor="@color/secondary_2"
-            app:cardCornerRadius="55dp"
-            app:cardElevation="1dp"
-            app:strokeColor="@color/white"
-            app:strokeWidth="2.5dp">
-
-            <ImageView
-                android:id="@+id/page_logo_iv"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/default_user_pic" />
-        </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            android:id="@+id/page_title_txt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="page title"
-            android:textColor="@color/secondary_3"
-            android:textSize="@dimen/label"
-            android:textStyle="bold" />
-
-        <com.google.android.flexbox.FlexboxLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            app:alignContent="center"
-            app:alignItems="center"
-            app:flexWrap="wrap">
-
-            <TextView
-                android:id="@+id/industry_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="industry"
-                android:textColor="@color/secondary_4"
-                android:textSize="@dimen/small_xs" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:text="@string/sign_bullet"
-                android:textColor="@color/secondary_4"
-                android:textSize="@dimen/small_lg" />
-
-            <TextView
-                android:id="@+id/address_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="address"
-                android:textColor="@color/secondary_4"
-                android:textSize="@dimen/small_xs" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:text="@string/sign_bullet"
-                android:textColor="@color/secondary_4"
-                android:textSize="@dimen/small_lg" />
-
-            <TextView
-                android:id="@+id/founded_yr_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="founded yr"
-                android:textColor="@color/secondary_4"
-                android:textSize="@dimen/small_xs" />
-        </com.google.android.flexbox.FlexboxLayout>
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                app:cardBackgroundColor="@color/secondary_2"
+                app:cardCornerRadius="55dp"
+                app:cardElevation="1dp"
+                app:strokeColor="@color/white"
+                app:strokeWidth="2.5dp">
+
+                <ImageView
+                    android:id="@+id/page_logo_iv"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/default_user_pic" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/page_title_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="page title"
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/label"
+                android:textStyle="bold" />
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                app:alignContent="center"
+                app:alignItems="center"
+                app:flexWrap="wrap">
+
+                <TextView
+                    android:id="@+id/industry_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="industry"
+                    android:textColor="@color/secondary_4"
+                    android:textSize="@dimen/small_xs" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:text="@string/sign_bullet"
+                    android:textColor="@color/secondary_4"
+                    android:textSize="@dimen/small_lg" />
+
+                <TextView
+                    android:id="@+id/address_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="address"
+                    android:textColor="@color/secondary_4"
+                    android:textSize="@dimen/small_xs" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:text="@string/sign_bullet"
+                    android:textColor="@color/secondary_4"
+                    android:textSize="@dimen/small_lg" />
+
+                <TextView
+                    android:id="@+id/founded_yr_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="founded yr"
+                    android:textColor="@color/secondary_4"
+                    android:textSize="@dimen/small_xs" />
+            </com.google.android.flexbox.FlexboxLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_weight="1"
+                    android:text="Description"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/primary"
+                    app:cornerRadius="4dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/more_option_mbtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_weight="1"
+                    android:text="Company"
+                    android:textColor="@color/primary"
+                    app:backgroundTint="@color/secondary_6"
+                    app:cornerRadius="4dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Job Description"
+                android:textSize="@dimen/label"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/description_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:textSize="@dimen/small_xs" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Location"
+                android:textSize="@dimen/label"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/location_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:textSize="@dimen/small_xs" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Information"
+                android:textSize="@dimen/label"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Position"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/position_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:textSize="@dimen/small_xs" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/secondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Job Hour/Time"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/hour_time_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:textSize="@dimen/small_xs" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/secondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Experiences"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/experience_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:textSize="@dimen/small_xs" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/secondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Salary"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/salary_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:textSize="@dimen/small_xs" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/secondary" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Specialities/Skills/Technologies"
+                android:textStyle="bold" />
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/job_skill_tag_fbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:alignContent="stretch"
+                app:alignItems="stretch"
+                app:flexWrap="wrap">
+
+                <include layout="@layout/skill_tag_item" />
+            </com.google.android.flexbox.FlexboxLayout>
+
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginRight="6dp"
-                android:layout_weight="1"
-                android:text="Description"
-                android:textColor="@color/white"
-                app:backgroundTint="@color/primary"
-                app:cornerRadius="4dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/more_option_mbtn"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginLeft="6dp"
-                android:layout_weight="1"
-                android:text="Company"
-                android:textColor="@color/primary"
-                app:backgroundTint="@color/secondary_6"
-                app:cornerRadius="4dp" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="16dp"
+                android:text="Apply Now"
+                app:cornerRadius="8dp" />
         </LinearLayout>
-
-        <com.google.android.flexbox.FlexboxLayout
-            android:id="@+id/job_skill_tag_fbl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:alignContent="stretch"
-            app:alignItems="stretch"
-            app:flexWrap="wrap">
-
-            <include layout="@layout/skill_tag_item" />
-        </com.google.android.flexbox.FlexboxLayout>
-    </LinearLayout>
+    </ScrollView>
 </FrameLayout>

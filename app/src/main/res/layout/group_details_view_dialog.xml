@@ -77,7 +77,6 @@
                         android:layout_height="wrap_content"
                         android:backgroundTint="@android:color/transparent"
                         android:gravity="center_vertical"
-                        
                         android:singleLine="true"
                         android:textSize="@dimen/small_xs" />
 

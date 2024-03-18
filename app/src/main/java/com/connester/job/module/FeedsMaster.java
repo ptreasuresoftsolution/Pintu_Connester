@@ -557,16 +557,25 @@ public class FeedsMaster {
         StyledPlayerView styledPlayerView = null;
         View view;
         if (feedsRow.tblName.equalsIgnoreCase("MEDIA")) {
+            if (title != null){
+                title.setText("Photos");
+            }
             if (feedsRow.tblMediaPost.type.equalsIgnoreCase("VIDEO")) {
                 view = getFeedsVideoView(feedsRow);
                 player = playerHashMap.get(feedsRow.feedMasterId);
                 styledPlayerView = styledPlayerViewHashMap.get(feedsRow.feedMasterId);
+                if (title != null){
+                    title.setText("Video");
+                }
             } else if (feedsRow.tblMediaPost.type.equalsIgnoreCase("M-IMAGE")) {
                 view = getFeedsMultiplePhotosView(feedsRow);
             } else {//IMAGE
                 view = getFeedsPhotoView(feedsRow);
             }
         } else if (feedsRow.tblName.equalsIgnoreCase("POST")) {
+            if (title != null){
+                title.setText("Text/Content");
+            }
             if (feedsRow.tblTextPost.type.equalsIgnoreCase("LINK")) {
                 view = getFeedsLinkView(feedsRow);
             } else if (feedsRow.tblTextPost.type.equalsIgnoreCase("TEXT-LINK")) {
@@ -575,11 +584,17 @@ public class FeedsMaster {
                 view = getFeedsContentView(feedsRow);
             }
         } else if (feedsRow.tblName.equalsIgnoreCase("EVENT")) {
+            if (title != null){
+                title.setText("Event");
+            }
             if (isFeedsFullView) {
                 view = getFeedsEventFullView(feedsRow);
             } else
                 view = getFeedsEventView(feedsRow);
         } else {//JOB
+            if (title != null){
+                title.setText("Job");
+            }
             if (isFeedsFullView) {
                 view = getFeedsJobFullView(feedsRow);
             } else
@@ -2546,6 +2561,12 @@ public class FeedsMaster {
 
     public void setFeedsFullView(boolean feedsFullView) {
         isFeedsFullView = feedsFullView;
+    }
+
+    TextView title = null;
+
+    public void setTitleView(TextView title) {
+        this.title = title;
     }
 
     boolean isJobEventEdit = false;
