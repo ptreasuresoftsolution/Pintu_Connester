@@ -152,8 +152,8 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void result(SocialLoginData loginData) {
 //                        loginData.fname, loginData.email, loginData.acId
-                        Log.e(LogTag.TMP_LOG, "FB id : " + loginData.acId + " nm : " + loginData.fname);
-                        Toast.makeText(context, "fb id : " + loginData.acId, Toast.LENGTH_SHORT).show();
+                        Log.e(LogTag.TMP_LOG, "Google id : " + loginData.acId + " nm : " + loginData.fname);
+                        Toast.makeText(context, "Google id : " + loginData.acId, Toast.LENGTH_SHORT).show();
                         Toast.makeText(context, "Google login done", Toast.LENGTH_SHORT).show();
                     }
                 });
