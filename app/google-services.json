@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "792060306296",
+    "project_id": "connester-40ed8",
+    "storage_bucket": "connester-40ed8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792060306296:android:02b6af8946bd5404ad5e8d",
+        "android_client_info": {
+          "package_name": "com.connester.job"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "792060306296-v3m8d7a55e0864sb5c2gh48uus4hcl51.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.connester.job",
+            "certificate_hash": "28ce77f4d3298ddf8cb06284efdbaaf499385c5c"
+          }
+        },
+        {
+          "client_id": "792060306296-ajfmrmr858qvtna0c28is38dqpuhv5c1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBa1jQXSsGEe36vv1EZfoM12ONxp5EYquo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "792060306296-ajfmrmr858qvtna0c28is38dqpuhv5c1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

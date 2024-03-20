@@ -70,6 +70,12 @@ dependencies {
     //for video load(server video)
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
 
+    //login facebook
+    implementation 'com.facebook.android:facebook-login:latest.release'
+
+    //google login
+    implementation 'com.google.android.gms:play-services-auth:21.0.0'
+
     //flex view
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
