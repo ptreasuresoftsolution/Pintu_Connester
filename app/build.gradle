@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -75,6 +76,11 @@ dependencies {
 
     //google login
     implementation 'com.google.android.gms:play-services-auth:21.0.0'
+
+    //firebase message
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+    implementation 'com.google.firebase:firebase-messaging:23.4.1'
 
     //flex view
     implementation 'com.google.android.flexbox:flexbox:3.0.0'

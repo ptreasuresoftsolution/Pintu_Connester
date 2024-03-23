@@ -141,9 +141,34 @@ public class UserMenuActivity extends AppCompatActivity {
 
         log_out_single_devices_ll = findViewById(R.id.log_out_single_devices_ll);
         log_out_single_devices_ll.setOnClickListener(v -> {
-            sessionPref.logOutPref();
-            ActivityCompat.finishAffinity(activity);
-            startActivity(new Intent(context, SplashActivity.class));
+            if (!sessionPref.getDEVICE_TOKEN().equalsIgnoreCase("")) {
+                CommonFunction.PleaseWaitShow(context);
+                HashMap hashMap = new HashMap();
+                hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                hashMap.put("apiKey", sessionPref.getApiKey());
+                hashMap.put("token", sessionPref.getDEVICE_TOKEN());
+                apiInterface.REMOVE_DISABLE_TOKEN(hashMap).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status) {
+                                    sessionPref.logOutPref();
+                                    ActivityCompat.finishAffinity(activity);
+                                    startActivity(new Intent(context, SplashActivity.class));
+                                } else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+                });
+            } else {
+                sessionPref.logOutPref();
+                ActivityCompat.finishAffinity(activity);
+                startActivity(new Intent(context, SplashActivity.class));
+            }
         });
         close_account_ll = findViewById(R.id.close_account_ll);
         close_account_ll.setOnClickListener(v -> {

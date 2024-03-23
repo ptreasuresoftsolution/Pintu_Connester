@@ -6,9 +6,11 @@ import android.widget.Toast;
 
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
+import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.LogTag;
+import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.google.gson.Gson;
 
@@ -63,9 +65,32 @@ public class UserMaster {
                             sessionPref.setUserFullName(userRowResponse.dt.name);
                             sessionPref.setUserName(userRowResponse.dt.userName);
                             sessionPref.setUserMasterRow(new Gson().toJson(userRowResponse.dt));
-                        } else
+
+                            HashMap hashMap = new HashMap();
+                            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                            hashMap.put("apiKey", sessionPref.getApiKey());
+                            hashMap.put("mobile_token", sessionPref.getDEVICE_TOKEN());
+                            hashMap.put("device_unique", CommonFunction.getDeviceId(context));
+                            hashMap.put("device_type", "ANDROID");
+                            hashMap.put("device_info", CommonFunction.getDeviceName(context));
+                            apiInterface.ADD_REGISTER_TOKEN(hashMap).enqueue(new MyApiCallback(){
+                                @Override
+                                public void onResponse(Call call, Response response) {
+                                    super.onResponse(call, response);
+                                    if (response.isSuccessful()) {
+                                        if (response.body() != null) {
+                                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                            Log.d(LogTag.CHECK_DEBUG, "On user master Token is Add or Register : " + normalCommonResponse.msg);
+                                            callBack.DataCallBack(response);
+                                        }
+                                    }
+                                }
+                            });
+                        } else {
                             Toast.makeText(context, userRowResponse.msg, Toast.LENGTH_SHORT).show();
-                        callBack.DataCallBack(response);
+                            callBack.DataCallBack(response);
+                        }
+
                     }
                 }
             }

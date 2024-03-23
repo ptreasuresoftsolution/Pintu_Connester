@@ -148,7 +148,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setData() {
         //login User
-        userMaster.getLoginUserData(new UserMaster.CallBack() {
+        userMaster.getUserClmData(new UserMaster.CallBack() {
             @Override
             public void DataCallBack(Response response) {
                 UserRowResponse loginUserRowResponse = (UserRowResponse) response.body();
@@ -264,7 +264,7 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 }, "*", true, user_master_id);
             }
-        });
+        }, "*", true);
     }
 
     HashMap hashMapDefault = new HashMap<>();

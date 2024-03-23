@@ -389,4 +389,15 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/userCommunityJoinRequestAccept")
     Call<NormalCommonResponse> GROUP_MEMBER_REQUEST_ACCEPT(@FieldMap Map<String, String> params);
+
+    //notification and chat message api
+    @FormUrlEncoded // call on logout
+    @POST(PRE_FIX + "NotificationMessage/removeToken")
+    Call<NormalCommonResponse> REMOVE_DISABLE_TOKEN(@FieldMap Map<String, String> params);
+    @FormUrlEncoded // call on isLogin change Token
+    @POST(PRE_FIX + "NotificationMessage/changeToken")
+    Call<NormalCommonResponse> CHANGE_UPDATE_TOKEN(@FieldMap Map<String, String> params);
+    @FormUrlEncoded // call on login && registration
+    @POST(PRE_FIX + "NotificationMessage/registerToken")
+    Call<NormalCommonResponse> ADD_REGISTER_TOKEN(@FieldMap Map<String, String> params);
 }
