@@ -40,6 +40,7 @@ import com.connester.job.RetrofitConnection.jsontogson.ProjectListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.WorkExperienceItemResponse;
 import com.connester.job.RetrofitConnection.jsontogson.WorkExperienceListResponse;
+import com.connester.job.activity.message.ChatHistoryUsersActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.DateUtils;
@@ -231,7 +232,7 @@ public class EditProfileActivity extends AppCompatActivity {
         });
         inbox_open_mbtn = findViewById(R.id.inbox_open_mbtn);
         inbox_open_mbtn.setOnClickListener(v -> {
-            startActivity(new Intent(context, MessageActivity.class));
+            startActivity(new Intent(context, ChatHistoryUsersActivity.class));
         });
         setting_open_mbtn = findViewById(R.id.setting_open_mbtn);
         setting_open_mbtn.setOnClickListener(v -> {
@@ -246,7 +247,7 @@ public class EditProfileActivity extends AppCompatActivity {
             share_profile_option_LL.setVisibility(View.VISIBLE);
             share_profile_option_LL.setOnClickListener(v1 -> {
                 profileOptionDialog.dismiss();
-                Intent intent = new Intent(context, MessageActivity.class);
+                Intent intent = new Intent(context, ChatHistoryUsersActivity.class);
                 intent.putExtra("action", "pick");
                 intent.putExtra("message", Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/profile/" + userDt.profileLink);
                 startActivity(intent);

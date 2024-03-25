@@ -14,7 +14,7 @@ import com.connester.job.R;
 import com.connester.job.activity.nonslug.AddFeedsActivity;
 import com.connester.job.activity.JobsEvents_Activity;
 import com.connester.job.activity.HomeActivity;
-import com.connester.job.activity.MessageActivity;
+import com.connester.job.activity.message.ChatHistoryUsersActivity;
 import com.connester.job.activity.NetworkActivity;
 import com.connester.job.activity.NotificationActivity;
 import com.connester.job.activity.UserMenuActivity;
@@ -124,7 +124,7 @@ public class SetTopBottomBar {
         open_message_iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.startActivity(new Intent(context, MessageActivity.class));
+                context.startActivity(new Intent(context, ChatHistoryUsersActivity.class));
             }
         });
     }

@@ -40,6 +40,9 @@
         tools:ignore="HardcodedDebugMode"
         tools:targetApi="s">
         <activity
+            android:name=".activity.message.ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.mycommunity.GroupDisableActivity"
             android:exported="false" />
         <activity
@@ -83,7 +86,7 @@
             android:exported="false" />
         <activity
             android:name=".activity.UserMenuActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".activity.JobsEvents_Activity"
             android:exported="false" />
@@ -97,7 +100,7 @@
             android:name=".activity.NetworkActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.MessageActivity"
+            android:name=".activity.message.ChatHistoryUsersActivity"
             android:exported="false" />
         <activity
             android:name=".activity.FeedFullViewActivity"
@@ -166,13 +169,15 @@
                 android:resource="@xml/provider_paths"
                 tools:replace="android:resource" />
         </provider>
+
         <service
             android:name=".module.notification_message.firebase_core.MyFirebaseMessagingService"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -196,7 +201,6 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

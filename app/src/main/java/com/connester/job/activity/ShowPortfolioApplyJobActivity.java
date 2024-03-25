@@ -20,6 +20,7 @@ import com.connester.job.RetrofitConnection.jsontogson.EducationListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.ProjectListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.WorkExperienceListResponse;
+import com.connester.job.activity.message.ChatHistoryUsersActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.DateUtils;
@@ -149,7 +150,7 @@ public class ShowPortfolioApplyJobActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             String portFolioLink = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/show-portfolio-applyjob?open=web-portfolio&userId=" + CommonFunction.base64Encode(userDt.userMasterId);
-                            Intent intent = new Intent(context, MessageActivity.class);
+                            Intent intent = new Intent(context, ChatHistoryUsersActivity.class);
                             intent.putExtra("action", "pick");
                             intent.putExtra("isEncryMsg", true);
                             intent.putExtra("message", CommonFunction.base64Encode(portFolioLink));

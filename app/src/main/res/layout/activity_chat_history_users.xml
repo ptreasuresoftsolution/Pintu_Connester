@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.MessageActivity">
+    tools:context=".activity.message.ChatHistoryUsersActivity">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -43,6 +43,7 @@
                 app:strokeWidth="0.5dp">
 
                 <androidx.appcompat.widget.SearchView
+                    android:id="@+id/search_user"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:queryHint="Search" />

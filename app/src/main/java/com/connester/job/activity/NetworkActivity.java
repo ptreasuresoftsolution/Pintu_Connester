@@ -32,6 +32,7 @@ import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListRespo
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.activity.business.BusinessActivity;
 import com.connester.job.activity.community.CommunityActivity;
+import com.connester.job.activity.message.ChatHistoryUsersActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
@@ -1192,7 +1193,7 @@ public class NetworkActivity extends AppCompatActivity {
                 members_start_chat_iv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(context, MessageActivity.class);
+                        Intent intent = new Intent(context, ChatHistoryUsersActivity.class);
                         intent.putExtra("action", "startChat");
                         intent.putExtra("userId", row.userMasterId);
                         startActivity(intent);
