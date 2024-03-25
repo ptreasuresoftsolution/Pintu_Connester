@@ -10,6 +10,7 @@ import com.connester.job.RetrofitConnection.jsontogson.GroupMembersListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.GroupRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.JobsEventMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MembersListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.MessageListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MyGroupListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MyPagesListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
@@ -408,4 +409,8 @@ public interface ApiInterface {
     @FormUrlEncoded // chat users history
     @POST(PRE_FIX + "NotificationMessage/chatUserHistory")
     Call<ChatUserListResponse> CHATTING_HISTORY_USER_LIST(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded // message list
+    @POST(PRE_FIX + "NotificationMessage/messageList")
+    Call<MessageListResponse> MESSAGE_LIST(@FieldMap Map<String, String> params);
 }

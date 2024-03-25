@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class ChatUserListResponse {
+public class MessageListResponse {
     @SerializedName("status")
     @Expose
     public Boolean status;
@@ -15,7 +15,9 @@ public class ChatUserListResponse {
     @SerializedName("dt")
     @Expose
     public List<Dt> dt;
-
+    @SerializedName("chatImgPath")
+    @Expose
+    public String chatImgPath;
     public class Dt {
 
         @SerializedName("chat_master_id")
@@ -72,25 +74,6 @@ public class ChatUserListResponse {
         @SerializedName("remote_ip")
         @Expose
         public String remoteIp;
-        @SerializedName("UNREAD")
-        @Expose
-        public String unread;
-        @SerializedName("user_master_id")
-        @Expose
-        public String userMasterId;
-        @SerializedName("name")
-        @Expose
-        public String name;
-        @SerializedName("profile_link")
-        @Expose
-        public String profileLink;
-        @SerializedName("profile_pic")
-        @Expose
-        public String profilePic;
 
     }
-
-    @SerializedName("imgPath")
-    @Expose
-    public String imgPath;
 }

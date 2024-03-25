@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/date_status_area"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:background="@color/primary"
+        app:cardBackgroundColor="@color/primary"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="3dp"
+        app:strokeWidth="0dp">
+
+        <TextView
+            android:id="@+id/date_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:gravity="center"
+            android:padding="3dp"
+            android:textColor="@color/white"
+            android:textSize="12dp" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/received_msg_area"
+        style="@style/MessageLeftCardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="60dp"
+        android:elevation="0dp"
+        app:cardBackgroundColor="@color/secondary_6"
+        app:strokeWidth="0dp">
+
+        <TextView
+            android:id="@+id/received_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="4dp"
+            android:padding="8dp"
+            android:text="How are you doing?" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/received_replay_msg_area"
+        style="@style/MessageLeftCardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="60dp"
+        android:elevation="0dp"
+        app:cardBackgroundColor="@color/secondary_6"
+        app:strokeWidth="0dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/received_replay_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yaah, Sure I’ll Come at 3:30 PM."
+                android:textSize="12dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                app:cardBackgroundColor="@color/secondary_5"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0.4dp">
+
+                <TextView
+                    android:id="@+id/replay_msg_received"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:text="I’m doing well can we meet up tomorrow \nat Coffee shope?"
+                    android:textSize="11dp" />
+
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/video_file_area"
+        style="@style/MessageLeftCardView"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_gravity="left"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="60dp"
+        android:elevation="0dp"
+        app:cardBackgroundColor="@color/secondary_2"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/video_thumb"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:padding="10dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/camera_video" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/overlayBlur" />
+
+            <ImageView
+                android:id="@+id/playBtn"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:src="@drawable/circle_play"
+                app:tint="@color/primary" />
+
+            <!--  <ImageView
+                  android:id="@+id/downloadBtn"
+                  android:layout_width="15dp"
+                  android:layout_height="15dp"
+                  android:visibility="gone"
+                  android:layout_gravity="center"
+                  android:src="@drawable/ic_download"
+                  app:tint="@color/white" />
+  -->
+        </FrameLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/photo_thumb_layout"
+        style="@style/MessageLeftCardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="60dp"
+        android:elevation="0dp"
+        app:cardBackgroundColor="@color/secondary_2"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp">
+
+        <ImageView
+            android:id="@+id/photo_thumb"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:padding="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/feed_add_photo" />
+
+        <View
+            android:id="@+id/overlay_img"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@color/overlayBlur" />
+
+        <ImageView
+            android:id="@+id/ic_upload"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:src="@drawable/cloud_upload_fill"
+            android:visibility="gone"
+            app:tint="@color/primary" />
+
+        <ProgressBar
+            android:id="@+id/progress_circular"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:indeterminate="false"
+            android:indeterminateTint="@color/primary"
+            android:visibility="gone" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/send_replay_msg_area"
+        style="@style/MessageRightCardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
+        android:elevation="0dp"
+        app:cardBackgroundColor="@color/primary_light"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/send_replay_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yaah, Sure I’ll Come at 3:30 PM."
+                android:textColor="@color/white"
+                android:textSize="12dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                app:cardBackgroundColor="@color/primary"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0.4dp">
+
+                <TextView
+                    android:id="@+id/replay_msg_send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:text="I’m doing well can we meet up tomorrow \nat Coffee shope?"
+                    android:textColor="@color/white"
+                    android:textSize="11dp" />
+
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/send_msg_area"
+        style="@style/MessageRightCardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
+        android:elevation="0dp"
+        app:cardBackgroundColor="@color/primary_light"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp">
+
+        <TextView
+            android:id="@+id/send_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Yaah, Sure I’ll Come at 3:30 PM."
+            android:textColor="@color/white"
+            android:textSize="12dp" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:id="@+id/time_status_area"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="12:45 PM"
+            android:textColor="@color/secondary_4"
+            android:textSize="6dp" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp">
+
+            <ImageView
+                android:id="@+id/status_img"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:src="@drawable/feeds_time"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+</LinearLayout>
