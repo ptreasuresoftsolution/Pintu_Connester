@@ -28,10 +28,12 @@
                 android:id="@+id/back_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:src="@drawable/arrow_back"
                 app:tint="@color/secondary_4" />
 
             <TextView
+                android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -43,6 +45,14 @@
                 android:textSize="@dimen/label"
                 android:textStyle="bold" />
 
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:visibility="gone" />
         </LinearLayout>
 
         <ListView
