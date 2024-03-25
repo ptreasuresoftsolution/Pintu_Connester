@@ -1,20 +1,14 @@
 package com.connester.job.activity.message;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -33,7 +27,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
-import com.connester.job.RetrofitConnection.jsontogson.MembersListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MessageListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.connester.job.activity.ProfileActivity;
@@ -44,19 +37,9 @@ import com.connester.job.function.LogTag;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.UserMaster;
 import com.connester.job.module.notification_message.ChatModule;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.card.MaterialCardView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -284,7 +267,7 @@ public class ChatActivity extends AppCompatActivity {
 
                             //time_status_area
                             LinearLayout.LayoutParams linearLayout = (LinearLayout.LayoutParams) holder.time_status_area.getLayoutParams();
-                            holder.time_text.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "hh:mm a", tableChatData.msg_Time));
+                            holder.time_text.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "hh:mm a", tableChatData.msgSendTime));
 
                             if (direction_Type.equalsIgnoreCase("send")) {
                                 //send message
