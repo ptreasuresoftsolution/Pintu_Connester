@@ -75,11 +75,11 @@ public class UserMaster {
                             hashMap.put("device_info", CommonFunction.getDeviceName(context));
                             apiInterface.ADD_REGISTER_TOKEN(hashMap).enqueue(new MyApiCallback(){
                                 @Override
-                                public void onResponse(Call call, Response response) {
-                                    super.onResponse(call, response);
-                                    if (response.isSuccessful()) {
-                                        if (response.body() != null) {
-                                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                public void onResponse(Call call, Response response2) {
+                                    super.onResponse(call, response2);
+                                    if (response2.isSuccessful()) {
+                                        if (response2.body() != null) {
+                                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response2.body();
                                             Log.d(LogTag.CHECK_DEBUG, "On user master Token is Add or Register : " + normalCommonResponse.msg);
                                             callBack.DataCallBack(response);
                                         }

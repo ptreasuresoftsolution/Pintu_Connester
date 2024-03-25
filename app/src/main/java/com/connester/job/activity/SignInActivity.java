@@ -124,7 +124,7 @@ public class SignInActivity extends AppCompatActivity {
                 if (password_show.getTag().equals("show")) {
                     password_show.setTag("hide");
                     password_show.setImageResource(R.drawable.eye_close);
-                    password_input.setInputType(InputType.TYPE_TEXT_VARIATION_NORMAL);
+                    password_input.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                 } else {
                     password_show.setTag("show");
                     password_show.setImageResource(R.drawable.eye_open);
