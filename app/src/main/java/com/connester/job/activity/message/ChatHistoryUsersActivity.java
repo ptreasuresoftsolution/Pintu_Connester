@@ -338,7 +338,7 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
                         ChatUserListResponse chatUserListResponse = (ChatUserListResponse) response.body();
                         if (chatUserListResponse.status) {
                             if (chatUserListResponse.dt.size() > 0) {
-                                no_row_found.setVisibility(View.VISIBLE);
+                                no_row_found.setVisibility(View.GONE);
                                 chatUserListAdapter = new ChatUserListAdapter(chatUserListResponse.dt, R.layout.chat_user_list_row_item, chatUserListResponse.imgPath);
                                 chatUserList.setAdapter(chatUserListAdapter);
                             } else {
