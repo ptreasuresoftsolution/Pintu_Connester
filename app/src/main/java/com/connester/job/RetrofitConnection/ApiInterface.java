@@ -24,6 +24,7 @@ import com.connester.job.RetrofitConnection.jsontogson.PageMembersResponse;
 import com.connester.job.RetrofitConnection.jsontogson.ProjectItemResponse;
 import com.connester.job.RetrofitConnection.jsontogson.ProjectListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.RequestedGroupListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.SendMessageResponse;
 import com.connester.job.RetrofitConnection.jsontogson.SignUpOtpResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserLoginResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
@@ -418,4 +419,8 @@ public interface ApiInterface {
     @FormUrlEncoded // message list
     @POST(PRE_FIX + "NotificationMessage/messageList")
     Call<MessageListResponse> MESSAGE_LIST(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded // message list
+    @POST(PRE_FIX + "NotificationMessage/sendMessageToUser")
+    Call<SendMessageResponse> MESSAGE_SEND(@FieldMap Map<String, String> params);
 }

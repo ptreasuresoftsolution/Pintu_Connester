@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,21 +29,31 @@ import com.bumptech.glide.request.RequestOptions;
 import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
+import com.connester.job.RetrofitConnection.jsontogson.FirebaseFCMResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MessageListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.SendMessageResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.connester.job.activity.ProfileActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.DateUtils;
 import com.connester.job.function.LogTag;
+import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.UserMaster;
 import com.connester.job.module.notification_message.ChatModule;
+import com.connester.job.module.notification_message.TypingOnlineListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.card.MaterialCardView;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import retrofit2.Call;
 import retrofit2.Response;
 
 public class ChatActivity extends AppCompatActivity {
@@ -58,6 +70,8 @@ public class ChatActivity extends AppCompatActivity {
     String imgPath = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/upload/images/auto/"; //overwrite on api call
     String chatImgPath = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/upload/images/chat/";
 
+    HashMap defaultUserData = new HashMap();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +82,9 @@ public class ChatActivity extends AppCompatActivity {
         userMaster = new UserMaster(context);
         chatModule = new ChatModule(context, activity);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        defaultUserData.put("user_master_id", sessionPref.getUserMasterId());
+        defaultUserData.put("apiKey", sessionPref.getApiKey());
+        defaultUserData.put("device", "ANDROID");
 
         if (getIntent() != null) {
             user_master_id = getIntent().getStringExtra("user_master_id");
@@ -84,7 +101,6 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         initView();
-
     }
 
     EditText message_ed_txt;
@@ -163,9 +179,21 @@ public class ChatActivity extends AppCompatActivity {
                     Glide.with(context).load(imgPath + userDt.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(profile_pic);
                     name.setText(userDt.name);
                     statusTxt.setText(userDt.chatStatus);
+                    if (userDt.chatStatus.equalsIgnoreCase("Offline")) {
+                        Date statusDatetime = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", userDt.chatStatusTime);
+                        String stTxt = "last seen ";
+                        if (DateUtils.getStringDate("yyyy-MM-dd", new Date()).equals(DateUtils.getStringDate("yyyy-MM-dd", statusDatetime))) {
+                            stTxt += DateUtils.getStringDate("hh:mm a", statusDatetime);
+                        } else {
+                            stTxt += DateUtils.getStringDate("dd MMM, hh:mm a", statusDatetime);
+                        }
+                        statusTxt.setText(stTxt);
+                    }
+
+                    iAmBlock = UserMaster.findIdInIds(sessionPref.getUserMasterId(), userDt.blockedUser);
                 }
             }
-        }, "name,user_name,profile_link,profile_pic,position,chat_status,blocked_user", true, user_master_id);
+        }, "name,user_name,profile_link,profile_pic,position,chat_status,chat_status_time,blocked_user", true, user_master_id);
 
         //replay selection
         cancelButton = findViewById(R.id.cancelButton);
@@ -175,7 +203,38 @@ public class ChatActivity extends AppCompatActivity {
         //open attach & send message
         btnFileGallery = findViewById(R.id.btnFileGallery);
         message_ed_txt = findViewById(R.id.message_ed_txt);
+        message_ed_txt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                typingOnlineListener.typing();
+            }
+        });
+
         send_message_btn = findViewById(R.id.send_message_btn);
+        send_message_btn.setOnClickListener(view -> {
+            if (!iAmBlock) {
+                if (message_ed_txt.getText().toString().trim().equals("")) {
+                    message_ed_txt.setError("Please enter message");
+                    Toast.makeText(ChatActivity.this, "Enter Message", Toast.LENGTH_SHORT).show();
+                } else {
+                    // send message
+                    sendChatMessage(message_ed_txt.getText().toString(), "", "TEXT");
+                    message_ed_txt.setText("");
+                }
+            } else {
+                Toast.makeText(this, "you are block by this user", Toast.LENGTH_LONG).show();
+            }
+        });
         txtBlock = findViewById(R.id.txtBlock);
 
         message_list = findViewById(R.id.message_list);
@@ -184,6 +243,48 @@ public class ChatActivity extends AppCompatActivity {
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         message_list.setLayoutManager(layoutManager);
+        message_list.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (tableChatDatas.size() == 0)
+                    return;
+
+                date_area.setVisibility(View.VISIBLE);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) message_list.getLayoutManager();
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                String dateFormate = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMMM yyyy", tableChatDatas.get(lastVisibleItemPosition).msgSendTime);
+                date.setText(dateFormate);
+
+//              Log.e(LogTag.CHECK_DEBUG, " & firstVisibleItemPosition : " + firstVisibleItemPosition + " & visibleItemCount : " + visibleItemCount + " &  totalItemCount : "+totalItemCount + " &  scroll view Y : " + dy + " & start list  : " + start);
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
+                    if (scrollFlg) {
+                        scrollFlg = false;
+                        Log.e(LogTag.CHECK_DEBUG, "Add next data : " + start);
+                        tableChatData(start);
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                scrollFlg = true;
+                            }
+                        }, 1000);
+                    }
+
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                date_area.setVisibility(View.GONE);
+            }
+
+        });
+
         tableChatData(0);
     }
 
@@ -192,6 +293,8 @@ public class ChatActivity extends AppCompatActivity {
     int preArraySize = 0;
 
     long start = 0;
+    boolean scrollFlg = true;
+    boolean iAmBlock = false;
 
     private void tableChatData(long start) {
         if (start == 0) {
@@ -500,7 +603,7 @@ public class ChatActivity extends AppCompatActivity {
                                                     }
                                                 });*/
 
-                                            }else{//DOC
+                                            } else {//DOC
 
                                             }
                                         }
@@ -585,6 +688,78 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    TypingOnlineListener typingOnlineListener = new TypingOnlineListener() {
+        @Override
+        public void online() {
+            chatModule.chatStatusApiCall("online");
+            Log.d(LogTag.CHECK_DEBUG, "update chat status Online by api");
+        }
 
+        @Override
+        public void typing() {
+            if (!this.isTyping) {
+                chatModule.chatStatusApiCall("typing");
+                Log.d(LogTag.CHECK_DEBUG, "update chat status typing by api");
+            }
+            super.typing();
+        }
+    };
 
+    private void sendChatMessage(String msg, String fileUrl, String msg_type) {
+        //insert
+        MessageListResponse.Dt tableChatData = new MessageListResponse().new Dt();
+        tableChatData.sendUserMasterId = sessionPref.getUserMasterId();
+        tableChatData.recUserMasterId = user_master_id;
+        tableChatData.msgType = msg_type;
+        tableChatData.msgSendTime = DateUtils.TODAYDATETIMEforDB();
+        tableChatData.msgStatus = "ERROR";
+        tableChatData.msgError = "wait";
+        if (msg_type.equalsIgnoreCase("TEXT")) {
+            tableChatData.msg = msg;
+        } else {//FILE
+            tableChatData.msgFile = fileUrl;
+            tableChatData.fileType = CommonFunction.fileType(fileUrl);
+        }
+        tableChatDatas.add(0, tableChatData);
+        if (message_list != null) {
+            if (message_list.getAdapter() != null) {
+                message_list.smoothScrollToPosition(0);
+                message_list.getAdapter().notifyDataSetChanged();
+            }
+        }
+
+        HashMap hashMap = new HashMap();
+        hashMap.putAll(defaultUserData);
+        hashMap.put("rec_user_master_id", user_master_id);
+        hashMap.put("msg_type", msg_type);
+        if (msg_type.equalsIgnoreCase("TEXT")) {
+            hashMap.put("msg", msg);
+        } else {
+            hashMap.put("file_type", tableChatData.fileType);
+        }
+        apiInterface.MESSAGE_SEND(hashMap).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        SendMessageResponse sendMessageResponse = (SendMessageResponse) response.body();
+                        if (sendMessageResponse.status) {
+                            FirebaseFCMResponse firebaseFCMResponse = new Gson().fromJson(sendMessageResponse.fcmResponse, FirebaseFCMResponse.class);
+                            if (message_list != null) {
+                                if (message_list.getAdapter() != null) {
+                                    int index = tableChatDatas.indexOf(tableChatData);
+                                    tableChatData.msgStatus = sendMessageResponse.pushJson.chatData.msgStatus;
+                                    tableChatData.chatMasterId = String.valueOf(sendMessageResponse.chatMasterId);
+                                    tableChatData.msgSendTime = sendMessageResponse.pushJson.chatData.msgSendTime;
+                                    tableChatDatas.set(index, tableChatData);
+                                    message_list.getAdapter().notifyItemChanged(index);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
 }

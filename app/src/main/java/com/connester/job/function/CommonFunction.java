@@ -50,6 +50,8 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -559,6 +561,23 @@ public class CommonFunction {
         ContentResolver resolver = context.getContentResolver();
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
         return MimeTypeMap.getFileExtensionFromUrl(resolver.getType(uri));
+    }
+
+    public static String fileType(String url) {
+        ArrayList<String> img = new ArrayList<>();
+        img.addAll(Arrays.asList(new String[]{"png", "jpg", "bmp", "jpeg", "webp"}));
+
+        ArrayList<String> video = new ArrayList<>();
+        video.addAll(Arrays.asList(new String[]{"mp4", "3gp", "avi", "mkv", "mpg"}));
+
+        String ext = url.substring(url.lastIndexOf(".") + 1);
+        if (video.indexOf(ext) != -1) {
+            return "VIDEO";
+        } else if (img.indexOf(ext) != -1) {
+            return "IMAGE";
+        } else {
+            return "DOC";
+        }
     }
 
     public static String getVersionCode(Context context) {

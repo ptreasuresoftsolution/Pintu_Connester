@@ -93,6 +93,9 @@ public class UserRowResponse {
         @SerializedName("chat_status")
         @Expose
         public String chatStatus;
+        @SerializedName("chat_status_time")
+        @Expose
+        public String chatStatusTime;
         @SerializedName("latitude_location")
         @Expose
         public String latitudeLocation;
