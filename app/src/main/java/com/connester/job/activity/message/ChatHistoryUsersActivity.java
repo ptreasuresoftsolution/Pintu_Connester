@@ -24,6 +24,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -126,6 +127,8 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
         });
 
         chatUserList = findViewById(R.id.chatUserList);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        chatUserList.setLayoutManager(layoutManager);
         no_row_found = findViewById(R.id.no_row_found);
         progressBar = findViewById(R.id.progressBar);
         back_iv = findViewById(R.id.back_iv);

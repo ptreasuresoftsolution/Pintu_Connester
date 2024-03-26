@@ -185,6 +185,7 @@ public class ChatActivity extends AppCompatActivity {
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         message_list.setLayoutManager(layoutManager);
+        tableChatData(0);
     }
 
 
@@ -271,10 +272,9 @@ public class ChatActivity extends AppCompatActivity {
 
                             if (direction_Type.equalsIgnoreCase("send")) {
                                 //send message
-                                if (!tableChatData.replayMsgId.equalsIgnoreCase("0")) {
+                                if (tableChatData.replayMsgId != null && !tableChatData.replayMsgId.equalsIgnoreCase("0")) {
                                     //replay type
                                     holder.send_replay_msg_area.setVisibility(View.VISIBLE);
-
                                 } else {
                                     //non replay type
                                     if (tableChatData.msgType.equalsIgnoreCase("TEXT")) {
@@ -407,7 +407,7 @@ public class ChatActivity extends AppCompatActivity {
                                 }
                             } else {
                                 //received message
-                                if (!tableChatData.replayMsgId.equalsIgnoreCase("0")) {
+                                if (tableChatData.replayMsgId != null && !tableChatData.replayMsgId.equalsIgnoreCase("0")) {
                                     //replay type
                                     holder.received_replay_msg_area.setVisibility(View.VISIBLE);
                                 } else {
@@ -486,7 +486,7 @@ public class ChatActivity extends AppCompatActivity {
 
                                             } else {
                                                 holder.photo_thumb.setVisibility(View.VISIBLE);
-                                                Glide.with(ChatActivity.this).load(chatImgPath+tableChatData.msgFile).into(holder.photo_thumb);
+                                                Glide.with(ChatActivity.this).load(chatImgPath + tableChatData.msgFile).into(holder.photo_thumb);
 
                                                 /*
                                                 //setting up open image file
