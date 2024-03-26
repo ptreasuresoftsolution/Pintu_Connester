@@ -27,6 +27,7 @@ import com.connester.job.RetrofitConnection.jsontogson.RequestedGroupListRespons
 import com.connester.job.RetrofitConnection.jsontogson.SignUpOtpResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserLoginResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
+import com.connester.job.RetrofitConnection.jsontogson.UserStatusUpdateResponse;
 import com.connester.job.RetrofitConnection.jsontogson.WorkExperienceItemResponse;
 import com.connester.job.RetrofitConnection.jsontogson.WorkExperienceListResponse;
 
@@ -394,6 +395,10 @@ public interface ApiInterface {
     Call<NormalCommonResponse> GROUP_MEMBER_REQUEST_ACCEPT(@FieldMap Map<String, String> params);
 
     //notification and chat message api
+    @FormUrlEncoded // update user status
+    @POST(PRE_FIX + "NotificationMessage/userStatusUpdate")
+    Call<UserStatusUpdateResponse> USER_STATUS_UPDATE_CALL(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded // call on logout
     @POST(PRE_FIX + "NotificationMessage/removeToken")
     Call<NormalCommonResponse> REMOVE_DISABLE_TOKEN(@FieldMap Map<String, String> params);

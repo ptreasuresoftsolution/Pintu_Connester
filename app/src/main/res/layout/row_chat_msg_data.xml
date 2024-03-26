@@ -102,13 +102,13 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/video_file_area"
-        style="@style/MessageLeftCardView"
+        app:cardCornerRadius="8dp"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_gravity="left"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="60dp"
+        android:layout_marginRight="10dp"
         android:elevation="0dp"
         app:cardBackgroundColor="@color/secondary_2"
         app:cardElevation="0dp"
@@ -122,7 +122,6 @@
                 android:id="@+id/video_thumb"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
-                android:padding="10dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/camera_video" />
 
@@ -154,13 +153,12 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/photo_thumb_layout"
-        style="@style/MessageLeftCardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="60dp"
-        android:elevation="0dp"
+        android:layout_marginRight="10dp"
+        app:cardCornerRadius="8dp"
         app:cardBackgroundColor="@color/secondary_2"
         app:cardElevation="0dp"
         app:strokeWidth="0dp">
@@ -169,7 +167,6 @@
             android:id="@+id/photo_thumb"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:padding="10dp"
             android:scaleType="centerCrop"
             android:src="@drawable/feed_add_photo" />
 

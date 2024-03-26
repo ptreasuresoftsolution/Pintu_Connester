@@ -391,6 +391,9 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
             Glide.with(context).load(url).placeholder(R.drawable.default_user_pic).into(holder.user_profile_pic);
 
             holder.text_msg.setText(datumList.get(position).msg);
+            if (datumList.get(position).msgType.equalsIgnoreCase("FILE")){
+                holder.text_msg.setText(datumList.get(position).fileType+" : File");
+            }
             holder.text_name.setText(datumList.get(position).name);
             String time = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "hh:mm a", datumList.get(position).msgSendTime);
             long dayInterval = DateUtils.dateDiff("d", datumList.get(position).msgSendTime, DateUtils.TODAYDATETIMEforDB());
