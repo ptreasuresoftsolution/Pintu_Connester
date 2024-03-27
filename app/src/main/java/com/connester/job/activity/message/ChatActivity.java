@@ -1,11 +1,16 @@
 package com.connester.job.activity.message;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +19,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,6 +28,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -46,6 +54,7 @@ import com.connester.job.activity.ProfileActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.DateUtils;
+import com.connester.job.function.FilePath;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
@@ -53,6 +62,9 @@ import com.connester.job.module.UserMaster;
 import com.connester.job.module.notification_message.ChatModule;
 import com.connester.job.module.notification_message.FileMessageUploadService;
 import com.connester.job.module.notification_message.TypingOnlineListener;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
@@ -119,9 +131,27 @@ public class ChatActivity extends AppCompatActivity {
             return;
         }
 
+        activityResultLauncherForPhoto = registerForActivityResult(new ActivityResultContracts.GetContent(), fileUri -> {
+            if (fileUri != null) {
+                uploadFileDialog(ChatModule.FileType.IMAGE.getVal(), fileUri);
+            }
+        });
+        activityResultLauncherForVideo = registerForActivityResult(new ActivityResultContracts.GetContent(), fileUri -> {
+            if (fileUri != null) {
+                uploadFileDialog(ChatModule.FileType.VIDEO.getVal(), fileUri);
+            }
+        });
+        activityResultLauncherForDoc = registerForActivityResult(new ActivityResultContracts.GetContent(), fileUri -> {
+            if (fileUri != null) {
+                uploadFileDialog(ChatModule.FileType.DOC.getVal(), fileUri);
+            }
+        });
+
         initView();
     }
 
+
+    ActivityResultLauncher activityResultLauncherForPhoto, activityResultLauncherForVideo, activityResultLauncherForDoc;
     EditText message_ed_txt;
     ImageView back, profile_pic, btnFileGallery, chatOption, send_message_btn;
     LinearLayout chat_profile;
@@ -210,13 +240,13 @@ public class ChatActivity extends AppCompatActivity {
             pick_doc_LL.setVisibility(View.VISIBLE);
 
             pick_img_LL.setOnClickListener(v1 -> {
-
+                activityResultLauncherForPhoto.launch(("image/*"));
             });
             pick_video_LL.setOnClickListener(v1 -> {
-
+                activityResultLauncherForVideo.launch(("video/*"));
             });
             pick_doc_LL.setOnClickListener(v1 -> {
-
+                activityResultLauncherForDoc.launch(("*/*"));
             });
 
         });
@@ -246,7 +276,7 @@ public class ChatActivity extends AppCompatActivity {
                     Toast.makeText(ChatActivity.this, "Enter Message", Toast.LENGTH_SHORT).show();
                 } else {
                     // send message
-                    sendChatMessage(message_ed_txt.getText().toString(), "", "TEXT");
+                    sendChatMessage(message_ed_txt.getText().toString(), "", "TEXT", null);
                     message_ed_txt.setText("");
                 }
             } else {
@@ -936,7 +966,7 @@ public class ChatActivity extends AppCompatActivity {
         }
     };
 
-    private void sendChatMessage(String msg, String fileUrl, String msg_type) {
+    private void sendChatMessage(String msg, String fileUrl, String msg_type, String fileType) {
         //insert
         MessageListResponse.Dt tableChatData = new MessageListResponse().new Dt();
         tableChatData.sendUserMasterId = sessionPref.getUserMasterId();
@@ -949,7 +979,11 @@ public class ChatActivity extends AppCompatActivity {
             tableChatData.msg = msg;
         } else {//FILE
             tableChatData.msgFile = fileUrl;
-            tableChatData.fileType = CommonFunction.fileType(fileUrl);
+            if (fileType != null) {
+                tableChatData.fileType = fileType;
+            } else {
+                tableChatData.fileType = CommonFunction.fileType(fileUrl);
+            }
         }
         tableChatDatas.add(0, tableChatData);
         if (message_list != null) {
@@ -1021,6 +1055,81 @@ public class ChatActivity extends AppCompatActivity {
                 .build();
 
         workManager.enqueue(oneTimeWorkRequest);
+    }
+
+    ExoPlayer player;
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (player != null && player.isPlaying()) {
+            player.stop();
+            player.release();
+        }
+    }
+
+    private void uploadFileDialog(String fileType, Uri fileUri) {
+        Dialog sendFileDialog = new Dialog(this);
+        sendFileDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        sendFileDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        sendFileDialog.setContentView(R.layout.photo_video_send_dailog);
+        int width = ViewGroup.LayoutParams.MATCH_PARENT;
+        int height = ViewGroup.LayoutParams.MATCH_PARENT;
+        sendFileDialog.getWindow().setLayout(width, height);
+
+
+        ImageView closeDailog = sendFileDialog.findViewById(R.id.closeDailog);
+        TextView fileTitle = sendFileDialog.findViewById(R.id.fileTitle);
+        ImageView imgSendBtnDialog = sendFileDialog.findViewById(R.id.imgSendBtnDialog);
+
+        if (fileType.equalsIgnoreCase(ChatModule.FileType.VIDEO.getVal())) {
+            StyledPlayerView video = sendFileDialog.findViewById(R.id.video_play);
+            video.setVisibility(View.VISIBLE);
+            fileTitle.setText("Video");
+            player = new ExoPlayer.Builder(context).build();
+            player.setPlayWhenReady(true);
+            video.setPlayer(player);
+            // Create and add media item
+            MediaItem mediaItem = MediaItem.fromUri(fileUri);
+            player.addMediaItem(mediaItem);
+            // Prepare exoplayer
+            player.prepare();
+            sendFileDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    if (player != null && player.isPlaying()) {
+                        player.stop();
+                        player.release();
+                    }
+                }
+            });
+        } else if (fileType.equalsIgnoreCase(ChatModule.FileType.IMAGE.getVal())) {
+            ImageView imgSelectShowDialog = sendFileDialog.findViewById(R.id.imgSelectShowDialog);
+            imgSelectShowDialog.setVisibility(View.VISIBLE);
+            fileTitle.setText("Image");
+            Glide.with(this).load(fileUri).into(imgSelectShowDialog);
+        } else { //DOC
+            ImageView imgSelectShowDialog = sendFileDialog.findViewById(R.id.imgSelectShowDialog);
+            imgSelectShowDialog.setVisibility(View.VISIBLE);
+            fileTitle.setText("Document");
+            Glide.with(this).load(R.drawable.file_earmark_document).into(imgSelectShowDialog);
+        }
+        imgSendBtnDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fileUri != null) {
+                    sendChatMessage("", FilePath.getPath2(context, fileUri), "FILE", fileType);
+                } else {
+                    Toast.makeText(ChatActivity.this, "File Selected", Toast.LENGTH_SHORT).show();
+                }
+                sendFileDialog.dismiss();
+            }
+        });
+
+        closeDailog.setOnClickListener(v ->
+                sendFileDialog.dismiss());
+
+        sendFileDialog.show();
     }
 
     private void updateStatusRead(String chat_master_id) {

@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -27,11 +28,14 @@ import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.google.gson.Gson;
+import com.iceteck.silicompressorr.SiliCompressor;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 
+import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -77,113 +81,130 @@ public class FileMessageUploadService extends Worker {
 
         createNotificationChannel();
 
-        try {
-            //call file upload api
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                //call file upload api
 
-            MultipartBody.Builder builder = new MultipartBody.Builder();
-            builder.setType(MultipartBody.FORM);
-            builder.addFormDataPart("user_master_id", sessionPref.getUserMasterId());
-            builder.addFormDataPart("apiKey", sessionPref.getApiKey());
-            builder.addFormDataPart("device_type", "ANDROID");
-            builder.addFormDataPart("chat_master_id", chat_master_id);
-            builder.addFormDataPart("file_type", fileType);
+                MultipartBody.Builder builder = new MultipartBody.Builder();
+                builder.setType(MultipartBody.FORM);
+                builder.addFormDataPart("user_master_id", sessionPref.getUserMasterId());
+                builder.addFormDataPart("apiKey", sessionPref.getApiKey());
+                builder.addFormDataPart("device_type", "ANDROID");
+                builder.addFormDataPart("chat_master_id", chat_master_id);
+                builder.addFormDataPart("file_type", fileType);
 
-            if (fileType.equalsIgnoreCase(ChatModule.FileType.IMAGE.getVal())){
+                File mainfile = new File(msgFileLocalUri);
+                //file compress process
+                File compressFile = mainfile;
+                if (fileType.equalsIgnoreCase(ChatModule.FileType.IMAGE.getVal())) {
+                    compressFile = new Compressor(context)
+                            .setMaxWidth(1080)
+                            .setMaxWidth(800)
+                            .setQuality(50)
+                            .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                            .setDestinationDirectoryPath(context.getFilesDir().getAbsolutePath())
+                            .compressToFile(mainfile);
+                } else if (fileType.equalsIgnoreCase(ChatModule.FileType.VIDEO.getVal())) {
+                    String filePath = SiliCompressor.with(context).compressVideo(mainfile.getAbsolutePath(), Constant.getStorageDirectoryPath(context));
+                    compressFile = new File(filePath);
+                } else {//DOC
 
-            }else if (fileType.equalsIgnoreCase(ChatModule.FileType.VIDEO.getVal())){
-
-            }else {//DOC
-
-            }
-            File file = new File(msgFileLocalUri);//remain compress process
-
-
-            String mimeType = FilePath.getMimeType(file);
-            builder.addFormDataPart("msg_file", file.getName(), RequestBody.create(MediaType.parse(mimeType), file));
-
-            requestBody = builder.build();
-            CountingFileRequestBody countingFileRequestBody = new CountingFileRequestBody(requestBody, "msg_file", new CountingFileRequestBody.ProgressListener() {
-                @Override
-                public void transferred(String key, int num) {
-                    Log.e(LogTag.TMP_LOG, "progress % is : " + num);
-                    if (!isStopped()) {
-
-                        Intent intent = new Intent(UPLOAD_FILE_PROCESS);
-                        intent.putExtra("chat_master_id", chat_master_id);
-                        intent.putExtra("process", num);
-                        context.sendBroadcast(intent);
+                }
+                Log.e(LogTag.CHECK_DEBUG, "Upload process Compress file path : " + compressFile.getAbsolutePath());
 
 
-                        Intent intents = new Intent(context, CharSequence.class);
-                        PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, intents, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
+                String mimeType = FilePath.getMimeType(compressFile);
+                builder.addFormDataPart("msg_file", compressFile.getName(), RequestBody.create(MediaType.parse(mimeType), compressFile));
+
+                requestBody = builder.build();
+                CountingFileRequestBody countingFileRequestBody = new CountingFileRequestBody(requestBody, "msg_file", new CountingFileRequestBody.ProgressListener() {
+                    @Override
+                    public void transferred(String key, int num) {
+                        Log.e(LogTag.TMP_LOG, "progress % is : " + num);
+                        if (!isStopped()) {
+
+                            Intent intent = new Intent(UPLOAD_FILE_PROCESS);
+                            intent.putExtra("chat_master_id", chat_master_id);
+                            intent.putExtra("process", num);
+                            context.sendBroadcast(intent);
+
+
+                            Intent intents = new Intent(context, CharSequence.class);
+                            PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, intents, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
 //                        PendingIntent pendingIntent = WorkManager.getInstance().createCancelPendingIntent(workId);
 
-                        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constant.channel_id);
-                        builder.setContentTitle("File Sending")
-                                .setContentText("Sending file in progress")
-                                .setWhen(System.currentTimeMillis())
-                                .setSmallIcon(R.drawable.cloud_upload_fill).setProgress(100, num, false)
-                                .setAutoCancel(true)
-                                .setSound(null)
-                                .setOngoing(true)
-                                .setSilent(true)
-                                .setContentIntent(pendingIntent);
+                            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constant.channel_id);
+                            builder.setContentTitle("File Sending")
+                                    .setContentText("Sending file in progress")
+                                    .setWhen(System.currentTimeMillis())
+                                    .setSmallIcon(R.drawable.cloud_upload_fill).setProgress(100, num, false)
+                                    .setAutoCancel(true)
+                                    .setSound(null)
+                                    .setOngoing(true)
+                                    .setSilent(true)
+                                    .setContentIntent(pendingIntent);
 
-                        notificationManager.notify(notificationId, builder.build());
+                            notificationManager.notify(notificationId, builder.build());
+                        }
                     }
-                }
-            });
+                });
 
-            apiInterface.CHAT_FILES_UPLOADER(countingFileRequestBody).enqueue(new MyApiCallback() {
-                @Override
-                public void onResponse(Call call, Response response) {
-                    super.onResponse(call, response);
-                    if (response.isSuccessful()) {
-                        if (response.body() != null) {
-                            SendMessageResponse sendMessageResponse = (SendMessageResponse) response.body();
-                            if (sendMessageResponse.status) {
+                File finalCompressFile = compressFile;
+                apiInterface.CHAT_FILES_UPLOADER(countingFileRequestBody).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                SendMessageResponse sendMessageResponse = (SendMessageResponse) response.body();
+                                if (sendMessageResponse.status) {
 
-                                Intent intent = new Intent(UPLOAD_FILE_COMPLETE);
-                                intent.putExtra("chat_master_id", chat_master_id);
-                                intent.putExtra("pushJson", new Gson().toJson(sendMessageResponse.pushJson));
-                                context.sendBroadcast(intent);
-                                notificationManager.cancel(notificationId);
+                                    Intent intent = new Intent(UPLOAD_FILE_COMPLETE);
+                                    intent.putExtra("chat_master_id", chat_master_id);
+                                    intent.putExtra("pushJson", new Gson().toJson(sendMessageResponse.pushJson));
+                                    context.sendBroadcast(intent);
+                                    notificationManager.cancel(notificationId);
+
+                                    if (!fileType.equalsIgnoreCase(ChatModule.FileType.DOC.getVal())) {
+                                        if (finalCompressFile.exists())
+                                            finalCompressFile.delete();
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            });
-        } catch (Exception e) {
-            Log.e(LogTag.EXCEPTION, "File Upload Fail Exception", e);
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constant.channel_id);
-            builder.setStyle(new NotificationCompat.BigTextStyle()
-                    .bigText("Upload Failed")).setTicker("Upload Failed");
-            notificationManager.notify(notificationId, builder.build());
+                });
+            } catch (Exception e) {
+                Log.e(LogTag.EXCEPTION, "File Upload Fail Exception", e);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constant.channel_id);
+                builder.setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText("Upload Failed")).setTicker("Upload Failed");
+                notificationManager.notify(notificationId, builder.build());
 
-            //call error message status api
-            HashMap hashMap = new HashMap();
-            hashMap.put("user_master_id", sessionPref.getUserMasterId());
-            hashMap.put("apiKey", sessionPref.getApiKey());
-            hashMap.put("chat_master_id", chat_master_id);
-            hashMap.put("error_msg", "Error:Something wrong! in file upload process!");
-            apiInterface.MESSAGE_STATUS_ERROR(hashMap).enqueue(new MyApiCallback() {
-                @Override
-                public void onResponse(Call call, Response response) {
-                    super.onResponse(call, response);
-                    if (response.isSuccessful()) {
-                        if (response.body() != null) {
-                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                            if (normalCommonResponse.status) {
-                                Log.d(LogTag.CHECK_DEBUG, "Confirm to api upload in file error");
+                //call error message status api
+                HashMap hashMap = new HashMap();
+                hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                hashMap.put("apiKey", sessionPref.getApiKey());
+                hashMap.put("chat_master_id", chat_master_id);
+                hashMap.put("error_msg", "Error:Something wrong! in file upload process!");
+                apiInterface.MESSAGE_STATUS_ERROR(hashMap).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status) {
+                                    Log.d(LogTag.CHECK_DEBUG, "Confirm to api upload in file error");
+                                }
                             }
                         }
                     }
-                }
-            });
-            Result.failure();
-        }
-
+                });
+                Result.failure();
+            }
+        });
         return Result.success();
     }
 
