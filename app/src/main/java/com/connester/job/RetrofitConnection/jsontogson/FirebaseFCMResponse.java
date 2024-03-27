@@ -23,7 +23,9 @@ public class FirebaseFCMResponse {
     public List<Result> results = null;
 
     public class Result {
-
+        @SerializedName("error")
+        @Expose
+        public String error;
         @SerializedName("message_id")
         @Expose
         public String messageId;

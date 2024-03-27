@@ -14,6 +14,7 @@ import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import retrofit2.Call;
@@ -26,6 +27,7 @@ public class ChatModule {
     public static final String CHAT_STATUS_UPDATE_FILTER = "CHAT_STATUS_UPDATE_FILTER";
 
     public static final long MSG_ROW_LIMIT = 10;
+
 
     public enum FileType {
         IMAGE("IMAGE"), VIDEO("VIDEO"), DOC("DOC");
@@ -102,5 +104,14 @@ public class ChatModule {
                 }
             }
         });
+    }
+
+    public int findIndexOf(ArrayList<MessageListResponse.Dt> tableChatDatas, String chatMasterId) {
+        for (int i = 0; i < tableChatDatas.size(); i++) {
+            if (tableChatDatas.get(i).chatMasterId.equalsIgnoreCase(chatMasterId)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

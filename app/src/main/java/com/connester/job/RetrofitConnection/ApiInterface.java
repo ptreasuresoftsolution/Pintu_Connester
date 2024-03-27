@@ -11,6 +11,7 @@ import com.connester.job.RetrofitConnection.jsontogson.GroupRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.JobsEventMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MembersListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MessageListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.MessageStatusUpdateResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MyGroupListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MyPagesListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
@@ -420,7 +421,15 @@ public interface ApiInterface {
     @POST(PRE_FIX + "NotificationMessage/messageList")
     Call<MessageListResponse> MESSAGE_LIST(@FieldMap Map<String, String> params);
 
-    @FormUrlEncoded // message list
+    @FormUrlEncoded // message send
     @POST(PRE_FIX + "NotificationMessage/sendMessageToUser")
     Call<SendMessageResponse> MESSAGE_SEND(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded // message status read
+    @POST(PRE_FIX + "NotificationMessage/messageRead")
+    Call<MessageStatusUpdateResponse> MESSAGE_STATUS_READ(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded // message status deliver
+    @POST(PRE_FIX + "NotificationMessage/messageDeliver")
+    Call<MessageStatusUpdateResponse> MESSAGE_STATUS_DELIVERY(@FieldMap Map<String, String> params);
 }

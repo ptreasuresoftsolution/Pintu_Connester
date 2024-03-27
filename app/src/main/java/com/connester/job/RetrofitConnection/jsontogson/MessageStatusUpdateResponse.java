@@ -3,19 +3,16 @@ package com.connester.job.RetrofitConnection.jsontogson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class UserStatusUpdateResponse {
+public class MessageStatusUpdateResponse {
     @SerializedName("status")
     @Expose
     public Boolean status;
+    @SerializedName("chat_master_id")
+    @Expose
+    public String chatMasterId;
     @SerializedName("pushJson")
     @Expose
     public PushJson pushJson;
-    @SerializedName("fcmResponse")
-    @Expose
-    public String fcmResponse;
-    @SerializedName("msg")
-    @Expose
-    public String msg;
 
     public class PushJson {
 
@@ -28,16 +25,23 @@ public class UserStatusUpdateResponse {
 
         public class ChatData {
 
-            @SerializedName("user_master_id")
+            @SerializedName("chat_master_id")
             @Expose
-            public String userMasterId;
-            @SerializedName("status")
+            public String chatMasterId;
+            @SerializedName("msg_status")
             @Expose
-            public String status;
-
+            public String msgStatus;
             @SerializedName("status_time")
             @Expose
             public String statusTime;
+
         }
     }
+
+    @SerializedName("fcmResponse")
+    @Expose
+    public String fcmResponse;
+    @SerializedName("msg")
+    @Expose
+    public String msg;
 }

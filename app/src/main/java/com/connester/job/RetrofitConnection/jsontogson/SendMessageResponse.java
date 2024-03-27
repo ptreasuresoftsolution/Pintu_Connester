@@ -13,7 +13,34 @@ public class SendMessageResponse {
     @SerializedName("pushJson")
     @Expose
     public PushJson pushJson;
-
+    //"pushJson": {
+    //        "type": "SEND",
+    //        "sendUser": {
+    //            "user_master_id": "3",
+    //            "name": "Pintu Dholariya",
+    //            "user_name": "pintu033dholariya",
+    //            "profile_link": "pintu033dholariya",
+    //            "profile_pic": "202403100104172743.png"
+    //        },
+    //        "recUser": {
+    //            "user_master_id": "4",
+    //            "name": "pintu",
+    //            "user_name": "pintu033dholariya656",
+    //            "profile_link": "pintu033dholariya656",
+    //            "profile_pic": "202401061046091705.jpg"
+    //        },
+    //        "chatData": {
+    //            "send_user_master_id": "3",
+    //            "rec_user_master_id": "4",
+    //            "msg_type": "TEXT",
+    //            "msg_file": "",
+    //            "file_type": "",
+    //            "msg_send_time": "2024-03-27 11:03:05",
+    //            "msg_status": "SEND",
+    //            "msg": "hi",
+    //            "chat_master_id": 12
+    //        }
+    //    }
     public class PushJson {
 
         @SerializedName("type")
@@ -79,6 +106,9 @@ public class SendMessageResponse {
             @SerializedName("rec_user_master_id")
             @Expose
             public String recUserMasterId;
+            @SerializedName("msg_file")
+            @Expose
+            public String msgFile;
             @SerializedName("msg_type")
             @Expose
             public String msgType;
@@ -93,7 +123,7 @@ public class SendMessageResponse {
             public String msg;
             @SerializedName("chat_master_id")
             @Expose
-            public Integer chatMasterId;
+            public String chatMasterId;
 
         }
     }
