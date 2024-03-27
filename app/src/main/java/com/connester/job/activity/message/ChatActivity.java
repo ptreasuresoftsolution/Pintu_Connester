@@ -1,6 +1,7 @@
 package com.connester.job.activity.message;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -46,6 +51,7 @@ import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.UserMaster;
 import com.connester.job.module.notification_message.ChatModule;
+import com.connester.job.module.notification_message.FileMessageUploadService;
 import com.connester.job.module.notification_message.TypingOnlineListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.card.MaterialCardView;
@@ -54,6 +60,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -76,6 +83,10 @@ public class ChatActivity extends AppCompatActivity {
 
     HashMap defaultUserData = new HashMap();
 
+
+    WorkManager workManager;
+    NotificationManager notificationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +97,10 @@ public class ChatActivity extends AppCompatActivity {
         userMaster = new UserMaster(context);
         chatModule = new ChatModule(context, activity);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
+
+        workManager = WorkManager.getInstance(getApplication());
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
         defaultUserData.put("user_master_id", sessionPref.getUserMasterId());
         defaultUserData.put("apiKey", sessionPref.getApiKey());
         defaultUserData.put("device", "ANDROID");
@@ -278,10 +293,10 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String chat_master_id = intent.getExtras().getString("chat_master_id");
-            String send_user_master_id = intent.getExtras().getString("send_user_master_id");
+            String rec_user_master_id = intent.getExtras().getString("rec_user_master_id");
             String pushJsonString = intent.getExtras().getString("pushJsonString");//normal format
             Log.e(LogTag.CHECK_DEBUG, "Message received call Broadcast : " + chat_master_id);
-            if (ChatActivity.this.user_master_id.equals(send_user_master_id)) {
+            if (ChatActivity.this.user_master_id.equals(rec_user_master_id)) {
                 if (pushJsonString != null) {
                     SendMessageResponse.PushJson pushJson = new Gson().fromJson(pushJsonString, SendMessageResponse.PushJson.class);
                     MessageListResponse.Dt tableChatData = new MessageListResponse().new Dt();
@@ -291,7 +306,7 @@ public class ChatActivity extends AppCompatActivity {
                     tableChatData.msgType = pushJson.chatData.msgType;
                     tableChatData.msg = pushJson.chatData.msg;
                     tableChatData.msgFile = pushJson.chatData.msgFile;
-                    tableChatData.fileType = pushJson.chatData.msgType;
+                    tableChatData.fileType = pushJson.chatData.fileType;
                     tableChatData.msgSendTime = pushJson.chatData.msgSendTime;
                     tableChatData.msgStatus = pushJson.chatData.msgStatus;
                     tableChatData.msgError = "";
@@ -362,6 +377,89 @@ public class ChatActivity extends AppCompatActivity {
         }
     };
 
+    BroadcastReceiver fileUploadProcessReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String chat_master_id = intent.getExtras().getString("chat_master_id");
+            int num = intent.getExtras().getInt("process");
+            Log.e(LogTag.TMP_LOG, "process upload" + num);
+
+            /*handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    tv.setText(num + "/" + 100);
+                    myHolder.progress_circular.setProgress(num);
+                }
+            });*/
+        }
+    };
+/*  do in sendChatMessage function for file
+    BroadcastReceiver fileUploadStartReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String chat_master_id = intent.getExtras().getString("chat_master_id");
+            String pushJsonString = intent.getExtras().getString("pushJsonString");//normal format
+            if (pushJsonString != null) {
+                SendMessageResponse.PushJson pushJson = new Gson().fromJson(pushJsonString, SendMessageResponse.PushJson.class);
+                MessageListResponse.Dt tableChatData = new MessageListResponse().new Dt();
+                tableChatData.chatMasterId = pushJson.chatData.chatMasterId;
+                tableChatData.sendUserMasterId = pushJson.chatData.sendUserMasterId;
+                tableChatData.recUserMasterId = pushJson.chatData.recUserMasterId;
+                tableChatData.msgType = pushJson.chatData.msgType;
+                tableChatData.msg = pushJson.chatData.msg;
+                tableChatData.msgFile = pushJson.chatData.msgFile;
+                tableChatData.fileType = pushJson.chatData.fileType;
+                tableChatData.msgSendTime = pushJson.chatData.msgSendTime;
+                tableChatData.msgStatus = pushJson.chatData.msgStatus;
+                tableChatData.msgError = "wait";
+                if (pushJson.chatData.msgError != null) {
+                    tableChatData.msgError = pushJson.chatData.msgError;
+                }
+                tableChatDatas.add(0, tableChatData);
+                if (message_list != null) {
+                    if (message_list.getAdapter() != null) {
+                        message_list.getAdapter().notifyDataSetChanged();
+                        message_list.smoothScrollToPosition(0);
+                    }
+                }
+            }
+        }
+    };*/
+
+    BroadcastReceiver fileCompleteUploadReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String chat_master_id = intent.getExtras().getString("chat_master_id");
+            String pushJsonString = intent.getExtras().getString("pushJson");//normal format
+            if (pushJsonString != null) {
+                SendMessageResponse.PushJson pushJson = new Gson().fromJson(pushJsonString, SendMessageResponse.PushJson.class);
+                MessageListResponse.Dt tableChatData = new MessageListResponse().new Dt();
+                tableChatData.chatMasterId = pushJson.chatData.chatMasterId;
+                tableChatData.sendUserMasterId = pushJson.chatData.sendUserMasterId;
+                tableChatData.recUserMasterId = pushJson.chatData.recUserMasterId;
+                tableChatData.msgType = pushJson.chatData.msgType;
+                tableChatData.msg = pushJson.chatData.msg;
+                tableChatData.msgFile = pushJson.chatData.msgFile;
+                tableChatData.fileType = pushJson.chatData.fileType;
+                tableChatData.msgSendTime = pushJson.chatData.msgSendTime;
+                tableChatData.msgStatus = pushJson.chatData.msgStatus;
+                if (pushJson.chatData.msgError != null) {
+                    tableChatData.msgError = pushJson.chatData.msgError;
+                }
+                tableChatDatas.add(0, tableChatData);
+                if (message_list != null) {
+                    if (message_list.getAdapter() != null) {
+                        int index = chatModule.findIndexOf(tableChatDatas, chat_master_id);
+                        if (index > -1) {
+                            tableChatDatas.set(index, tableChatData);
+                            message_list.getAdapter().notifyItemChanged(index);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -378,12 +476,12 @@ public class ChatActivity extends AppCompatActivity {
 
 //        IntentFilter startUpload = new IntentFilter(UploadService.UPLOAD_FILE_START);
 //        registerReceiver(fileUploadStartReceiver, startUpload);
-//
-//        IntentFilter process = new IntentFilter(UploadService.UPLOAD_FILE_PROCESS);
-//        registerReceiver(fileUploadProcessReceiver, process);
-//
-//        IntentFilter complete = new IntentFilter(UploadService.UPLOAD_FILE_COMPLETE);
-//        registerReceiver(fileCompleteUploadReceiver, complete);
+
+        IntentFilter process = new IntentFilter(FileMessageUploadService.UPLOAD_FILE_PROCESS);
+        registerReceiver(fileUploadProcessReceiver, process);
+
+        IntentFilter complete = new IntentFilter(FileMessageUploadService.UPLOAD_FILE_COMPLETE);
+        registerReceiver(fileCompleteUploadReceiver, complete);
 
         ViewerProfileDetailsApiCall();
 
@@ -397,8 +495,8 @@ public class ChatActivity extends AppCompatActivity {
         unregisterReceiver(statusChange);
 
 //        unregisterReceiver(fileUploadStartReceiver);
-//        unregisterReceiver(fileUploadProcessReceiver);
-//        unregisterReceiver(fileCompleteUploadReceiver);
+        unregisterReceiver(fileUploadProcessReceiver);
+        unregisterReceiver(fileCompleteUploadReceiver);
     }
 
     private void tableChatData(long start) {
@@ -494,7 +592,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
                                             Log.d(LogTag.CHECK_DEBUG, "fileType " + tableChatData.fileType);
-                                            if (tableChatData.msgError.equals("wait") || tableChatData.msgError.contains("wait progress")) {
+                                            if (tableChatData.msgError != null && tableChatData.msgError.equals("wait") || tableChatData.msgError.contains("wait progress")) {
                                                 //setting remain
                                                 holder.photo_thumb_layout.setVisibility(View.VISIBLE);
                                                 holder.photo_thumb.setVisibility(View.VISIBLE);
@@ -507,7 +605,7 @@ public class ChatActivity extends AppCompatActivity {
                                                     holder.progress_circular.setProgress(Integer.parseInt(num));
                                                     Log.d(LogTag.CHECK_DEBUG, "FILE process" + arr);
                                                 }
-                                                Glide.with(ChatActivity.this).load(chatImgPath + tableChatData.msgFile).into(holder.photo_thumb);
+//                                                Glide.with(ChatActivity.this).load(chatImgPath + tableChatData.msgFile).into(holder.photo_thumb);
                                             } else if (tableChatData.fileType.equalsIgnoreCase(ChatModule.FileType.VIDEO.getVal())) {
                                                 holder.video_file_area.setVisibility(View.VISIBLE);
 
@@ -864,6 +962,9 @@ public class ChatActivity extends AppCompatActivity {
                                     tableChatData.msgSendTime = sendMessageResponse.pushJson.chatData.msgSendTime;
                                     tableChatDatas.set(index, tableChatData);
                                     message_list.getAdapter().notifyItemChanged(index);
+                                    if (msg_type.equalsIgnoreCase("FILE")) {
+                                        uploadFileProcess(tableChatData.chatMasterId, tableChatData.fileType, tableChatData.msgFile);
+                                    }
                                 }
                             }
                         }
@@ -871,6 +972,32 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void uploadFileProcess(String chat_master_id, String fileType, String msgFileLocalUri) {
+        try {
+            List<WorkInfo> workInfos = workManager.getWorkInfosByTag(chat_master_id).get();
+            WorkInfo.State state = workInfos != null && workInfos.size() > 0 ? workInfos.get(0).getState() : null;
+            if (state != null) {
+                if (state == WorkInfo.State.RUNNING || state == WorkInfo.State.ENQUEUED) {
+                    Toast.makeText(context, "cannot start upload. a upload is already in progress", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            Log.e(LogTag.EXCEPTION, "quality Workinfo exception ", e);
+        }
+        Data.Builder builder = new Data.Builder();
+        builder.putString("chat_master_id", chat_master_id);
+        builder.putString("fileType", fileType);
+        builder.putString("msgFileLocalUri", msgFileLocalUri);
+
+        OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(FileMessageUploadService.class)
+                .addTag(chat_master_id)
+                .setInputData(builder.build())
+                .build();
+
+        workManager.enqueue(oneTimeWorkRequest);
     }
 
     private void updateStatusRead(String chat_master_id) {
@@ -896,7 +1023,6 @@ public class ChatActivity extends AppCompatActivity {
         });
 
     }
-
 
     private void ViewerProfileDetailsApiCall() {
         userMaster.getUserClmData(new UserMaster.CallBack() {
@@ -925,5 +1051,12 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         }, "name,user_name,profile_link,profile_pic,position,chat_status,chat_status_time,blocked_user", true, user_master_id);
+    }
+
+    //if require cancel
+    private void cancelUploadFile(String chatMasterId) {
+        workManager.cancelAllWorkByTag(chatMasterId);
+        notificationManager.cancel(Integer.parseInt(chatMasterId));
+        //call api message error
     }
 }

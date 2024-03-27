@@ -2,6 +2,7 @@
     <string name="app_name">Connester</string>
     <string name="sign_bullet">\u2022</string>
     <!-- TODO: Remove or change this placeholder text -->
+    <string name="upload_file_channel_name">Connester Message File Upload</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string-array name="job_type">

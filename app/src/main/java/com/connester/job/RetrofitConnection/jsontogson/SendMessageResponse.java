@@ -109,6 +109,9 @@ public class SendMessageResponse {
             @SerializedName("msg_file")
             @Expose
             public String msgFile;
+            @SerializedName("file_type")
+            @Expose
+            public String fileType;
             @SerializedName("msg_type")
             @Expose
             public String msgType;
@@ -118,6 +121,9 @@ public class SendMessageResponse {
             @SerializedName("msg_status")
             @Expose
             public String msgStatus;
+            @SerializedName("msg_error")
+            @Expose
+            public String msgError;
             @SerializedName("msg")
             @Expose
             public String msg;

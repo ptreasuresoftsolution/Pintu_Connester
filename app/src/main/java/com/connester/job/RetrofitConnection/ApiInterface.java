@@ -425,6 +425,9 @@ public interface ApiInterface {
     @POST(PRE_FIX + "NotificationMessage/sendMessageToUser")
     Call<SendMessageResponse> MESSAGE_SEND(@FieldMap Map<String, String> params);
 
+    @POST(PRE_FIX + "NotificationMessage/uploadMessageFileToUser")
+    Call<SendMessageResponse> CHAT_FILES_UPLOADER(@Body RequestBody files);
+
     @FormUrlEncoded // message status read
     @POST(PRE_FIX + "NotificationMessage/messageRead")
     Call<MessageStatusUpdateResponse> MESSAGE_STATUS_READ(@FieldMap Map<String, String> params);
@@ -432,4 +435,8 @@ public interface ApiInterface {
     @FormUrlEncoded // message status deliver
     @POST(PRE_FIX + "NotificationMessage/messageDeliver")
     Call<MessageStatusUpdateResponse> MESSAGE_STATUS_DELIVERY(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded // message status error call by file upload cancel
+    @POST(PRE_FIX + "NotificationMessage/messageSetError")
+    Call<NormalCommonResponse> MESSAGE_STATUS_ERROR(@FieldMap Map<String, String> params);
 }
