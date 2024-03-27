@@ -354,5 +354,77 @@
                 android:textColor="@color/secondary_3"
                 android:textSize="@dimen/label" />
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pick_img_LL"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_marginBottom="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="20dp"
+                android:src="@drawable/file_earmark_image"
+                app:tint="@color/secondary_3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Image / Photo"
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/label" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pick_video_LL"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_marginBottom="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="20dp"
+                android:src="@drawable/file_earmark_play_video"
+                app:tint="@color/secondary_3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Video"
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/label" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pick_doc_LL"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_marginBottom="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="20dp"
+                android:src="@drawable/file_earmark_document"
+                app:tint="@color/secondary_3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Document"
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/label" />
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

@@ -132,7 +132,7 @@ public class ChatActivity extends AppCompatActivity {
     TextView textQuotedMessage;
     ImageButton cancelButton;
 
-    BottomSheetDialog bottomSheetDialog;
+    BottomSheetDialog chatOptionBottomSheetDialog;
 
     private void initView() {
         chat_profile = findViewById(R.id.btn_chat_profile);
@@ -140,8 +140,8 @@ public class ChatActivity extends AppCompatActivity {
             Intent intent = new Intent(context, ProfileActivity.class);
             intent.putExtra("user_master_id", user_master_id);
             startActivity(intent);
-            if (bottomSheetDialog != null && bottomSheetDialog.isShowing())
-                bottomSheetDialog.dismiss();
+            if (chatOptionBottomSheetDialog != null && chatOptionBottomSheetDialog.isShowing())
+                chatOptionBottomSheetDialog.dismiss();
         };
         chat_profile.setOnClickListener(openProfile);
         back = findViewById(R.id.btn_back);
@@ -153,13 +153,13 @@ public class ChatActivity extends AppCompatActivity {
         statusTxt = findViewById(R.id.statusTxt);
         chatOption = findViewById(R.id.chat_option);
         chatOption.setOnClickListener(v -> {
-            bottomSheetDialog = new BottomSheetDialog(context);
-            bottomSheetDialog.setContentView(R.layout.common_option_dialog_layout);
+            chatOptionBottomSheetDialog = new BottomSheetDialog(context);
+            chatOptionBottomSheetDialog.setContentView(R.layout.common_option_dialog_layout);
 
-            LinearLayout profile_view_LL = bottomSheetDialog.findViewById(R.id.profile_view_LL),
-                    delete_conversation_LL = bottomSheetDialog.findViewById(R.id.delete_conversation_LL),
-                    block_user_LL = bottomSheetDialog.findViewById(R.id.block_user_LL),
-                    report_LL = bottomSheetDialog.findViewById(R.id.report_LL);
+            LinearLayout profile_view_LL = chatOptionBottomSheetDialog.findViewById(R.id.profile_view_LL),
+                    delete_conversation_LL = chatOptionBottomSheetDialog.findViewById(R.id.delete_conversation_LL),
+                    block_user_LL = chatOptionBottomSheetDialog.findViewById(R.id.block_user_LL),
+                    report_LL = chatOptionBottomSheetDialog.findViewById(R.id.report_LL);
 
             profile_view_LL.setVisibility(View.VISIBLE);
             delete_conversation_LL.setVisibility(View.VISIBLE);
@@ -173,19 +173,19 @@ public class ChatActivity extends AppCompatActivity {
                 if (message_list != null) {
                     message_list.getAdapter().notifyDataSetChanged();
                 }
-                bottomSheetDialog.dismiss();
+                chatOptionBottomSheetDialog.dismiss();
             });
             block_user_LL.setOnClickListener(v1 -> {
                 //call block member api
 
-                bottomSheetDialog.dismiss();
+                chatOptionBottomSheetDialog.dismiss();
             });
             report_LL.setOnClickListener(v1 -> {
                 //call user chat report
 
-                bottomSheetDialog.dismiss();
+                chatOptionBottomSheetDialog.dismiss();
             });
-            bottomSheetDialog.show();
+            chatOptionBottomSheetDialog.show();
         });
 //        ViewerProfileDetailsApiCall(); // call on resume
 
@@ -197,6 +197,29 @@ public class ChatActivity extends AppCompatActivity {
 
         //open attach & send message
         btnFileGallery = findViewById(R.id.btnFileGallery);
+        btnFileGallery.setOnClickListener(v -> {
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+            bottomSheetDialog.setContentView(R.layout.common_option_dialog_layout);
+
+            LinearLayout pick_img_LL = bottomSheetDialog.findViewById(R.id.pick_img_LL),
+                    pick_video_LL = bottomSheetDialog.findViewById(R.id.pick_video_LL),
+                    pick_doc_LL = bottomSheetDialog.findViewById(R.id.pick_doc_LL);
+
+            pick_img_LL.setVisibility(View.VISIBLE);
+            pick_video_LL.setVisibility(View.VISIBLE);
+            pick_doc_LL.setVisibility(View.VISIBLE);
+
+            pick_img_LL.setOnClickListener(v1 -> {
+
+            });
+            pick_video_LL.setOnClickListener(v1 -> {
+
+            });
+            pick_doc_LL.setOnClickListener(v1 -> {
+
+            });
+
+        });
         message_ed_txt = findViewById(R.id.message_ed_txt);
         message_ed_txt.addTextChangedListener(new TextWatcher() {
             @Override

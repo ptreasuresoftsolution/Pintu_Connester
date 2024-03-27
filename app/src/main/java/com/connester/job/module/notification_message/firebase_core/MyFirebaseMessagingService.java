@@ -51,13 +51,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
+    SessionPref sessionPref;
+    ApiInterface apiInterface;
+
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
         Log.d(LogTag.CHECK_DEBUG, "Refreshed token: " + token);
 
-        SessionPref sessionPref = new SessionPref(getApplicationContext());
-        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        sessionPref = new SessionPref(getApplicationContext());
+        apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         if (sessionPref.isLogin()) {
             if (!sessionPref.getDEVICE_TOKEN().equalsIgnoreCase("")) {
@@ -76,33 +79,39 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                 if (response.body() != null) {
                                     NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                     Log.d(LogTag.CHECK_DEBUG, "Token is changed : " + normalCommonResponse.msg);
+                                    addOrUpdateToken(token);
                                 }
                             }
                         }
                     });
                 }
+            } else {
+                //add or update token
+                addOrUpdateToken(token);
             }
-            //add or update token
-            HashMap hashMap = new HashMap();
-            hashMap.put("user_master_id", sessionPref.getUserMasterId());
-            hashMap.put("apiKey", sessionPref.getApiKey());
-            hashMap.put("mobile_token", token);
-            hashMap.put("device_unique", CommonFunction.getDeviceId(getApplicationContext()));
-            hashMap.put("device_type", "ANDROID");
-            hashMap.put("device_info", CommonFunction.getDeviceName(getApplicationContext()));
-            apiInterface.ADD_REGISTER_TOKEN(hashMap).enqueue(new MyApiCallback(){
-                @Override
-                public void onResponse(Call call, Response response) {
-                    super.onResponse(call, response);
-                    if (response.isSuccessful()) {
-                        if (response.body() != null) {
-                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                            Log.d(LogTag.CHECK_DEBUG, "Token is Add or Register : " + normalCommonResponse.msg);
-                        }
-                    }
-                }
-            });
         }
         sessionPref.setDEVICE_TOKEN(token);
+    }
+
+    private void addOrUpdateToken(String token) {
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+        hashMap.put("apiKey", sessionPref.getApiKey());
+        hashMap.put("mobile_token", token);
+        hashMap.put("device_unique", CommonFunction.getDeviceId(getApplicationContext()));
+        hashMap.put("device_type", "ANDROID");
+        hashMap.put("device_info", CommonFunction.getDeviceName(getApplicationContext()));
+        apiInterface.ADD_REGISTER_TOKEN(hashMap).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                        Log.d(LogTag.CHECK_DEBUG, "Token is Add or Register : " + normalCommonResponse.msg);
+                    }
+                }
+            }
+        });
     }
 }
