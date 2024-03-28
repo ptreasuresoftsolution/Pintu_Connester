@@ -580,6 +580,9 @@ public class CommonFunction {
         }
     }
 
+    public static String getFileExtension(String url) {
+        return url.substring(url.lastIndexOf(".") + 1);
+    }
     public static String getVersionCode(Context context) {
         try {
             return String.valueOf(context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);

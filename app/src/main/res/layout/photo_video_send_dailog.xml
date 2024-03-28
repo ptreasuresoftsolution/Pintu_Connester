@@ -4,7 +4,7 @@
     android:id="@+id/sendImgDialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_white"
+    android:background="@color/secondary_2"
     android:orientation="vertical">
 
     <LinearLayout
@@ -37,6 +37,16 @@
             android:src="@drawable/ic_right_true" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/file_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="file name" />
 
     <FrameLayout
         android:layout_width="match_parent"

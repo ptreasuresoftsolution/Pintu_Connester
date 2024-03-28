@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -55,6 +56,7 @@ import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.DateUtils;
 import com.connester.job.function.FilePath;
+import com.connester.job.function.FileUtils;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
@@ -143,6 +145,7 @@ public class ChatActivity extends AppCompatActivity {
         });
         activityResultLauncherForDoc = registerForActivityResult(new ActivityResultContracts.GetContent(), fileUri -> {
             if (fileUri != null) {
+//                getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 uploadFileDialog(ChatModule.FileType.DOC.getVal(), fileUri);
             }
         });
@@ -241,14 +244,17 @@ public class ChatActivity extends AppCompatActivity {
 
             pick_img_LL.setOnClickListener(v1 -> {
                 activityResultLauncherForPhoto.launch(("image/*"));
+                bottomSheetDialog.dismiss();
             });
             pick_video_LL.setOnClickListener(v1 -> {
                 activityResultLauncherForVideo.launch(("video/*"));
+                bottomSheetDialog.dismiss();
             });
             pick_doc_LL.setOnClickListener(v1 -> {
                 activityResultLauncherForDoc.launch(("*/*"));
+                bottomSheetDialog.dismiss();
             });
-
+            bottomSheetDialog.show();
         });
         message_ed_txt = findViewById(R.id.message_ed_txt);
         if (message != null && !message.equalsIgnoreCase("")) {
@@ -638,7 +644,7 @@ public class ChatActivity extends AppCompatActivity {
                                         holder.progress_circular.setVisibility(View.GONE);
                                     } else if (tableChatData.msgType.equals("FILE")) {
                                         //file
-                                        if (tableChatData.msgFile != null && !tableChatData.msgFile.trim().equals("")) {
+                                        if (tableChatData.msgFile != null && !tableChatData.msgFile.trim().equals("") || (tableChatData.msgError != null && tableChatData.msgError.equals("wait"))) {
                                             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.photo_thumb_layout.getLayoutParams();
                                             layoutParams.gravity = Gravity.RIGHT;
                                             holder.photo_thumb_layout.setLayoutParams(layoutParams);
@@ -653,6 +659,7 @@ public class ChatActivity extends AppCompatActivity {
                                                 //setting remain
                                                 holder.photo_thumb_layout.setVisibility(View.VISIBLE);
                                                 holder.photo_thumb.setVisibility(View.VISIBLE);
+                                                holder.photo_thumb.setPadding(4, 4, 4, 4);
                                                 holder.ic_upload.setVisibility(View.VISIBLE);
                                                 holder.progress_circular.setVisibility(View.VISIBLE);
                                                 String num = "0";
@@ -662,7 +669,11 @@ public class ChatActivity extends AppCompatActivity {
                                                     holder.progress_circular.setProgress(Integer.parseInt(num));
                                                     Log.d(LogTag.CHECK_DEBUG, "FILE process" + arr);
                                                 }
-//                                                Glide.with(ChatActivity.this).load(chatImgPath + tableChatData.msgFile).into(holder.photo_thumb);
+                                                if (tableChatData.fileType.equalsIgnoreCase(ChatModule.FileType.VIDEO.getVal())) {
+                                                    holder.photo_thumb.setImageResource(R.drawable.file_earmark_play_video);
+                                                } else if (tableChatData.fileType.equalsIgnoreCase(ChatModule.FileType.DOC.getVal())) {
+                                                    holder.photo_thumb.setImageResource(ChatModule.getDocFileResource(tableChatData.msgFile));
+                                                }
                                             } else if (tableChatData.fileType.equalsIgnoreCase(ChatModule.FileType.VIDEO.getVal())) {
                                                 holder.video_file_area.setVisibility(View.VISIBLE);
 
@@ -723,6 +734,7 @@ public class ChatActivity extends AppCompatActivity {
                                             } else if (tableChatData.fileType.equalsIgnoreCase(ChatModule.FileType.IMAGE.getVal())) {
                                                 holder.photo_thumb_layout.setVisibility(View.VISIBLE);
                                                 holder.photo_thumb.setVisibility(View.VISIBLE);
+                                                holder.photo_thumb.setPadding(0, 0, 0, 0);
                                                 holder.overlay_img.setVisibility(View.GONE);
                                                 Glide.with(ChatActivity.this).load(chatImgPath + tableChatData.msgFile).into(holder.photo_thumb);
 
@@ -846,6 +858,7 @@ public class ChatActivity extends AppCompatActivity {
                                             } else if (tableChatData.fileType.equalsIgnoreCase(ChatModule.FileType.IMAGE.getVal())) {
                                                 holder.photo_thumb_layout.setVisibility(View.VISIBLE);
                                                 holder.photo_thumb.setVisibility(View.VISIBLE);
+                                                holder.photo_thumb.setPadding(0, 0, 0, 0);
                                                 holder.overlay_img.setVisibility(View.GONE);
                                                 Glide.with(ChatActivity.this).load(chatImgPath + tableChatData.msgFile).into(holder.photo_thumb);
 
@@ -1083,9 +1096,10 @@ public class ChatActivity extends AppCompatActivity {
 
 
         ImageView closeDailog = sendFileDialog.findViewById(R.id.closeDailog);
+        TextView file_name = sendFileDialog.findViewById(R.id.file_name);
         TextView fileTitle = sendFileDialog.findViewById(R.id.fileTitle);
         ImageView imgSendBtnDialog = sendFileDialog.findViewById(R.id.imgSendBtnDialog);
-
+        String filePath = FilePath.getPath2(context, fileUri);
         if (fileType.equalsIgnoreCase(ChatModule.FileType.VIDEO.getVal())) {
             StyledPlayerView video = sendFileDialog.findViewById(R.id.video_play);
             video.setVisibility(View.VISIBLE);
@@ -1116,13 +1130,20 @@ public class ChatActivity extends AppCompatActivity {
             ImageView imgSelectShowDialog = sendFileDialog.findViewById(R.id.imgSelectShowDialog);
             imgSelectShowDialog.setVisibility(View.VISIBLE);
             fileTitle.setText("Document");
-            Glide.with(this).load(R.drawable.file_earmark_document).into(imgSelectShowDialog);
+            imgSelectShowDialog.setImageResource(R.drawable.file_earmark_document);
+            if (DocumentsContract.isDocumentUri(this, fileUri)) {
+                FileUtils fileUtils = new FileUtils(context);
+                filePath = fileUtils.getPath(fileUri);
+            }
         }
+//        file_name.setText(filePath);
+        Log.e(LogTag.TMP_LOG, "File path : " + fileUri);
+        String finalFilePath = filePath;
         imgSendBtnDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (fileUri != null) {
-                    sendChatMessage("", FilePath.getPath2(context, fileUri), "FILE", fileType);
+                    sendChatMessage("", finalFilePath, "FILE", fileType);
                 } else {
                     Toast.makeText(ChatActivity.this, "File Selected", Toast.LENGTH_SHORT).show();
                 }
@@ -1172,7 +1193,7 @@ public class ChatActivity extends AppCompatActivity {
                     Glide.with(context).load(imgPath + userDt.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(profile_pic);
                     name.setText(userDt.name);
                     statusTxt.setText(userDt.chatStatus);
-                    if (userDt.chatStatus.equalsIgnoreCase("Offline")) {
+                    if (userDt.chatStatus.equalsIgnoreCase("Offline") && userDt.chatStatusTime != null) {
                         Date statusDatetime = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", userDt.chatStatusTime);
                         String stTxt = "last seen ";
                         if (DateUtils.getStringDate("yyyy-MM-dd", new Date()).equals(DateUtils.getStringDate("yyyy-MM-dd", statusDatetime))) {
@@ -1182,8 +1203,8 @@ public class ChatActivity extends AppCompatActivity {
                         }
                         statusTxt.setText(stTxt);
                     }
-
-                    iAmBlock = UserMaster.findIdInIds(sessionPref.getUserMasterId(), userDt.blockedUser);
+                    if (userDt.blockedUser != null && !userDt.blockedUser.equalsIgnoreCase(""))
+                        iAmBlock = UserMaster.findIdInIds(sessionPref.getUserMasterId(), userDt.blockedUser);
                 }
             }
         }, "name,user_name,profile_link,profile_pic,position,chat_status,chat_status_time,blocked_user", true, user_master_id);

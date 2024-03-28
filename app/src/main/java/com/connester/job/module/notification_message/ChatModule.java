@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.ChatUserListResponse;
@@ -123,5 +124,23 @@ public class ChatModule {
             }
         }
         return -1;
+    }
+
+
+    public static int getDocFileResource(String msgFile) {
+        if (msgFile != null && !msgFile.equalsIgnoreCase("")) {
+            if (CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("pdf")) {
+
+            } else if (CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("doc") || CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("docx")) {
+
+            } else if (CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("xls") || CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("xlsx") || CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("csv")) {
+
+            }else if (CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("ppt") || CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("pptx")) {
+
+            }else if (CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("txt")) {
+
+            }
+        }
+        return R.drawable.file_earmark_document;
     }
 }

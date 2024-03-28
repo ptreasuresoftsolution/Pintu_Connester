@@ -93,6 +93,7 @@ public class FileMessageUploadService extends Worker {
                 builder.addFormDataPart("chat_master_id", chat_master_id);
                 builder.addFormDataPart("file_type", fileType);
 
+                Log.e(LogTag.CHECK_DEBUG, "Upload file msgFileLocalUri :" + msgFileLocalUri);
                 File mainfile = new File(msgFileLocalUri);
                 //file compress process
                 File compressFile = mainfile;
@@ -138,7 +139,8 @@ public class FileMessageUploadService extends Worker {
                             builder.setContentTitle("File Sending")
                                     .setContentText("Sending file in progress")
                                     .setWhen(System.currentTimeMillis())
-                                    .setSmallIcon(R.drawable.cloud_upload_fill).setProgress(100, num, false)
+                                    .setSmallIcon(R.drawable.cloud_upload_fill)
+                                    .setProgress(100, num, false)
                                     .setAutoCancel(true)
                                     .setSound(null)
                                     .setOngoing(true)
@@ -178,8 +180,13 @@ public class FileMessageUploadService extends Worker {
             } catch (Exception e) {
                 Log.e(LogTag.EXCEPTION, "File Upload Fail Exception", e);
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constant.channel_id);
-                builder.setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Upload Failed")).setTicker("Upload Failed");
+                builder.setStyle(new NotificationCompat.BigTextStyle().bigText("Upload Failed"))
+                        .setSmallIcon(R.drawable.cloud_upload_fill)
+                        .setSound(null)
+                        .setOngoing(true)
+                        .setSilent(true)
+                        .setContentTitle("Upload Failed!")
+                        .setTicker("Upload Failed");
                 notificationManager.notify(notificationId, builder.build());
 
                 //call error message status api
