@@ -251,6 +251,9 @@ public class ChatActivity extends AppCompatActivity {
 
         });
         message_ed_txt = findViewById(R.id.message_ed_txt);
+        if (message != null && !message.equalsIgnoreCase("")) {
+            message_ed_txt.setText(message);
+        }
         message_ed_txt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -347,9 +350,10 @@ public class ChatActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String chat_master_id = intent.getExtras().getString("chat_master_id");
             String rec_user_master_id = intent.getExtras().getString("rec_user_master_id");
-            String pushJsonString = intent.getExtras().getString("pushJsonString");//normal format
+            String send_user_master_id = intent.getExtras().getString("send_user_master_id");
+            String pushJsonString = intent.getExtras().getString("pushJson");//normal format
             Log.e(LogTag.CHECK_DEBUG, "Message received call Broadcast : " + chat_master_id);
-            if (ChatActivity.this.user_master_id.equals(rec_user_master_id)) {
+            if (ChatActivity.this.user_master_id.equals(send_user_master_id)) {
                 if (pushJsonString != null) {
                     SendMessageResponse.PushJson pushJson = new Gson().fromJson(pushJsonString, SendMessageResponse.PushJson.class);
                     MessageListResponse.Dt tableChatData = new MessageListResponse().new Dt();
@@ -385,7 +389,7 @@ public class ChatActivity extends AppCompatActivity {
                 if (pushJsonString != null)
                     if (message_list != null) {
                         if (message_list.getAdapter() != null) {
-                            int index = chatModule.findIndexOf(tableChatDatas, chat_master_id);
+                            int index = chatModule.findIndexOfForMessage(tableChatDatas, chat_master_id);
                             if (index > -1) {
                                 MessageStatusUpdateResponse.PushJson pushJson = new Gson().fromJson(pushJsonString, MessageStatusUpdateResponse.PushJson.class);
                                 MessageListResponse.Dt tableChatData = tableChatDatas.get(index);
@@ -451,7 +455,7 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String chat_master_id = intent.getExtras().getString("chat_master_id");
-            String pushJsonString = intent.getExtras().getString("pushJsonString");//normal format
+            String pushJsonString = intent.getExtras().getString("pushJson");//normal format
             if (pushJsonString != null) {
                 SendMessageResponse.PushJson pushJson = new Gson().fromJson(pushJsonString, SendMessageResponse.PushJson.class);
                 MessageListResponse.Dt tableChatData = new MessageListResponse().new Dt();
@@ -502,7 +506,7 @@ public class ChatActivity extends AppCompatActivity {
                 tableChatDatas.add(0, tableChatData);
                 if (message_list != null) {
                     if (message_list.getAdapter() != null) {
-                        int index = chatModule.findIndexOf(tableChatDatas, chat_master_id);
+                        int index = chatModule.findIndexOfForMessage(tableChatDatas, chat_master_id);
                         if (index > -1) {
                             tableChatDatas.set(index, tableChatData);
                             message_list.getAdapter().notifyItemChanged(index);

@@ -1,20 +1,37 @@
 package com.connester.job.module.notification_message.firebase_core;
 
 import android.app.ActivityManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 
+import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
+import com.connester.job.RetrofitConnection.jsontogson.FirebaseFCMResponse;
+import com.connester.job.RetrofitConnection.jsontogson.MessageStatusUpdateResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
+import com.connester.job.RetrofitConnection.jsontogson.SendMessageResponse;
+import com.connester.job.RetrofitConnection.jsontogson.UserStatusUpdateResponse;
+import com.connester.job.activity.message.ChatActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
+import com.connester.job.module.notification_message.ChatModule;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -38,25 +55,64 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             if (sessionPref.isLogin()) {
                 String jsonEncStr = remoteMessage.getData().get("data");
-                String pushJson = CommonFunction.base64Decode(jsonEncStr);
+                String pushJsonString = CommonFunction.base64Decode(jsonEncStr);
                 try {
-                    JSONObject jsonObject = new JSONObject(pushJson);
+                    JSONObject jsonObject = new JSONObject(pushJsonString);
                     String type = jsonObject.getString("type");
                     if (type.equalsIgnoreCase("SEND")) {
                         //logic (you are received the message from other user) you are receiver
                         //SendMessageResponse use class
+                        SendMessageResponse.PushJson pushJson = new Gson().fromJson(pushJsonString, SendMessageResponse.PushJson.class);
+                        if (pushJson.chatData.recUserMasterId.equalsIgnoreCase(sessionPref.getUserMasterId())) {
+                            Intent intent = new Intent(ChatModule.MSG_RECEIVED_FILTER);
+                            intent.putExtra("chat_master_id", pushJson.chatData.chatMasterId);
+                            intent.putExtra("rec_user_master_id", pushJson.chatData.recUserMasterId);
+                            intent.putExtra("send_user_master_id", pushJson.chatData.sendUserMasterId);
+                            intent.putExtra("pushJson", pushJsonString);
+                            sendBroadcast(intent);
 
+                            if (!applicationInForeground()) {
+                                String message = "File (Photos,Video)";
+                                if (!pushJson.chatData.msg.equalsIgnoreCase("") && pushJson.chatData.msgType.equalsIgnoreCase("TEXT")) {
+                                    message = pushJson.chatData.msg;
+                                }
+                                sendNotification(String.valueOf(pushJson.chatData.sendUserMasterId), pushJson.sendUser.name, message);
+                                Log.e(LogTag.TMP_LOG, "Notify message notification");
+                            }
+
+                            //call message deliver api
+                            callMessageDeliverApi(pushJson.chatData.chatMasterId, sessionPref.getUserMasterId(), sessionPref.getApiKey());
+                        }
                     } else if (type.equalsIgnoreCase("DELIVER")) {
                         //logic (your message is deliver to other user) you are sender
                         //MessageStatusUpdateResponse use class
+                        MessageStatusUpdateResponse.PushJson pushJson = new Gson().fromJson(pushJsonString, MessageStatusUpdateResponse.PushJson.class);
 
+                        Intent intent = new Intent(ChatModule.MSG_DELIVERED_FILTER);
+                        intent.putExtra("chat_master_id", pushJson.chatData.chatMasterId);
+                        intent.putExtra("pushJson", pushJsonString);
+                        sendBroadcast(intent);
+                        Log.e(LogTag.CHECK_DEBUG, "message delivered id " + pushJson.chatData.chatMasterId);
                     } else if (type.equalsIgnoreCase("READ")) {
                         //logic (your message is read a other user) you are sender
                         //MessageStatusUpdateResponse use class
+                        MessageStatusUpdateResponse.PushJson pushJson = new Gson().fromJson(pushJsonString, MessageStatusUpdateResponse.PushJson.class);
 
+                        Intent intent = new Intent(ChatModule.MSG_READ_FILTER);
+                        intent.putExtra("chat_master_id", pushJson.chatData.chatMasterId);
+                        intent.putExtra("pushJson", pushJsonString);
+                        sendBroadcast(intent);
+                        Log.e(LogTag.CHECK_DEBUG, "message read id " + pushJson.chatData.chatMasterId);
                     } else if (type.equalsIgnoreCase("STATUS_UPDATE")) {
                         //logic (you are received update from other user status is change) you are sender/receiver
                         //UserStatusUpdateResponse use class
+                        UserStatusUpdateResponse.PushJson pushJson = new Gson().fromJson(pushJsonString, UserStatusUpdateResponse.PushJson.class);
+
+                        Intent intent = new Intent(ChatModule.CHAT_STATUS_UPDATE_FILTER);
+                        intent.putExtra("user_master_id", pushJson.chatData.userMasterId);
+                        intent.putExtra("pushJson", pushJsonString);
+                        sendBroadcast(intent);
+                        Log.e(LogTag.CHECK_DEBUG, "User-Status-Change id " + pushJson.chatData.userMasterId);
                     }
                 } catch (Exception e) {
                     Log.e(LogTag.EXCEPTION, "Firebase service msg received OnException", e);
@@ -88,6 +144,54 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         return isActivityFound;
     }
 
+    private void sendNotification(String user_master_id, String title, String message) {
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("user_master_id", user_master_id);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_ONE_SHOT);
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, user_master_id)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round))
+                .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(user_master_id, "Connester Message", NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+        notificationManager.notify(Integer.parseInt(user_master_id), notificationBuilder.build());
+        notificationBuilder.setAutoCancel(true);
+    }
+
+
+    private void callMessageDeliverApi(String chatMasterId, String userMasterId, String apiKey) {
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", userMasterId);
+        hashMap.put("apiKey", apiKey);
+        hashMap.put("chat_master_id", chatMasterId);
+
+        apiInterface.MESSAGE_STATUS_DELIVERY(hashMap).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        MessageStatusUpdateResponse messageStatusUpdateResponse = (MessageStatusUpdateResponse) response.body();
+                        FirebaseFCMResponse firebaseFCMResponse = new Gson().fromJson(messageStatusUpdateResponse.fcmResponse, FirebaseFCMResponse.class);
+                        if (messageStatusUpdateResponse.status) {
+                            Log.e(LogTag.CHECK_DEBUG, "Delivery status update id " + chatMasterId);
+                        }
+                    }
+                }
+            }
+        });
+    }
 
     //token process update and add
     SessionPref sessionPref;

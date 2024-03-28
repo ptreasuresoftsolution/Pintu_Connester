@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
+import com.connester.job.RetrofitConnection.jsontogson.ChatUserListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MessageListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserStatusUpdateResponse;
 import com.connester.job.function.CommonFunction;
@@ -14,8 +15,8 @@ import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -106,9 +107,18 @@ public class ChatModule {
         });
     }
 
-    public int findIndexOf(ArrayList<MessageListResponse.Dt> tableChatDatas, String chatMasterId) {
+    public static int findIndexOfForMessage(List<MessageListResponse.Dt> tableChatDatas, String chatMasterId) {
         for (int i = 0; i < tableChatDatas.size(); i++) {
             if (tableChatDatas.get(i).chatMasterId.equalsIgnoreCase(chatMasterId)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int findIndexOfForUser(List<ChatUserListResponse.Dt> chatUserDatas, String userMasterId) {
+        for (int i = 0; i < chatUserDatas.size(); i++) {
+            if (chatUserDatas.get(i).userMasterId.equalsIgnoreCase(userMasterId)) {
                 return i;
             }
         }

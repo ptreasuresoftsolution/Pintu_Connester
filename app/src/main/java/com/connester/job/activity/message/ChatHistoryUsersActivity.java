@@ -33,6 +33,7 @@ import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.ChatUserListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSeeAllCommonResponse;
+import com.connester.job.RetrofitConnection.jsontogson.SendMessageResponse;
 import com.connester.job.activity.EditProfileActivity;
 import com.connester.job.activity.NetworkActivity;
 import com.connester.job.function.ActionCallBack;
@@ -47,6 +48,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -73,18 +75,35 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
     BroadcastReceiver msgReceived = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Integer pushJson = intent.getExtras().getInt("pushJson"); // encrypt Json string
-            Log.e(LogTag.CHECK_DEBUG, "In ChatFragment Message received call Broadcast ");
-            /*if (chatUserList != null && chatUserListAdapter != null && chatUserListResponse != null) {
-                int index = findIndexOf(chatUserListResponse, cus_id);
+            String chat_master_id = intent.getExtras().getString("chat_master_id");
+            String rec_user_master_id = intent.getExtras().getString("rec_user_master_id");
+            String send_user_master_id = intent.getExtras().getString("send_user_master_id");
+            String pushJsonString = intent.getExtras().getString("pushJson");//normal format
+            Log.d(LogTag.CHECK_DEBUG, "In ChatFragment Message received call Broadcast ");
+            if (chatUserList != null && chatUserListAdapter != null && chatUserListResponse != null) {
+                int index = ChatModule.findIndexOfForUser(chatUserListResponse.dt, send_user_master_id);
                 if (index > -1) {
+                    SendMessageResponse.PushJson pushJson = new Gson().fromJson(pushJsonString, SendMessageResponse.PushJson.class);
+                    ChatUserListResponse.Dt dt = chatUserListResponse.dt.get(index);
+                    dt.msgType = pushJson.chatData.msgType;
+                    dt.msg = pushJson.chatData.msg;
+                    dt.msgFile = pushJson.chatData.msgFile;
+                    dt.fileType = pushJson.chatData.fileType;
+                    dt.msgSendTime = pushJson.chatData.msgSendTime;
+                    dt.sendUserMasterId = pushJson.chatData.sendUserMasterId;
+                    dt.recUserMasterId = pushJson.chatData.recUserMasterId;
+                    dt.msgStatus = pushJson.chatData.msgStatus;
+                    dt.chatMasterId = pushJson.chatData.chatMasterId;
+                    dt.msgError = pushJson.chatData.msgError;
+                    chatUserListResponse.dt.set(index, dt);
+
                     chatUserListAdapter.notifyItemChanged(index);
-                    Collections.swap(chatUserListResponse.data, index, 0);
+                    Collections.swap(chatUserListResponse.dt, index, 0);
                     chatUserListAdapter.notifyItemMoved(index, 0);
                 } else {
-                    ChatUserListApi();
+                    setData();
                 }
-            }*/
+            }
         }
     };
 
@@ -326,6 +345,7 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
         }
     }
 
+    ChatUserListResponse chatUserListResponse;
 
     private void setData() {
         progressBar.setVisibility(View.VISIBLE);
@@ -338,7 +358,7 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
                 super.onResponse(call, response);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        ChatUserListResponse chatUserListResponse = (ChatUserListResponse) response.body();
+                        chatUserListResponse = (ChatUserListResponse) response.body();
                         if (chatUserListResponse.status) {
                             if (chatUserListResponse.dt.size() > 0) {
                                 no_row_found.setVisibility(View.GONE);
@@ -391,8 +411,8 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
             Glide.with(context).load(url).placeholder(R.drawable.default_user_pic).into(holder.user_profile_pic);
 
             holder.text_msg.setText(datumList.get(position).msg);
-            if (datumList.get(position).msgType.equalsIgnoreCase("FILE")){
-                holder.text_msg.setText(datumList.get(position).fileType+" : File");
+            if (datumList.get(position).msgType.equalsIgnoreCase("FILE")) {
+                holder.text_msg.setText(datumList.get(position).fileType + " : File");
             }
             holder.text_name.setText(datumList.get(position).name);
             String time = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "hh:mm a", datumList.get(position).msgSendTime);
