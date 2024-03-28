@@ -126,6 +126,7 @@
                 android:layout_gravity="center|top"
                 android:layout_marginTop="5dp"
                 android:visibility="gone"
+                app:strokeWidth="0dp"
                 app:cardBackgroundColor="@color/primary"
                 app:cardCornerRadius="15dp"
                 app:cardElevation="3dp">

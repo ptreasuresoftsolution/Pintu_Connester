@@ -67,7 +67,7 @@ public class ChatModule {
 
     public void getCusMessage(String view_cus_id, long start, MessageListCallBack messageListCallBack) {
 
-        CommonFunction.PleaseWaitShow(context);
+//        CommonFunction.PleaseWaitShow(context);
         HashMap hashMap = new HashMap();
         hashMap.putAll(defaultUserData);
         hashMap.put("sl_user_master_id", view_cus_id);
@@ -89,8 +89,12 @@ public class ChatModule {
         });
     }
 
+    static boolean callApi = false;
     public void chatStatusApiCall(String status) {
-        CommonFunction.PleaseWaitShow(context);
+        if (callApi){
+            return;
+        }
+        callApi = true;
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.putAll(defaultUserData);
         hashMap.put("status", status);
@@ -102,6 +106,7 @@ public class ChatModule {
                     if (response.body() != null) {
                         UserStatusUpdateResponse userStatusUpdateResponse = (UserStatusUpdateResponse) response.body();
                         Log.d(LogTag.CHECK_DEBUG, "User status update: " + userStatusUpdateResponse.status);
+                        callApi = false;
                     }
                 }
             }
@@ -130,15 +135,15 @@ public class ChatModule {
     public static int getDocFileResource(String msgFile) {
         if (msgFile != null && !msgFile.equalsIgnoreCase("")) {
             if (CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("pdf")) {
-
+                return R.drawable.file_earmark_pdf;
             } else if (CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("doc") || CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("docx")) {
-
+                return R.drawable.file_earmark_word;
             } else if (CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("xls") || CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("xlsx") || CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("csv")) {
-
-            }else if (CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("ppt") || CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("pptx")) {
-
-            }else if (CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("txt")) {
-
+                return R.drawable.file_earmark_excel;
+            } else if (CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("ppt") || CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("pptx")) {
+                return R.drawable.file_earmark_ppt;
+            } else if (CommonFunction.getFileExtension(msgFile).equalsIgnoreCase("txt")) {
+                return R.drawable.file_earmark_text;
             }
         }
         return R.drawable.file_earmark_document;
