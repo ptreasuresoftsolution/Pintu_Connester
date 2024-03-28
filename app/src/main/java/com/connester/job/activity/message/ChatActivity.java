@@ -757,7 +757,10 @@ public class ChatActivity extends AppCompatActivity {
                                                     }
                                                 });*/
                                             } else {//DOC file
-
+                                                holder.photo_thumb_layout.setVisibility(View.VISIBLE);
+                                                holder.photo_thumb.setVisibility(View.VISIBLE);
+                                                holder.photo_thumb.setPadding(4, 4, 4, 4);
+                                                holder.photo_thumb.setImageResource(ChatModule.getDocFileResource(tableChatData.msgFile));
                                             }
                                         }
                                     }
@@ -882,7 +885,10 @@ public class ChatActivity extends AppCompatActivity {
                                                 });*/
 
                                             } else {//DOC
-
+                                                holder.photo_thumb_layout.setVisibility(View.VISIBLE);
+                                                holder.photo_thumb.setVisibility(View.VISIBLE);
+                                                holder.photo_thumb.setPadding(4, 4, 4, 4);
+                                                holder.photo_thumb.setImageResource(ChatModule.getDocFileResource(tableChatData.msgFile));
                                             }
                                         }
                                     }
