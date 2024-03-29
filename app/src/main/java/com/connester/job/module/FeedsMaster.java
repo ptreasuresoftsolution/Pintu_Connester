@@ -195,6 +195,12 @@ public class FeedsMaster {
                             }
                         }
                     }
+                    if (!isFeedsFullView && !feedStorage.impressionAdd) {
+                        if (CommonFunction.verticallyTopBottomShowInView(mainLinearLayout.getChildAt(feedStorage.viewIndex), scrollView.getScrollY(), context)) {
+                            if (feedStorage.feedsRow.feedMasterId != null)
+                                visitMaster.impressionFeeds(feedStorage.feedsRow.feedMasterId);
+                        }
+                    }
                 }
             }
         });
@@ -246,12 +252,14 @@ public class FeedsMaster {
     public FeedsMaster(Context context, Activity activity) {
         this.context = context;
         this.activity = activity;
+        visitMaster = new VisitMaster(context, activity);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
         sessionPref = new SessionPref(context);
         loginUserRow = sessionPref.getUserMasterRowInObject();
         layoutInflater = LayoutInflater.from(context);
     }
 
+    VisitMaster visitMaster;
     ArrayList<FeedStorage> feedsViews = new ArrayList<>();
     HashMap<String, ExoPlayer> playerHashMap = new HashMap<>();
     HashMap<String, StyledPlayerView> styledPlayerViewHashMap = new HashMap<>();
@@ -325,6 +333,12 @@ public class FeedsMaster {
                                     feedStorage.player.pause();
                                 }
                             }
+                        }
+                    }
+                    if (!isFeedsFullView && !feedStorage.impressionAdd) {
+                        if (CommonFunction.verticallyTopBottomShowInView(mainLinearLayout.getChildAt(feedStorage.viewIndex), scrollView.getScrollY(), context)) {
+                            if (feedStorage.feedsRow.feedMasterId != null)
+                                visitMaster.impressionFeeds(feedStorage.feedsRow.feedMasterId);
                         }
                     }
                 }
@@ -2399,6 +2413,8 @@ public class FeedsMaster {
         public StyledPlayerView styledPlayerView;
 
         public boolean isVideoFeeds = false;
+
+        public boolean impressionAdd = false;
 
         public FeedStorage(View view, int viewIndex, FeedsRow feedsRow) {
             this.view = view;

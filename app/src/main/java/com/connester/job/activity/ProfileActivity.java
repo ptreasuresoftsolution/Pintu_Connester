@@ -29,6 +29,7 @@ import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 import com.connester.job.module.UserMaster;
+import com.connester.job.module.VisitMaster;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
@@ -71,6 +72,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         initView();
         setData();
+        new VisitMaster(context, activity).visitedUserProfile(user_master_id);
     }
 
     TextView userFullName_txt, user_position_tv, user_bio_tv, followers_tv, following_tv, about_me_tv;

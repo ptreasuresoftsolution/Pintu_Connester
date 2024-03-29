@@ -205,6 +205,10 @@ public interface ApiInterface {
     Call<NormalCommonResponse> UN_BLOCKED_USER(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/blockedUser")
+    Call<NormalCommonResponse> BLOCKED_USER(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/loadBlockedUserList")
     Call<MembersListResponse> BLOCKED_USER_LIST(@FieldMap Map<String, String> params);
 
@@ -396,6 +400,29 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Community/userCommunityJoinRequestAccept")
     Call<NormalCommonResponse> GROUP_MEMBER_REQUEST_ACCEPT(@FieldMap Map<String, String> params);
+
+    //visit master api
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "VisitMaster/visitedFeeds")
+    Call<NormalCommonResponse> IMPRESSION_FEEDS(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "VisitMaster/visitedBusinessPage")
+    Call<NormalCommonResponse> VISITED_BUSINESS_PAGE(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "VisitMaster/visitedCommunity")
+    Call<NormalCommonResponse> VISITED_COMMUNITY(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "VisitMaster/visitedUserProfile")
+    Call<NormalCommonResponse> VISITED_USER_PROFILE(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "VisitMaster/visitedFeedsItem")
+    Call<NormalCommonResponse> VISITED_FEEDS_ITEM(@FieldMap Map<String, String> params);
+
 
     //notification and chat message api
     @FormUrlEncoded

@@ -24,6 +24,7 @@ import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
+import com.connester.job.module.VisitMaster;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -137,7 +138,10 @@ public class BusinessActivity extends AppCompatActivity {
 
             }
         });
+
+        new VisitMaster(context, activity).visitedBusinessPage(business_page_id);
     }
+
 
     private void openMoreOptionDialog() {
         BottomSheetDialog optionDialog = new BottomSheetDialog(context);

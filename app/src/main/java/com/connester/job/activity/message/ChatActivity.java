@@ -203,6 +203,7 @@ public class ChatActivity extends AppCompatActivity {
             profile_view_LL.setOnClickListener(openProfile);
             delete_conversation_LL.setOnClickListener(v1 -> {
                 //call chat clear api
+                CommonFunction.PleaseWaitShow(context);
                 HashMap hashMap = new HashMap();
                 hashMap.putAll(defaultUserData);
                 hashMap.put("sl_user_master_id", user_master_id);
@@ -228,8 +229,24 @@ public class ChatActivity extends AppCompatActivity {
             });
             block_user_LL.setOnClickListener(v1 -> {
                 //call block member api
-
-                chatOptionBottomSheetDialog.dismiss();
+                CommonFunction.PleaseWaitShow(context);
+                HashMap hashMap = new HashMap();
+                hashMap.putAll(defaultUserData);
+                hashMap.put("id", user_master_id);
+                apiInterface.BLOCKED_USER(hashMap).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status)
+                                    chatOptionBottomSheetDialog.dismiss();
+                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
             });
             report_LL.setOnClickListener(v1 -> {
                 //call user chat report

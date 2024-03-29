@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.connester.job.R;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
+import com.connester.job.module.VisitMaster;
 
 import java.util.ArrayList;
 
@@ -61,6 +62,8 @@ public class FeedFullViewActivity extends AppCompatActivity {
         feedsMaster.setChkClose(false);
         feedsMaster.loadSingleFeeds(feeds_mainList, scrollView, feed_master_id);
         feedsMaster.setTitleView(title);
+
+        new VisitMaster(context, activity).visitedFeedsItem(feed_master_id);
     }
 
     @Override
