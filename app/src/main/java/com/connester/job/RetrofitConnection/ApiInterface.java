@@ -407,6 +407,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "NotificationMessage/statusUpdateNotificationItem")
     Call<NormalCommonResponse> NOTIFICATION_STATUS_UPDATE(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "NotificationMessage/sendAddMessageNotification")
+    Call<NormalCommonResponse> NOTIFICATION_IN_ADD_TYPE_MESSAGE(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded // update user status
     @POST(PRE_FIX + "NotificationMessage/userStatusUpdate")

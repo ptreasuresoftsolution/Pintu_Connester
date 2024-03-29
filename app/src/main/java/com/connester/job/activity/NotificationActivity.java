@@ -209,11 +209,13 @@ public class NotificationActivity extends AppCompatActivity {
                 } else if (dt.notificationType.equalsIgnoreCase(MESSAGE)) {
                     Glide.with(context).load(imgPath + dt.profilePic).centerCrop().into(notification_pic);
                     title_tv.setText(dt.name);
-                    subtitle_tv.setText("send message: " + dt.msg);
-                    if (dt.msgType.equalsIgnoreCase("FILE")) {
-                        subtitle_tv.setText("send file: " + dt.fileType.toLowerCase());
+                    subtitle_tv.setText("send message(Error):");
+                    if (dt.msgType != null && !dt.msgType.equalsIgnoreCase("")) {
+                        subtitle_tv.setText("send message: " + dt.msg);
+                        if (dt.msgType.equalsIgnoreCase("FILE")) {
+                            subtitle_tv.setText("send file: " + dt.fileType.toLowerCase());
+                        }
                     }
-
                     View.OnClickListener openMessage = v -> {
                         statusAsRead(dt.notificationId, new ActionCallBack() {
                             @Override

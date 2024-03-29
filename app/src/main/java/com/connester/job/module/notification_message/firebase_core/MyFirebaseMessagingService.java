@@ -77,6 +77,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                     message = pushJson.chatData.msg;
                                 }
                                 sendNotification(String.valueOf(pushJson.chatData.sendUserMasterId), pushJson.sendUser.name, message);
+                                addMessageInNotificationList(pushJson.chatData.sendUserMasterId, pushJson.chatData.chatMasterId, sessionPref.getUserMasterId(), sessionPref.getApiKey());
                                 Log.e(LogTag.TMP_LOG, "Notify message notification");
                             }
 
@@ -187,6 +188,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         if (messageStatusUpdateResponse.status) {
                             Log.e(LogTag.CHECK_DEBUG, "Delivery status update id " + chatMasterId);
                         }
+                    }
+                }
+            }
+        });
+    }
+
+    private void addMessageInNotificationList(String sendUserMasterId, String chatMasterId, String userMasterId, String apiKey) {
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", userMasterId);
+        hashMap.put("apiKey", apiKey);
+        hashMap.put("chat_master_id", chatMasterId);
+        hashMap.put("send_user_master_id", sendUserMasterId);
+        apiInterface.NOTIFICATION_IN_ADD_TYPE_MESSAGE(hashMap).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                        Log.d(LogTag.CHECK_DEBUG, "Add Notification type message Status: " + normalCommonResponse.status);
                     }
                 }
             }
