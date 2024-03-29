@@ -197,8 +197,10 @@ public class FeedsMaster {
                     }
                     if (!isFeedsFullView && !feedStorage.impressionAdd) {
                         if (CommonFunction.verticallyTopBottomShowInView(mainLinearLayout.getChildAt(feedStorage.viewIndex), scrollView.getScrollY(), context)) {
-                            if (feedStorage.feedsRow.feedMasterId != null)
+                            if (feedStorage.feedsRow.feedMasterId != null) {
                                 visitMaster.impressionFeeds(feedStorage.feedsRow.feedMasterId);
+                                feedStorage.impressionAdd = true;
+                            }
                         }
                     }
                 }
@@ -337,8 +339,10 @@ public class FeedsMaster {
                     }
                     if (!isFeedsFullView && !feedStorage.impressionAdd) {
                         if (CommonFunction.verticallyTopBottomShowInView(mainLinearLayout.getChildAt(feedStorage.viewIndex), scrollView.getScrollY(), context)) {
-                            if (feedStorage.feedsRow.feedMasterId != null)
+                            if (feedStorage.feedsRow.feedMasterId != null) {
                                 visitMaster.impressionFeeds(feedStorage.feedsRow.feedMasterId);
+                                feedStorage.impressionAdd = true;
+                            }
                         }
                     }
                 }
