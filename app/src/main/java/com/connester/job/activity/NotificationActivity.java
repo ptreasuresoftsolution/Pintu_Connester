@@ -28,6 +28,7 @@ import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.MyListRowSet;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -105,6 +106,11 @@ public class NotificationActivity extends AppCompatActivity {
                 NotificationListResponse.Dt dt = notificationList.get(position);
                 View view = getLayoutInflater().inflate(R.layout.notification_list_item, null);
 
+                MaterialCardView main_cv = view.findViewById(R.id.main_cv);
+                if (dt.notificationStatus.equalsIgnoreCase("READ"))
+                    main_cv.setCardBackgroundColor(getColor(R.color.secondary_7));
+                else main_cv.setCardBackgroundColor(getColor(R.color.secondary_6));
+
                 ImageView notification_pic = view.findViewById(R.id.notification_pic);
                 TextView datetime_tv = view.findViewById(R.id.datetime_tv);
                 TextView title_tv = view.findViewById(R.id.title_tv);
@@ -123,6 +129,7 @@ public class NotificationActivity extends AppCompatActivity {
                         statusAsRead(dt.notificationId, new ActionCallBack() {
                             @Override
                             public void callBack() {
+                                main_cv.setCardBackgroundColor(getColor(R.color.secondary_7));
                                 Intent intent = new Intent(context, ProfileActivity.class);
                                 intent.putExtra("user_master_id", dt.fromUserMasterId);
                                 startActivity(intent);
@@ -163,6 +170,7 @@ public class NotificationActivity extends AppCompatActivity {
                         statusAsRead(dt.notificationId, new ActionCallBack() {
                             @Override
                             public void callBack() {
+                                main_cv.setCardBackgroundColor(getColor(R.color.secondary_7));
                                 Intent intent = new Intent(context, ProfileActivity.class);
                                 intent.putExtra("user_master_id", dt.fromUserMasterId);
                                 startActivity(intent);
@@ -210,6 +218,7 @@ public class NotificationActivity extends AppCompatActivity {
                         statusAsRead(dt.notificationId, new ActionCallBack() {
                             @Override
                             public void callBack() {
+                                main_cv.setCardBackgroundColor(getColor(R.color.secondary_7));
                                 Intent intent = new Intent(context, ChatHistoryUsersActivity.class);
                                 intent.putExtra("action", "startChat");
                                 intent.putExtra("userId", dt.fromUserMasterId);
@@ -235,6 +244,7 @@ public class NotificationActivity extends AppCompatActivity {
                         statusAsRead(dt.notificationId, new ActionCallBack() {
                             @Override
                             public void callBack() {
+                                main_cv.setCardBackgroundColor(getColor(R.color.secondary_7));
                                 Intent intent = new Intent(context, FeedFullViewActivity.class);
                                 intent.putExtra("feed_master_id", dt.feedMasterId);
                                 context.startActivity(intent);
