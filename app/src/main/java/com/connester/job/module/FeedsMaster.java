@@ -1970,7 +1970,7 @@ public class FeedsMaster {
                 MultipartBody.Builder builder = new MultipartBody.Builder();
                 builder.setType(MultipartBody.FORM)
                         .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
-                        .addFormDataPart("apiKey", "RBqtNuh+0qdrKn+Bb9WafA==")
+                        .addFormDataPart("apiKey", sessionPref.getApiKey())
 
                         .addFormDataPart("frm_business_page_id", feedForId)//pass by setFeedForId
                         .addFormDataPart("title", event_title_et.getText().toString())

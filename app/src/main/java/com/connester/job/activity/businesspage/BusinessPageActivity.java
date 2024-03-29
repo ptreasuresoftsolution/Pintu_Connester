@@ -274,7 +274,7 @@ public class BusinessPageActivity extends AppCompatActivity {
                     MultipartBody.Builder builder = new MultipartBody.Builder();
                     builder.setType(MultipartBody.FORM)
                             .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
-                            .addFormDataPart("apiKey", "RBqtNuh+0qdrKn+Bb9WafA==")
+                            .addFormDataPart("apiKey", sessionPref.getApiKey())
                             .addFormDataPart("bus_name", business_nm_input.getText().toString())
                             .addFormDataPart("website", web_url_input.getText().toString())
                             .addFormDataPart("industry", industry_input.getText().toString())

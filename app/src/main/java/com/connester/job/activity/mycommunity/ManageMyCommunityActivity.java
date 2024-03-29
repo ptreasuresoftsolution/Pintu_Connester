@@ -448,7 +448,7 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
                     MultipartBody.Builder builder = new MultipartBody.Builder();
                     builder.setType(MultipartBody.FORM)
                             .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
-                            .addFormDataPart("apiKey", "RBqtNuh+0qdrKn+Bb9WafA==")
+                            .addFormDataPart("apiKey", sessionPref.getApiKey())
                             .addFormDataPart("community_master_id", community_master_id)
                             .addFormDataPart("name", group_nm_input.getText().toString())
                             .addFormDataPart("bio", description_et.getText().toString())

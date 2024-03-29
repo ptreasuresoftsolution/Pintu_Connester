@@ -131,7 +131,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 MultipartBody.Builder builder = new MultipartBody.Builder();
                 builder.setType(MultipartBody.FORM)
                         .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
-                        .addFormDataPart("apiKey", "RBqtNuh+0qdrKn+Bb9WafA==")
+                        .addFormDataPart("apiKey", sessionPref.getApiKey())
                         .addFormDataPart("clmNm", "profile_banner")
                         .addFormDataPart("old_pic", userDt.profilePic);
 
@@ -185,7 +185,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 MultipartBody.Builder builder = new MultipartBody.Builder();
                 builder.setType(MultipartBody.FORM)
                         .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
-                        .addFormDataPart("apiKey", "RBqtNuh+0qdrKn+Bb9WafA==")
+                        .addFormDataPart("apiKey", sessionPref.getApiKey())
                         .addFormDataPart("clmNm", "profile_pic")
                         .addFormDataPart("old_pic", userDt.profilePic);
 

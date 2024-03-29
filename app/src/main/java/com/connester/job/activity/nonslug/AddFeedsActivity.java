@@ -215,7 +215,7 @@ public class AddFeedsActivity extends AppCompatActivity {
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM)
                 .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
-                .addFormDataPart("apiKey", "RBqtNuh+0qdrKn+Bb9WafA==")
+                .addFormDataPart("apiKey", sessionPref.getApiKey())
                 .addFormDataPart("pt_title", pt_title);
 
         if (feedFor.equalsIgnoreCase("BUSINESS")) {
@@ -376,7 +376,7 @@ public class AddFeedsActivity extends AppCompatActivity {
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM)
                 .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
-                .addFormDataPart("apiKey", "RBqtNuh+0qdrKn+Bb9WafA==")
+                .addFormDataPart("apiKey", sessionPref.getApiKey())
                 .addFormDataPart("pt_title", pt_title);
 
         if (feedFor.equalsIgnoreCase("BUSINESS")) {
