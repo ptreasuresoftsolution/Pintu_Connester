@@ -401,15 +401,19 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "NotificationMessage/userNotificationList")
     Call<NotificationListResponse> NOTIFICATION_LIST(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "NotificationMessage/removeNotificationItem")
     Call<NormalCommonResponse> NOTIFICATION_ITEM_DELETE(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "NotificationMessage/statusUpdateNotificationItem")
     Call<NormalCommonResponse> NOTIFICATION_STATUS_UPDATE(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "NotificationMessage/sendAddMessageNotification")
     Call<NormalCommonResponse> NOTIFICATION_IN_ADD_TYPE_MESSAGE(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST(PRE_FIX + "NotificationMessage/getCountingNewMessageNotification")
     Call<NormalCommonResponse> NEW_MESSAGE_NOTIFICATION_COUNT(@FieldMap Map<String, String> params);
@@ -437,6 +441,10 @@ public interface ApiInterface {
     @FormUrlEncoded // message list
     @POST(PRE_FIX + "NotificationMessage/messageList")
     Call<MessageListResponse> MESSAGE_LIST(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded // message list
+    @POST(PRE_FIX + "NotificationMessage/messageListDelete")
+    Call<NormalCommonResponse> MESSAGE_CONVERSATION_CLEAR(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded // message send
     @POST(PRE_FIX + "NotificationMessage/sendMessageToUser")

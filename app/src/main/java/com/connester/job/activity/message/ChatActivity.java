@@ -48,6 +48,7 @@ import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.FirebaseFCMResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MessageListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.MessageStatusUpdateResponse;
+import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.SendMessageResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserStatusUpdateResponse;
@@ -202,11 +203,28 @@ public class ChatActivity extends AppCompatActivity {
             profile_view_LL.setOnClickListener(openProfile);
             delete_conversation_LL.setOnClickListener(v1 -> {
                 //call chat clear api
-
-                if (message_list != null) {
-                    message_list.getAdapter().notifyDataSetChanged();
-                }
-                chatOptionBottomSheetDialog.dismiss();
+                HashMap hashMap = new HashMap();
+                hashMap.putAll(defaultUserData);
+                hashMap.put("sl_user_master_id", user_master_id);
+                apiInterface.MESSAGE_CONVERSATION_CLEAR(hashMap).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status) {
+                                    tableChatDatas.clear();
+                                    if (message_list != null) {
+                                        message_list.getAdapter().notifyDataSetChanged();
+                                    }
+                                    chatOptionBottomSheetDialog.dismiss();
+                                } else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
             });
             block_user_LL.setOnClickListener(v1 -> {
                 //call block member api
