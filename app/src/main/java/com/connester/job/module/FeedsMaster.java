@@ -1172,7 +1172,7 @@ public class FeedsMaster {
         View view = layoutInflater.inflate(R.layout.feeds_job_full_layout, null);
         view.setTag(feedsRow.feedMasterId);
 
-        SimpleDraweeView job_business_iv = view.findViewById(R.id.job_business_iv);
+        ImageView job_business_iv = view.findViewById(R.id.job_business_iv);
         Glide.with(context).load(imgPath + feedsRow.tblBusinessPage.logo).into(job_business_iv);
 //        Uri uri = Uri.parse(feedImgPath + feedsRow.tblBusinessPage.logo);
 //        job_business_iv.setImageURI(uri);

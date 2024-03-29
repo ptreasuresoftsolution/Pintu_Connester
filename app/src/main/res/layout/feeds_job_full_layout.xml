@@ -32,6 +32,7 @@
                 <ImageView
                     android:id="@+id/job_business_iv"
                     android:layout_width="100dp"
+                    android:scaleType="centerCrop"
                     android:layout_height="100dp"
                     android:src="@drawable/default_business_pic" />
             </com.google.android.material.card.MaterialCardView>

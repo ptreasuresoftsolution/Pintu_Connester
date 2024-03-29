@@ -20,13 +20,17 @@ import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NotificationListResponse;
+import com.connester.job.activity.message.ChatHistoryUsersActivity;
+import com.connester.job.function.ActionCallBack;
 import com.connester.job.function.CommonFunction;
+import com.connester.job.function.DateUtils;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.MyListRowSet;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -113,11 +117,17 @@ public class NotificationActivity extends AppCompatActivity {
                 TextView delete_notification = view.findViewById(R.id.delete_notification);
 
                 datetime_tv.setText(FeedsMaster.feedTimeCount(dt.createDate));
+
                 if (dt.notificationType.equalsIgnoreCase(CONNECT_REQ)) {
                     View.OnClickListener openUserProfile = v -> {
-                        Intent intent = new Intent(context, ProfileActivity.class);
-                        intent.putExtra("user_master_id", dt.fromUserMasterId);
-                        startActivity(intent);
+                        statusAsRead(dt.notificationId, new ActionCallBack() {
+                            @Override
+                            public void callBack() {
+                                Intent intent = new Intent(context, ProfileActivity.class);
+                                intent.putExtra("user_master_id", dt.fromUserMasterId);
+                                startActivity(intent);
+                            }
+                        });
                     };
                     title_tv.setText(dt.name);
                     title_tv.setOnClickListener(openUserProfile);
@@ -149,14 +159,90 @@ public class NotificationActivity extends AppCompatActivity {
                         }, NetworkActivity.ActionName.InvReqDecline, dt.fromUserMasterId, context);
                     });
                 } else if (dt.notificationType.equalsIgnoreCase(FOLLOW_REQ)) {
-//                    Glide.with(context).load(groupLogoFile).centerCrop().into(notification_pic);
+                    View.OnClickListener openUserProfile = v -> {
+                        statusAsRead(dt.notificationId, new ActionCallBack() {
+                            @Override
+                            public void callBack() {
+                                Intent intent = new Intent(context, ProfileActivity.class);
+                                intent.putExtra("user_master_id", dt.fromUserMasterId);
+                                startActivity(intent);
+                            }
+                        });
+                    };
+                    title_tv.setText(dt.name);
+                    title_tv.setOnClickListener(openUserProfile);
+                    subtitle_tv.setText("send follow request");
+                    Glide.with(context).load(imgPath + dt.profilePic).centerCrop().into(notification_pic);
+                    notification_pic.setOnClickListener(openUserProfile);
 
+                    //action set accept && decline
+                    req_accept.setVisibility(View.VISIBLE);
+                    req_accept.setOnClickListener(v -> {
+                        ProfileActivity.networkActionMange(new NetworkActivity.NetworkActionCallback() {
+                            @Override
+                            public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                if (normalCommonResponse.status) main_ll.removeView(view);
+                                else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }, NetworkActivity.ActionName.FollowReqAccept, dt.fromUserMasterId, context);
+                    });
+                    req_decline.setVisibility(View.VISIBLE);
+                    req_decline.setOnClickListener(v -> {
+                        ProfileActivity.networkActionMange(new NetworkActivity.NetworkActionCallback() {
+                            @Override
+                            public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                if (normalCommonResponse.status) main_ll.removeView(view);
+                                else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }, NetworkActivity.ActionName.FollowReqReject, dt.fromUserMasterId, context);
+                    });
                 } else if (dt.notificationType.equalsIgnoreCase(MESSAGE)) {
-//                    Glide.with(context).load(groupLogoFile).centerCrop().into(notification_pic);
+                    Glide.with(context).load(imgPath + dt.profilePic).centerCrop().into(notification_pic);
+                    title_tv.setText(dt.name);
+                    subtitle_tv.setText("send message: " + dt.msg);
+                    if (dt.msgType.equalsIgnoreCase("FILE")) {
+                        subtitle_tv.setText("send file: " + dt.fileType.toLowerCase());
+                    }
 
+                    View.OnClickListener openMessage = v -> {
+                        statusAsRead(dt.notificationId, new ActionCallBack() {
+                            @Override
+                            public void callBack() {
+                                Intent intent = new Intent(context, ChatHistoryUsersActivity.class);
+                                intent.putExtra("action", "startChat");
+                                intent.putExtra("userId", dt.fromUserMasterId);
+                                startActivity(intent);
+                            }
+                        });
+                    };
+                    view_msg_job.setVisibility(View.VISIBLE);
+                    view_msg_job.setOnClickListener(openMessage);
+                    title_tv.setOnClickListener(openMessage);
+                    subtitle_tv.setOnClickListener(openMessage);
                 } else if (dt.notificationType.equalsIgnoreCase(RECOMMENDED_JOB)) {
-//                    Glide.with(context).load(groupLogoFile).centerCrop().into(notification_pic);
+                    Glide.with(context).load(imgPath + dt.logo).centerCrop().into(notification_pic);
+                    title_tv.setText(dt.titlePost);
+                    Date endDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", dt.postExpire);
+                    String exipreString = "Job Expire on " + DateUtils.getStringDate("dd MMM", endDate);
+                    if (new Date().getTime() > endDate.getTime()) {//is expire
+                        exipreString = "Job is expire";
+                    }
+                    subtitle_tv.setText("experience: " + dt.requirements + ", Job at " + dt.busName + " (" + exipreString + ")");
 
+                    View.OnClickListener openFullViewJob = v -> {
+                        statusAsRead(dt.notificationId, new ActionCallBack() {
+                            @Override
+                            public void callBack() {
+                                Intent intent = new Intent(context, FeedFullViewActivity.class);
+                                intent.putExtra("feed_master_id", dt.feedMasterId);
+                                context.startActivity(intent);
+                            }
+                        });
+                    };
+                    view_msg_job.setVisibility(View.VISIBLE);
+                    view_msg_job.setOnClickListener(openFullViewJob);
                 }
                 delete_notification.setOnClickListener(v -> {
                     //call api remove notification in list
@@ -184,6 +270,29 @@ public class NotificationActivity extends AppCompatActivity {
                 return view;
             }
         }.createView();
+    }
+
+    private void statusAsRead(String notification_id, ActionCallBack actionCallBack) {
+        CommonFunction.PleaseWaitShow(context);
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+        hashMap.put("apiKey", sessionPref.getApiKey());
+        hashMap.put("notification_id", notification_id);
+        hashMap.put("status", "READ");
+        apiInterface.NOTIFICATION_STATUS_UPDATE(hashMap).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                        if (normalCommonResponse.status) actionCallBack.callBack();
+                        else
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
 
     final static String CONNECT_REQ = "CONNECT_REQ", FOLLOW_REQ = "FOLLOW_REQ", MESSAGE = "MESSAGE", RECOMMENDED_JOB = "RECOMMENDED_JOB";

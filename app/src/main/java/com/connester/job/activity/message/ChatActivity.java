@@ -1187,7 +1187,7 @@ public class ChatActivity extends AppCompatActivity {
                     if (response.body() != null) {
                         MessageStatusUpdateResponse messageStatusUpdateResponse = (MessageStatusUpdateResponse) response.body();
                         if (messageStatusUpdateResponse.status) {
-                            FirebaseFCMResponse firebaseFCMResponse = new Gson().fromJson(messageStatusUpdateResponse.fcmResponse, FirebaseFCMResponse.class);
+//                            FirebaseFCMResponse firebaseFCMResponse = new Gson().fromJson(messageStatusUpdateResponse.fcmResponse, FirebaseFCMResponse.class);
 
                             Log.d(LogTag.CHECK_DEBUG, "Message Read Status : " + messageStatusUpdateResponse.status);
                         }
