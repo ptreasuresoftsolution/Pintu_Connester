@@ -17,6 +17,7 @@ import com.connester.job.RetrofitConnection.jsontogson.MyPagesListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkMenuListCounter;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
+import com.connester.job.RetrofitConnection.jsontogson.NotificationListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.OurEventPostRow;
 import com.connester.job.RetrofitConnection.jsontogson.OurJobPostRow;
 import com.connester.job.RetrofitConnection.jsontogson.PageAnalyticsResponse;
@@ -397,6 +398,13 @@ public interface ApiInterface {
     Call<NormalCommonResponse> GROUP_MEMBER_REQUEST_ACCEPT(@FieldMap Map<String, String> params);
 
     //notification and chat message api
+    @FormUrlEncoded
+    @POST(PRE_FIX + "NotificationMessage/userNotificationList")
+    Call<NotificationListResponse> NOTIFICATION_LIST(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "NotificationMessage/removeNotificationItem")
+    Call<NormalCommonResponse> NOTIFICATION_ITEM_DELETE(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded // update user status
     @POST(PRE_FIX + "NotificationMessage/userStatusUpdate")
     Call<UserStatusUpdateResponse> USER_STATUS_UPDATE_CALL(@FieldMap Map<String, String> params);
