@@ -13,8 +13,8 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         app:cardCornerRadius="35dp"
-        app:strokeWidth="0.5dp"
-        app:strokeColor="@color/secondary_2">
+        app:strokeColor="@color/secondary_2"
+        app:strokeWidth="0.5dp">
 
         <ImageView
             android:id="@+id/user_pic"
@@ -39,10 +39,28 @@
         app:queryBackground="@android:color/transparent"
         app:queryHint="Search" />
 
-    <ImageView
-        android:id="@+id/open_message_iv"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:layout_weight="1"
-        android:src="@drawable/top_bar_chat" />
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/open_message_iv"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:src="@drawable/top_bar_chat" />
+
+        <TextView
+            android:id="@+id/message_dot"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="18dp"
+            android:gravity="top"
+            android:text="@string/sign_bullet"
+            android:textColor="@color/primary"
+            android:textSize="35dp"
+            android:visibility="gone" />
+    </FrameLayout>
 </LinearLayout>

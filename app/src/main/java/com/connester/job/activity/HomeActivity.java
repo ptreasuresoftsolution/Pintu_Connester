@@ -57,6 +57,17 @@ public class HomeActivity extends AppCompatActivity {
         setTopBottomBar.setBottomNavBar(SetTopBottomBar.MenuItem.navHome_btn);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setTopBottomBar.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setTopBottomBar.onPause();
+    }
 
     public void check() {
 

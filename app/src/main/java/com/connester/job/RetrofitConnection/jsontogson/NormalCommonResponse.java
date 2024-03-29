@@ -53,4 +53,12 @@ public class NormalCommonResponse {
     @SerializedName("dt")
     @Expose
     public List<String> dt = new ArrayList<>();
+
+    //new notification and message counter
+    @SerializedName("totalNotification")
+    @Expose
+    public String totalNotification;
+    @SerializedName("totalMessage")
+    @Expose
+    public String totalMessage;
 }

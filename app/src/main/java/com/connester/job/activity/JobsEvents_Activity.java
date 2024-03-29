@@ -48,4 +48,16 @@ public class JobsEvents_Activity extends AppCompatActivity {
         setTopBottomBar.setTopBar();
         setTopBottomBar.setBottomNavBar(SetTopBottomBar.MenuItem.navJob_btn);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setTopBottomBar.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setTopBottomBar.onPause();
+    }
 }

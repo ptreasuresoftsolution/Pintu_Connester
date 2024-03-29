@@ -86,6 +86,17 @@ public class NetworkActivity extends AppCompatActivity {
         loadDefaultView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setTopBottomBar.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setTopBottomBar.onPause();
+    }
 
     private void loadDefaultView() {
         main_ll.removeAllViews();

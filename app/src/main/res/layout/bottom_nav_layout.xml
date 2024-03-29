@@ -44,12 +44,30 @@
                 android:layout_weight="1"
                 android:src="@drawable/nav_add_feeds" />
 
-            <ImageView
-                android:id="@+id/navNotification_btn"
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/nav_notification" />
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/navNotification_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:src="@drawable/nav_notification" />
+
+                <TextView
+                    android:id="@+id/notification_dot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/sign_bullet"
+                    android:textColor="@color/primary"
+                    android:textSize="40dp" />
+            </FrameLayout>
 
             <ImageView
                 android:id="@+id/navJob_btn"

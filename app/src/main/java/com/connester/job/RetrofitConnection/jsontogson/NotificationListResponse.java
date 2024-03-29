@@ -30,6 +30,8 @@ public class NotificationListResponse {
         @SerializedName("json_data")
         @Expose
         public String jsonData;
+        //for convert user NotificationJsonData
+
         @SerializedName("notification_status")
         @Expose
         public String notificationStatus;

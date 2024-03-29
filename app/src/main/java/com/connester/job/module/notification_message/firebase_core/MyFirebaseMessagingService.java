@@ -23,6 +23,7 @@ import com.connester.job.RetrofitConnection.jsontogson.MessageStatusUpdateRespon
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.SendMessageResponse;
 import com.connester.job.RetrofitConnection.jsontogson.UserStatusUpdateResponse;
+import com.connester.job.activity.NotificationActivity;
 import com.connester.job.activity.message.ChatActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.LogTag;
@@ -59,6 +60,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 try {
                     JSONObject jsonObject = new JSONObject(pushJsonString);
                     String type = jsonObject.getString("type");
+                    //message type data received
                     if (type.equalsIgnoreCase("SEND")) {
                         //logic (you are received the message from other user) you are receiver
                         //SendMessageResponse use class
@@ -114,6 +116,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         intent.putExtra("pushJson", pushJsonString);
                         sendBroadcast(intent);
                         Log.e(LogTag.CHECK_DEBUG, "User-Status-Change id " + pushJson.chatData.userMasterId);
+                    }
+                    //notification data received
+                    else if (type.equalsIgnoreCase("CONNECT_REQ")) {
+//                        NotificationJsonData notificationJsonData = new Gson().fromJson(pushJsonString, NotificationJsonData.class);
+                        Intent intent = new Intent(NotificationActivity.BROADCAST_CONNECT_REQ);
+                        intent.putExtra("jsonData", pushJsonString);
+                        sendBroadcast(intent);
+                    } else if (type.equalsIgnoreCase("FOLLOW_REQ")) {
+                        Intent intent = new Intent(NotificationActivity.BROADCAST_FOLLOW_REQ);
+                        intent.putExtra("jsonData", pushJsonString);
+                        sendBroadcast(intent);
+                    } else if (type.equalsIgnoreCase("MESSAGE")) {
+                        Intent intent = new Intent(NotificationActivity.BROADCAST_MESSAGE);
+                        intent.putExtra("jsonData", pushJsonString);
+                        sendBroadcast(intent);
+                    } else if (type.equalsIgnoreCase("RECOMMENDED_JOB")) {
+                        Intent intent = new Intent(NotificationActivity.BROADCAST_RECOMMENDED_JOB);
+                        intent.putExtra("jsonData", pushJsonString);
+                        sendBroadcast(intent);
                     }
                 } catch (Exception e) {
                     Log.e(LogTag.EXCEPTION, "Firebase service msg received OnException", e);

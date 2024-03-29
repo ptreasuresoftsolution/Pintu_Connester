@@ -1,8 +1,10 @@
 package com.connester.job.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -19,6 +21,7 @@ import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
+import com.connester.job.RetrofitConnection.jsontogson.NotificationJsonData;
 import com.connester.job.RetrofitConnection.jsontogson.NotificationListResponse;
 import com.connester.job.activity.message.ChatHistoryUsersActivity;
 import com.connester.job.function.ActionCallBack;
@@ -29,6 +32,7 @@ import com.connester.job.function.MyListRowSet;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 import com.google.android.material.card.MaterialCardView;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -308,4 +312,33 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     final static String CONNECT_REQ = "CONNECT_REQ", FOLLOW_REQ = "FOLLOW_REQ", MESSAGE = "MESSAGE", RECOMMENDED_JOB = "RECOMMENDED_JOB";
+    public final static String BROADCAST_CONNECT_REQ = "BROADCAST_CONNECT_REQ", BROADCAST_FOLLOW_REQ = "BROADCAST_FOLLOW_REQ", BROADCAST_MESSAGE = "BROADCAST_MESSAGE", BROADCAST_RECOMMENDED_JOB = "BROADCAST_RECOMMENDED_JOB";
+
+    BroadcastReceiver allNotificationReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String jsonData = intent.getExtras().getString("jsonData");
+            NotificationJsonData notificationJsonData = new Gson().fromJson(jsonData, NotificationJsonData.class);
+            if (notificationJsonData.notificationId != null && !notificationJsonData.notificationId.equalsIgnoreCase("")){
+                setData();
+            }
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter intentFilterReadDelivered = new IntentFilter();
+        intentFilterReadDelivered.addAction(BROADCAST_CONNECT_REQ);
+        intentFilterReadDelivered.addAction(BROADCAST_FOLLOW_REQ);
+        intentFilterReadDelivered.addAction(BROADCAST_MESSAGE);
+        intentFilterReadDelivered.addAction(BROADCAST_RECOMMENDED_JOB);
+        registerReceiver(allNotificationReceiver, intentFilterReadDelivered);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(allNotificationReceiver);
+    }
 }
