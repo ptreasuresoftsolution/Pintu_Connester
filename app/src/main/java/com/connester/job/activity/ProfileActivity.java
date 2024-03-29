@@ -209,7 +209,7 @@ public class ProfileActivity extends AppCompatActivity {
                                             else
                                                 Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                                         }
-                                    }, NetworkActivity.ActionName.UnFollowFollowing, user_master_id);
+                                    }, NetworkActivity.ActionName.UnFollowFollowing, user_master_id, context);
                                 });
                             } else if (UserMaster.findIdInIds(user_master_id, loginUserDt.sendFollowingReq)) {//is following -> Pending
                                 one_mbtn.setText("Pending");
@@ -227,7 +227,7 @@ public class ProfileActivity extends AppCompatActivity {
                                             else
                                                 Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                                         }
-                                    }, NetworkActivity.ActionName.ReqFollow, user_master_id);
+                                    }, NetworkActivity.ActionName.ReqFollow, user_master_id, context);
                                 });
                             }
 
@@ -258,7 +258,7 @@ public class ProfileActivity extends AppCompatActivity {
                                             else
                                                 Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                                         }
-                                    }, NetworkActivity.ActionName.SendInvReq, user_master_id);
+                                    }, NetworkActivity.ActionName.SendInvReq, user_master_id, context);
                                 });
                             }
                         }
@@ -374,15 +374,16 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    void networkActionMange(NetworkActivity.NetworkActionCallback networkActionCallback, NetworkActivity.ActionName action, String userOpponentsId) {
+    static void networkActionMange(NetworkActivity.NetworkActionCallback networkActionCallback, NetworkActivity.ActionName action, String userOpponentsId, Context context) {
         CommonFunction.PleaseWaitShow(context);
+        SessionPref sessionPref = new SessionPref(context);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
 //      InvReqAccept / InvReqDecline / SendInvReq / RemoveConnection / RemoveFollower / UnFollowFollowing / ReqFollow / FollowReqAccept / FollowReqReject
         hashMap.put("action", action.getVal());
         hashMap.put("opponentsId", userOpponentsId);
-        apiInterface.NETWORK_ACTION_MANGE(hashMap).enqueue(new MyApiCallback() {
+        ApiClient.getClient().create(ApiInterface.class).NETWORK_ACTION_MANGE(hashMap).enqueue(new MyApiCallback() {
             @Override
             public void onResponse(Call call, Response response) {
                 super.onResponse(call, response);

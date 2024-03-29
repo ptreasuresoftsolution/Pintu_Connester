@@ -24,6 +24,7 @@ import com.connester.job.function.CommonFunction;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.MyListRowSet;
 import com.connester.job.function.SessionPref;
+import com.connester.job.module.FeedsMaster;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -111,15 +112,42 @@ public class NotificationActivity extends AppCompatActivity {
                 TextView view_msg_job = view.findViewById(R.id.view_msg_job);
                 TextView delete_notification = view.findViewById(R.id.delete_notification);
 
+                datetime_tv.setText(FeedsMaster.feedTimeCount(dt.createDate));
                 if (dt.notificationType.equalsIgnoreCase(CONNECT_REQ)) {
                     View.OnClickListener openUserProfile = v -> {
                         Intent intent = new Intent(context, ProfileActivity.class);
                         intent.putExtra("user_master_id", dt.fromUserMasterId);
                         startActivity(intent);
                     };
-
+                    title_tv.setText(dt.name);
+                    title_tv.setOnClickListener(openUserProfile);
+                    subtitle_tv.setText("send connect invitation request");
                     Glide.with(context).load(imgPath + dt.profilePic).centerCrop().into(notification_pic);
+                    notification_pic.setOnClickListener(openUserProfile);
 
+                    //action set accept && decline
+                    req_accept.setVisibility(View.VISIBLE);
+                    req_accept.setOnClickListener(v -> {
+                        ProfileActivity.networkActionMange(new NetworkActivity.NetworkActionCallback() {
+                            @Override
+                            public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                if (normalCommonResponse.status) main_ll.removeView(view);
+                                else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }, NetworkActivity.ActionName.InvReqAccept, dt.fromUserMasterId, context);
+                    });
+                    req_decline.setVisibility(View.VISIBLE);
+                    req_decline.setOnClickListener(v -> {
+                        ProfileActivity.networkActionMange(new NetworkActivity.NetworkActionCallback() {
+                            @Override
+                            public void apiCallBack(NormalCommonResponse normalCommonResponse) {
+                                if (normalCommonResponse.status) main_ll.removeView(view);
+                                else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }, NetworkActivity.ActionName.InvReqDecline, dt.fromUserMasterId, context);
+                    });
                 } else if (dt.notificationType.equalsIgnoreCase(FOLLOW_REQ)) {
 //                    Glide.with(context).load(groupLogoFile).centerCrop().into(notification_pic);
 
