@@ -127,6 +127,7 @@ public class CommunityActivity extends AppCompatActivity {
 
             }
         });
+        CommonFunction._LoadFirstFragment(CommunityActivity.this, R.id.container, fragments.get(0));
 
         new VisitMaster(context, activity).visitedCommunity(community_master_id);
     }

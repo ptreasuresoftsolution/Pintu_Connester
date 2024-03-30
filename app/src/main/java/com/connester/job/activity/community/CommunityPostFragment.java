@@ -54,7 +54,7 @@ public class CommunityPostFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_community_post, container, false);
         context = getContext();
         main_ll = view.findViewById(R.id.main_ll);
-
+        sessionPref = new SessionPref(context);
 
         feeds_add_ly = view.findViewById(R.id.feeds_add_ly);
         feeds_add_ly.setVisibility(View.GONE);

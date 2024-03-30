@@ -30,7 +30,7 @@
             android:layout_gravity="center"
             android:gravity="start"
             android:paddingLeft="14dp"
-            android:text="Change Password"
+            android:text="Blocked users"
             android:textColor="@color/secondary_3"
             android:textSize="@dimen/label"
             android:textStyle="bold" />

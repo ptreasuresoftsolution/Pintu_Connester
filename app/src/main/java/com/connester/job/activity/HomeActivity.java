@@ -1,7 +1,9 @@
 package com.connester.job.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -122,9 +124,26 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        ActivityCompat.finishAffinity(HomeActivity.this);
+        onBackPressed();
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        alertDialog.setMessage("Are you sure to exit?");
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                HomeActivity.super.onBackPressed();
+                ActivityCompat.finishAffinity(HomeActivity.this);
+            }
+        });
+        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                HomeActivity.super.onBackPressed();
+                ActivityCompat.finishAffinity(HomeActivity.this);
+            }
+        });
+        alertDialog.show();
     }
 }

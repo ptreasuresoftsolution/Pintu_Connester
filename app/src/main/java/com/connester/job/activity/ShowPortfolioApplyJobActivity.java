@@ -81,7 +81,7 @@ public class ShowPortfolioApplyJobActivity extends AppCompatActivity {
 
         share_web_portfolio = findViewById(R.id.share_web_portfolio);
 
-        back_iv = findViewById(R.id.back_cv);
+        back_iv = findViewById(R.id.back_iv);
         back_iv.setOnClickListener(v -> {
             onBackPressed();
         });
@@ -115,13 +115,18 @@ public class ShowPortfolioApplyJobActivity extends AppCompatActivity {
 
                     userFullName_txt.setText(userDt.name);
                     Glide.with(context).load(imgPath + userDt.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(user_pic);
-                    birth_date_tv.setText(DateUtils.getStringDate("yyyy-MM-dd", "dd MMM, yyyy", userDt.birthDate));
-                    phone_tv.setText(userDt.mainPhone);
-                    email_tv.setText(userDt.email);
-                    gender_tv.setText(userDt.gender);
-                    location_tv.setText(userDt.city + ", " + userDt.countryRegion);
-
-                    about_me_tv.setText(userDt.bio);
+                    if (userDt.birthDate != null)
+                        birth_date_tv.setText(DateUtils.getStringDate("yyyy-MM-dd", "dd MMM, yyyy", userDt.birthDate));
+                    if (userDt.mainPhone != null)
+                        phone_tv.setText(userDt.mainPhone);
+                    if (userDt.email != null)
+                        email_tv.setText(userDt.email);
+                    if (userDt.gender != null)
+                        gender_tv.setText(userDt.gender);
+                    if (userDt.city != null && userDt.countryRegion != null)
+                        location_tv.setText(userDt.city + ", " + userDt.countryRegion);
+                    if (userDt.bio != null)
+                        about_me_tv.setText(userDt.bio);
 
                     loadWorkExperience();
                     loadEducation();

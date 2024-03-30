@@ -138,7 +138,7 @@ public class BusinessActivity extends AppCompatActivity {
 
             }
         });
-
+        CommonFunction._LoadFirstFragment(BusinessActivity.this, R.id.container, fragments.get(0));
         new VisitMaster(context, activity).visitedBusinessPage(business_page_id);
     }
 

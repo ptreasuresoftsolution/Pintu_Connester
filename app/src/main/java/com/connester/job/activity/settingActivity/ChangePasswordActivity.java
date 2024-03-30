@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +33,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
     SessionPref sessionPref;
     Context context;
     Activity activity;
+    ImageView back_iv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
         new_password_et = findViewById(R.id.new_password_et);
         confirm_password_et = findViewById(R.id.confirm_password_et);
         save_pass_mbtn = findViewById(R.id.save_pass_mbtn);
+        back_iv = findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            onBackPressed();
+        });
 
         context = this;
         activity = this;

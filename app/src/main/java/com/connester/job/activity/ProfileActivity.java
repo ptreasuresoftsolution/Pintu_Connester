@@ -172,7 +172,17 @@ public class ProfileActivity extends AppCompatActivity {
                             userFullName_txt.setText(userDt.name);
                             user_position_tv.setText(userDt.position);
                             user_bio_tv.setText(userDt.bio);
-                            followers_tv.setText(userDt.followerIds + " followers");
+
+                            int followers = 0;
+                            if (userDt.followerIds != null)
+                                followers = userDt.followerIds.split(",").length;
+                            followers_tv.setText(followers + " followers");
+
+                            int following = 0;
+                            if (userDt.followingIds != null)
+                                following = userDt.followingIds.split(",").length;
+                            following_tv.setText(following + " following");
+
                             about_me_tv.setText(userDt.bio);
 
                             loadWorkExperience();
@@ -199,7 +209,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                             //set all button
                             //one-first button
-                            if (loginUserDt.followerIds != null && UserMaster.findIdInIds(user_master_id, loginUserDt.followerIds)) {//is follower -> Unfollow
+                            if (loginUserDt.followingIds != null && UserMaster.findIdInIds(user_master_id, loginUserDt.followingIds)) {//is follower -> Unfollow
                                 one_mbtn.setText("UnFollow");
                                 one_mbtn.setIcon(getDrawable(R.drawable.person_dash_unfollow));
                                 one_mbtn.setEnabled(true);

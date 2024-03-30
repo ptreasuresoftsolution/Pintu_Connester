@@ -137,6 +137,7 @@ public class UserMenuActivity extends AppCompatActivity {
                     });
                 }
             });
+            alertDialog.show();
         });
 
         log_out_single_devices_ll = findViewById(R.id.log_out_single_devices_ll);
