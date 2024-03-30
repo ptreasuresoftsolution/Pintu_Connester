@@ -32,13 +32,14 @@ public class PostsFragment extends Fragment {
         progressBar = view.findViewById(R.id.progressBar);
 
         sessionPref = new SessionPref(getContext());
-        feedsMaster = new FeedsMaster(getContext(), getActivity());
-        feedsMaster.setProgressBar(progressBar);
-        feedsMaster.setChkClose(false);
-        feedsMaster.setFeedsIds(sessionPref.getUserMasterRowInObject().saveFeeds);
-        feedsMaster.setTblName("MEDIA,POST");
-        feedsMaster.loadFeedMaster(feeds_save_post_list, scrollView, 25);
-
+        if (sessionPref.getUserMasterRowInObject().saveFeeds != null && !sessionPref.getUserMasterRowInObject().saveFeeds.equalsIgnoreCase("")) {
+            feedsMaster = new FeedsMaster(getContext(), getActivity());
+            feedsMaster.setProgressBar(progressBar);
+            feedsMaster.setChkClose(false);
+            feedsMaster.setFeedsIds(sessionPref.getUserMasterRowInObject().saveFeeds);
+            feedsMaster.setTblName("MEDIA,POST");
+            feedsMaster.loadFeedMaster(feeds_save_post_list, scrollView, 25);
+        }
         return view;
     }
 }

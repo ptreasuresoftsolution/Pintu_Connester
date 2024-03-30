@@ -186,8 +186,10 @@ public class EditProfileActivity extends AppCompatActivity {
                 builder.setType(MultipartBody.FORM)
                         .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
                         .addFormDataPart("apiKey", sessionPref.getApiKey())
-                        .addFormDataPart("clmNm", "profile_pic")
-                        .addFormDataPart("old_pic", userDt.profilePic);
+                        .addFormDataPart("clmNm", "profile_pic");
+
+                if (userDt.profilePic != null)
+                    builder.addFormDataPart("old_pic", userDt.profilePic);
 
                 builder.addFormDataPart("profile_img", imgFile.getName(),
                         RequestBody.create(MediaType.parse(FilePath.getMimeType(imgFile)), imgFile));
@@ -1236,6 +1238,11 @@ public class EditProfileActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.editprofile_about_me_dialog);
         setDialogFullScreenSetting(dialog);
 
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
         EditText edit_bio_et = dialog.findViewById(R.id.edit_bio_et);
         if (userDt.bio != null)
             edit_bio_et.setText(userDt.bio);
@@ -1369,13 +1376,22 @@ public class EditProfileActivity extends AppCompatActivity {
                     userDt = userRowResponse.dt;
                     imgPath = userRowResponse.imgPath;
 
-
                     Glide.with(context).load(imgPath + userDt.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(user_pic);
                     Glide.with(context).load(imgPath + userDt.profileBanner).centerCrop().placeholder(R.drawable.user_default_banner).into(user_banner_iv);
                     userFullName_txt.setText(userDt.name);
                     user_position_tv.setText(userDt.position);
                     user_bio_tv.setText(userDt.bio);
-                    followers_tv.setText(userDt.followerIds + " followers");
+
+                    int followers = 0;
+                    if (userDt.followerIds != null)
+                        followers = userDt.followerIds.split(",").length;
+                    followers_tv.setText(followers + " followers");
+
+                    int following = 0;
+                    if (userDt.followingIds != null)
+                        following = userDt.followingIds.split(",").length;
+                    following_tv.setText(following + " following");
+
                     about_me_tv.setText(userDt.bio);
 
                     loadWorkExperience();
@@ -1384,21 +1400,23 @@ public class EditProfileActivity extends AppCompatActivity {
 
                     //skills set
                     user_skill_tag_fbl.removeAllViews();
-                    for (String skill : userDt.skill.split(",")) {
-                        View skillItem = getLayoutInflater().inflate(R.layout.skill_tag_item, null);
-                        TextView skill_item = skillItem.findViewById(R.id.skill_item);
-                        skill_item.setText(skill);
-                        user_skill_tag_fbl.addView(skillItem);
-                    }
+                    if (userDt.skill != null)
+                        for (String skill : userDt.skill.split(",")) {
+                            View skillItem = getLayoutInflater().inflate(R.layout.skill_tag_item, null);
+                            TextView skill_item = skillItem.findViewById(R.id.skill_item);
+                            skill_item.setText(skill);
+                            user_skill_tag_fbl.addView(skillItem);
+                        }
 
                     //language set
                     user_language_tag_fbl.removeAllViews();
-                    for (String language : userDt.language.split(",")) {
-                        View languageItem = getLayoutInflater().inflate(R.layout.skill_tag_item, null);
-                        TextView language_item = languageItem.findViewById(R.id.skill_item);
-                        language_item.setText(language);
-                        user_language_tag_fbl.addView(languageItem);
-                    }
+                    if (userDt.language != null)
+                        for (String language : userDt.language.split(",")) {
+                            View languageItem = getLayoutInflater().inflate(R.layout.skill_tag_item, null);
+                            TextView language_item = languageItem.findViewById(R.id.skill_item);
+                            language_item.setText(language);
+                            user_language_tag_fbl.addView(languageItem);
+                        }
                 }
             }
         }, "*", true);

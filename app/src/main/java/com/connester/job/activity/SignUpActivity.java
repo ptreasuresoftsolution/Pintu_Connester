@@ -39,6 +39,7 @@ public class SignUpActivity extends AppCompatActivity {
     ImageView singUpGoogle_btn, singUpFB_btn, password_show;
     LinearLayout openSignIn_ll_btn;
     TextView resendCode_btn;
+    LinearLayout verifyCode_ll;
 
     private void initView() {
         email_input = findViewById(R.id.email_input);
@@ -49,6 +50,7 @@ public class SignUpActivity extends AppCompatActivity {
         singUpGoogle_btn = findViewById(R.id.singUpGoogle_btn);
         singUpFB_btn = findViewById(R.id.singUpFB_btn);
         password_show = findViewById(R.id.password_show);
+        verifyCode_ll = findViewById(R.id.verifyCode_ll);
         openSignIn_ll_btn = findViewById(R.id.openSignIn_ll_btn);
     }
 
@@ -72,6 +74,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     if (signUpOtpResponse.status) {
                                         signUp_btn.setText("Verify Code");
                                         codeTime = signUpOtpResponse.dt.codeTime;
+                                        verifyCode_ll.setVisibility(View.VISIBLE);
                                     } else {
                                         Toast.makeText(context, signUpOtpResponse.msg, Toast.LENGTH_SHORT).show();
                                     }

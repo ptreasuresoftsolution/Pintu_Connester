@@ -199,7 +199,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                             //set all button
                             //one-first button
-                            if (UserMaster.findIdInIds(user_master_id, loginUserDt.followerIds)) {//is follower -> Unfollow
+                            if (loginUserDt.followerIds != null && UserMaster.findIdInIds(user_master_id, loginUserDt.followerIds)) {//is follower -> Unfollow
                                 one_mbtn.setText("UnFollow");
                                 one_mbtn.setIcon(getDrawable(R.drawable.person_dash_unfollow));
                                 one_mbtn.setEnabled(true);
@@ -213,7 +213,7 @@ public class ProfileActivity extends AppCompatActivity {
                                         }
                                     }, NetworkActivity.ActionName.UnFollowFollowing, user_master_id, context);
                                 });
-                            } else if (UserMaster.findIdInIds(user_master_id, loginUserDt.sendFollowingReq)) {//is following -> Pending
+                            } else if (loginUserDt.sendFollowingReq != null && UserMaster.findIdInIds(user_master_id, loginUserDt.sendFollowingReq)) {//is following -> Pending
                                 one_mbtn.setText("Pending");
                                 one_mbtn.setIcon(getDrawable(R.drawable.feeds_time));
                                 one_mbtn.setEnabled(false);
@@ -234,7 +234,7 @@ public class ProfileActivity extends AppCompatActivity {
                             }
 
                             //two-second button
-                            if (UserMaster.findIdInIds(user_master_id, loginUserDt.connectUser)) {//is connected -> Message
+                            if (loginUserDt.connectUser != null && UserMaster.findIdInIds(user_master_id, loginUserDt.connectUser)) {//is connected -> Message
                                 two_mbtn.setText("Message");
                                 two_mbtn.setIcon(getDrawable(R.drawable.inbox_message_chat_send));
                                 two_mbtn.setEnabled(true);

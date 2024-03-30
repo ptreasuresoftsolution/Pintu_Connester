@@ -33,14 +33,15 @@ public class JobFragment extends Fragment {
         progressBar = view.findViewById(R.id.progressBar);
 
         sessionPref = new SessionPref(getContext());
-        feedsMaster = new FeedsMaster(getContext(), getActivity());
-        feedsMaster.feedListBy = "SAVED";
-        feedsMaster.setProgressBar(progressBar);
-        feedsMaster.setFeedsIds(sessionPref.getUserMasterRowInObject().saveFeeds);
-        feedsMaster.setTblName("JOB");
-        feedsMaster.setChkClose(false);
-        feedsMaster.loadFeedMaster(feeds_job_list, scrollView, 25);
-
+        if (sessionPref.getUserMasterRowInObject().saveFeeds != null && !sessionPref.getUserMasterRowInObject().saveFeeds.equalsIgnoreCase("")) {
+            feedsMaster = new FeedsMaster(getContext(), getActivity());
+            feedsMaster.feedListBy = "SAVED";
+            feedsMaster.setProgressBar(progressBar);
+            feedsMaster.setFeedsIds(sessionPref.getUserMasterRowInObject().saveFeeds);
+            feedsMaster.setTblName("JOB");
+            feedsMaster.setChkClose(false);
+            feedsMaster.loadFeedMaster(feeds_job_list, scrollView, 25);
+        }
         return view;
     }
 }

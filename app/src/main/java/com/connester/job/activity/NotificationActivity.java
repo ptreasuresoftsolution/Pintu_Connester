@@ -50,7 +50,7 @@ public class NotificationActivity extends AppCompatActivity {
     ScrollView scrollView;
     FrameLayout progressBar;
     ApiInterface apiInterface;
-
+ImageView back_iv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +64,10 @@ public class NotificationActivity extends AppCompatActivity {
         main_ll = findViewById(R.id.main_ll);
         scrollView = findViewById(R.id.scrollView);
         progressBar = findViewById(R.id.progressBar);
-
+        back_iv = findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            onBackPressed();
+        });
         setData();
     }
 

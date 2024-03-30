@@ -1665,8 +1665,10 @@ public class FeedsMaster {
                                         if (normalCommonResponse.status) {
                                             isSave[0] = normalCommonResponse.feedSave;
                                             if (isSave[0]) {
+                                                feedsRow.isSave = "1";
                                                 feed_save_unsave_icon.setImageResource(R.drawable.feed_save_fill);
                                             } else {
+                                                feedsRow.isSave = "0";
                                                 feed_save_unsave_icon.setImageResource(R.drawable.feed_save_blank);
                                                 if (loadOnSavePage) {
                                                     removeFeedsInList(view);

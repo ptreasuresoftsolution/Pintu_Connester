@@ -170,10 +170,12 @@ public class UserMaster {
     }
 
     public static boolean findIdInIds(String id, String ids) {
-        //split and filter (remove blank)
-        List<String> idsList = Stream.of(ids.split(",")).filter(item -> item != null && !item.isEmpty() && !item.trim().equals("")).collect(Collectors.toList());
-        if (idsList.indexOf(id) >= 0)
-            return true;
+        if (ids != null && id != null) {
+            //split and filter (remove blank)
+            List<String> idsList = Stream.of(ids.split(",")).filter(item -> item != null && !item.isEmpty() && !item.trim().equals("")).collect(Collectors.toList());
+            if (idsList.indexOf(id) >= 0)
+                return true;
+        }
         return false;
     }
 }
