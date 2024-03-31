@@ -17,6 +17,7 @@ import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.PageJobApplicationResponse;
+import com.connester.job.activity.ProfileActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
@@ -88,6 +89,14 @@ public class JobApplicationListActivity extends AppCompatActivity {
 
                 TextView member_tv = jobApplicationView.findViewById(R.id.member_tv);
                 member_tv.setText(dt.name);
+
+                View.OnClickListener openUserProfile = v -> {
+                    Intent intent = new Intent(context, ProfileActivity.class);
+                    intent.putExtra("user_master_id", dt.userMasterId);
+                    startActivity(intent);
+                };
+                member_profile_pic.setOnClickListener(openUserProfile);
+                member_tv.setOnClickListener(openUserProfile);
 
                 TextView first_tv = jobApplicationView.findViewById(R.id.first_tv);
                 TextView second_tv = jobApplicationView.findViewById(R.id.second_tv);

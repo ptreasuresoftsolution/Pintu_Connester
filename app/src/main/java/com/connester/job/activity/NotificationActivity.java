@@ -216,6 +216,14 @@ ImageView back_iv;
                 } else if (dt.notificationType.equalsIgnoreCase(MESSAGE)) {
                     Glide.with(context).load(imgPath + dt.profilePic).centerCrop().into(notification_pic);
                     title_tv.setText(dt.name);
+                    View.OnClickListener openUserProfile = v -> {
+                        Intent intent = new Intent(context, ProfileActivity.class);
+                        intent.putExtra("user_master_id", dt.sendUserMasterId);
+                        startActivity(intent);
+                    };
+                    title_tv.setOnClickListener(openUserProfile);
+                    notification_pic.setOnClickListener(openUserProfile);
+
                     subtitle_tv.setText("send message(Error):");
                     if (dt.msgType != null && !dt.msgType.equalsIgnoreCase("")) {
                         subtitle_tv.setText("send message: " + dt.msg);

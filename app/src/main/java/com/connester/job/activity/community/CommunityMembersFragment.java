@@ -1,6 +1,7 @@
 package com.connester.job.activity.community;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.GroupMembersListResponse;
+import com.connester.job.activity.ProfileActivity;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.google.android.material.button.MaterialButton;
@@ -79,6 +81,14 @@ public class CommunityMembersFragment extends Fragment {
 
                                 TextView member_tv = jobApplicationView.findViewById(R.id.member_tv);
                                 member_tv.setText(dt.name);
+
+                                View.OnClickListener openUserProfile = v -> {
+                                    Intent intent = new Intent(context, ProfileActivity.class);
+                                    intent.putExtra("user_master_id", dt.userMasterId);
+                                    startActivity(intent);
+                                };
+                                member_profile_pic.setOnClickListener(openUserProfile);
+                                member_tv.setOnClickListener(openUserProfile);
 
                                 MaterialButton first_mbtn = jobApplicationView.findViewById(R.id.first_mbtn);
                                 first_mbtn.setVisibility(View.GONE);

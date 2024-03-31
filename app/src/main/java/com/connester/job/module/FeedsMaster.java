@@ -1461,6 +1461,14 @@ public class FeedsMaster {
                                     TextView userFullName_txt = view.findViewById(R.id.userFullName_txt);
                                     userFullName_txt.setText(commentsRow.name);
 
+                                    View.OnClickListener openUserProfile = v -> {
+                                        Intent intent = new Intent(context, ProfileActivity.class);
+                                        intent.putExtra("user_master_id", commentsRow.userMasterId);
+                                        context.startActivity(intent);
+                                    };
+                                    user_pic.setOnClickListener(openUserProfile);
+                                    userFullName_txt.setOnClickListener(openUserProfile);
+
                                     TextView time_comment_txt = view.findViewById(R.id.time_comment_txt);
                                     time_comment_txt.setText(feedTimeCount(commentsRow.createDate));
 

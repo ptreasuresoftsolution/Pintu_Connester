@@ -1,6 +1,7 @@
 package com.connester.job.activity.business;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.PageMembersResponse;
+import com.connester.job.activity.ProfileActivity;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.google.android.material.button.MaterialButton;
@@ -72,12 +74,19 @@ public class BusinessPeopleFragment extends Fragment {
                             for (PageMembersResponse.Dt dt : pageMembersResponse.dt) {
                                 View jobApplicationView = getLayoutInflater().inflate(R.layout.user_pic_two_btn_list_item, null);
 
-
                                 ImageView member_profile_pic = jobApplicationView.findViewById(R.id.member_profile_pic);
                                 Glide.with(context).load(pageMembersResponse.imgPath + dt.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(member_profile_pic);
 
                                 TextView member_tv = jobApplicationView.findViewById(R.id.member_tv);
                                 member_tv.setText(dt.name);
+
+                                View.OnClickListener openUserProfile = v -> {
+                                    Intent intent = new Intent(context, ProfileActivity.class);
+                                    intent.putExtra("user_master_id", dt.userMasterId);
+                                    startActivity(intent);
+                                };
+                                member_profile_pic.setOnClickListener(openUserProfile);
+                                member_tv.setOnClickListener(openUserProfile);
 
                                 MaterialButton second_mbtn = jobApplicationView.findViewById(R.id.second_mbtn);
                                 second_mbtn.setVisibility(View.GONE);

@@ -1,6 +1,7 @@
 package com.connester.job.activity.mycommunity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.GroupMembersListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
+import com.connester.job.activity.ProfileActivity;
 import com.connester.job.function.ActionCallBack;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.MyApiCallback;
@@ -89,6 +91,14 @@ public class GroupMembersFragment extends Fragment {
 
                                     TextView member_tv = jobApplicationView.findViewById(R.id.member_tv);
                                     member_tv.setText(dt.name);
+
+                                    View.OnClickListener openUserProfile = v -> {
+                                        Intent intent = new Intent(context, ProfileActivity.class);
+                                        intent.putExtra("user_master_id", dt.userMasterId);
+                                        startActivity(intent);
+                                    };
+                                    member_profile_pic.setOnClickListener(openUserProfile);
+                                    member_tv.setOnClickListener(openUserProfile);
 
                                     MaterialButton first_mbtn = jobApplicationView.findViewById(R.id.first_mbtn);
                                     first_mbtn.setBackgroundTintList(getResources().getColorStateList(R.color.primary_light));
