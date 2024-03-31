@@ -326,7 +326,6 @@ public class EditProfileActivity extends AppCompatActivity {
         TextView language_selected = dialog.findViewById(R.id.language_selected);
         if (userDt.language != null)
             language_selected.setText(userDt.language.replace(",", ", "));
-        CommonFunction.PleaseWaitShow(context);
         apiInterface.GET_LANGUAGE_TBL(hashMapDefault).enqueue(new MyApiCallback() {
             @Override
             public void onResponse(Call call, Response response) {
@@ -435,6 +434,7 @@ public class EditProfileActivity extends AppCompatActivity {
             });
         });
         dialog.show();
+        CommonFunction.PleaseWaitShow(context);
     }
 
     boolean[] selectedSkill;
@@ -455,7 +455,6 @@ public class EditProfileActivity extends AppCompatActivity {
         TextView skills_selected = dialog.findViewById(R.id.skills_selected);
         if (userDt.skill != null)
             skills_selected.setText(userDt.skill.replace(",", ", "));
-        CommonFunction.PleaseWaitShow(context);
         apiInterface.GET_SKILL_TBL(hashMapDefault).enqueue(new MyApiCallback() {
             @Override
             public void onResponse(Call call, Response response) {
@@ -563,6 +562,7 @@ public class EditProfileActivity extends AppCompatActivity {
             });
         });
         dialog.show();
+        CommonFunction.PleaseWaitShow(context);
     }
 
     Calendar startDateCalendar, endDateCalendar;
@@ -686,7 +686,6 @@ public class EditProfileActivity extends AppCompatActivity {
         EditText description_et = dialog.findViewById(R.id.description_et);
 
         //set project data
-        CommonFunction.PleaseWaitShow(context);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
@@ -783,6 +782,7 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
         dialog.show();
+        CommonFunction.PleaseWaitShow(context);
     }
 
     private void openAddEducationDialog() {
@@ -907,7 +907,6 @@ public class EditProfileActivity extends AppCompatActivity {
         EditText description_et = dialog.findViewById(R.id.description_et);
 
         //set education data
-        CommonFunction.PleaseWaitShow(context);
         HashMap hashMapSelect = new HashMap();
         hashMapSelect.put("user_master_id", sessionPref.getUserMasterId());
         hashMapSelect.put("apiKey", sessionPref.getApiKey());
@@ -1007,6 +1006,7 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
         dialog.show();
+        CommonFunction.PleaseWaitShow(context);
     }
 
     private void openAddWorkExperienceDialog() {
@@ -1130,7 +1130,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
         EditText description_et = dialog.findViewById(R.id.description_et);
         //set work experience data
-        CommonFunction.PleaseWaitShow(context);
         HashMap hashMapSelect = new HashMap();
         hashMapSelect.put("user_master_id", sessionPref.getUserMasterId());
         hashMapSelect.put("apiKey", sessionPref.getApiKey());
@@ -1230,6 +1229,7 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
         dialog.show();
+        CommonFunction.PleaseWaitShow(context);
     }
 
     private void openEditAboutDialog() {

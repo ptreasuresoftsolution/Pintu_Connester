@@ -131,7 +131,6 @@ public class BusinessPageActivity extends AppCompatActivity {
     ImageView page_banner_iv, page_logo_iv;
 
     private void createBusinessPageDialogOpen() {
-        CommonFunction.PleaseWaitShow(context);
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.page_create_manage_dialog);
@@ -248,10 +247,12 @@ public class BusinessPageActivity extends AppCompatActivity {
                 try {
                     if (pageLogoFile == null) {
                         Toast.makeText(context, "Please select logo!", Toast.LENGTH_SHORT).show();
+                        CommonFunction.dismissDialog();
                         return;
                     }
                     if (pageBannerFile == null) {
                         Toast.makeText(context, "Please select banner!", Toast.LENGTH_SHORT).show();
+                        CommonFunction.dismissDialog();
                         return;
                     }
                     File imgFileLogo = new Compressor(context)
@@ -316,12 +317,15 @@ public class BusinessPageActivity extends AppCompatActivity {
                         }
                     });
                 } catch (Exception e) {
+                    CommonFunction.dismissDialog();
+                    Toast.makeText(context, "Request Create page fail!", Toast.LENGTH_LONG).show();
                     Log.e(LogTag.EXCEPTION, "Image Compress from Business page create Exception", e);
                 }
             }
         });
 
         dialog.show();
+        CommonFunction.PleaseWaitShow(context);
     }
 
     boolean[] selectedSkill;

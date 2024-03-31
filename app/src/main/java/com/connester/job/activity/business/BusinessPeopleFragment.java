@@ -82,7 +82,7 @@ public class BusinessPeopleFragment extends Fragment {
                                 MaterialButton second_mbtn = jobApplicationView.findViewById(R.id.second_mbtn);
                                 second_mbtn.setVisibility(View.GONE);
 
-                                LinearLayout first_mbtn = jobApplicationView.findViewById(R.id.first_mbtn);
+                                MaterialButton first_mbtn = jobApplicationView.findViewById(R.id.first_mbtn);
                                 first_mbtn.setVisibility(View.GONE);
 
                                 main_ll.addView(jobApplicationView);

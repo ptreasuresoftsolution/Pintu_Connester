@@ -80,6 +80,7 @@ public class CommonFunction {
 
     public static void PleaseWaitShowMessage(String message) {
         try {
+            if (progressDialog != null)
             progressDialog.setMessage(message);
         } catch (Exception e) {
             Log.e(LogTag.EXCEPTION, "Update Progress Alert", e);

@@ -35,6 +35,7 @@ public class MemberRequestFragment extends Fragment {
     FrameLayout progressBar;
     ScrollView scrollView;
     HashMap hashMapMain = new HashMap();
+
     public MemberRequestFragment(ScrollView scrollView, String communityMasterId, FrameLayout progressBar) {
         this.scrollView = scrollView;
         this.communityMasterId = communityMasterId;
@@ -44,17 +45,18 @@ public class MemberRequestFragment extends Fragment {
     LinearLayout main_ll;
     ApiInterface apiInterface;
     SessionPref sessionPref;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        sessionPref = new SessionPref(getContext());
         hashMapMain.put("user_master_id", sessionPref.getUserMasterId());
         hashMapMain.put("apiKey", sessionPref.getApiKey());
         hashMapMain.put("device", "ANDROID");
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         // Inflate the layout for this fragment
-        View view  = inflater.inflate(R.layout.fragment_member_request, container, false);
+        View view = inflater.inflate(R.layout.fragment_member_request, container, false);
 
         main_ll = view.findViewById(R.id.main_ll);
         main_ll.removeAllViews();

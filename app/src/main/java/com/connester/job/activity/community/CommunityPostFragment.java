@@ -58,7 +58,6 @@ public class CommunityPostFragment extends Fragment {
 
         feeds_add_ly = view.findViewById(R.id.feeds_add_ly);
         feeds_add_ly.setVisibility(View.GONE);
-        CommonFunction.PleaseWaitShow(context);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());

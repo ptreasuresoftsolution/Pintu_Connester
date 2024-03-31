@@ -590,7 +590,6 @@ public class NetworkActivity extends AppCompatActivity {
     //list option dialog open full screen
 
     private void openNetworkListMenu() {
-        CommonFunction.PleaseWaitShow(context);
         Dialog dialog = new Dialog(activity, android.R.style.Theme_Translucent_NoTitleBar);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.network_list_menu_dialog);
@@ -794,6 +793,7 @@ public class NetworkActivity extends AppCompatActivity {
         });
 
         dialog.show();
+        CommonFunction.PleaseWaitShow(context);
     }
 
     private BaseAdapter getBusPageAdapter(NetworkSeeAllCommonResponse.BusinessPagesListResponse businessPagesListResponse) {

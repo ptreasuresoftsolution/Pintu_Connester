@@ -106,7 +106,7 @@ public class PagePeopleFragment extends Fragment {
                                     });
                                 });
 
-                                LinearLayout first_mbtn = jobApplicationView.findViewById(R.id.first_mbtn);
+                                MaterialButton first_mbtn = jobApplicationView.findViewById(R.id.first_mbtn);
                                 first_mbtn.setVisibility(View.GONE);
 
                                 main_ll.addView(jobApplicationView);

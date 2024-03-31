@@ -80,6 +80,7 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
     MaterialButton details_mbtn, setting_open_mbtn;
     ScrollView scrollView;
     FrameLayout progressBar;
+    GroupMembersFragment groupMembersFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,14 +147,15 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
         setData();
 
         tab_layout = findViewById(R.id.tab_layout);
+        groupMembersFragment = new GroupMembersFragment(scrollView, community_master_id, progressBar);
 
         fragments.add(new GroupPostFragment(scrollView, community_master_id, progressBar));
         fragmentsTitle.add("Posts");
-        fragments.add(new GroupMembersFragment(scrollView,community_master_id, progressBar));
+        fragments.add(groupMembersFragment);
         fragmentsTitle.add("Group Members");
         fragments.add(new MemberRequestFragment(scrollView, community_master_id, progressBar));
         fragmentsTitle.add("Member Request");
-
+        tab_layout.getTabAt(2).view.setVisibility(View.GONE);
         tab_layout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -175,7 +177,6 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
     }
 
     private void openGroupDetailsDialog() {
-        CommonFunction.PleaseWaitShow(context);
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.group_details_view_dialog);
@@ -268,7 +269,6 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
     }
 
     private void openBlockingMemberListDialog() {
-        CommonFunction.PleaseWaitShow(context);
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.list_view_dialog);
@@ -304,6 +304,7 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
             }
         });
         dialog.show();
+        CommonFunction.PleaseWaitShow(context);
     }
 
     private ListAdapter getBlockedMemberGroupAdapter(GroupMembersListResponse groupMembersListResponse) {
@@ -363,6 +364,9 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
                                 if (response.body() != null) {
                                     NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                     if (normalCommonResponse.status) {
+                                        if (groupMembersFragment != null) {
+                                            groupMembersFragment.actionCallBack.callBack();
+                                        }
                                         removeItem(position);
                                     }
                                     Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
@@ -388,7 +392,6 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
     ImageView d_group_banner_iv, d_group_logo_iv;
 
     private void openGroupEditDialog() {
-        CommonFunction.PleaseWaitShow(context);
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.group_create_manage_dialog);
@@ -559,8 +562,16 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
                                 //set icon
                                 if (groupRow.type.equalsIgnoreCase("PUBLIC")) {
                                     privacy_img.setImageResource(R.drawable.people_fill_public);
+                                    if (tab_layout != null) {
+                                        if (tab_layout.getSelectedTabPosition() == 2){
+                                            tab_layout.selectTab(tab_layout.getTabAt(1));
+                                        }
+                                        tab_layout.getTabAt(2).view.setVisibility(View.GONE);
+                                    }
                                 } else {
                                     privacy_img.setImageResource(R.drawable.person_fill_lock_private);
+                                    if (tab_layout != null)
+                                        tab_layout.getTabAt(2).view.setVisibility(View.VISIBLE);
                                 }
                             }
                         } else {

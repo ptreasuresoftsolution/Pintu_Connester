@@ -130,7 +130,6 @@ public class MyCommunityActivity extends AppCompatActivity {
     ImageView group_banner_iv, group_logo_iv;
 
     private void createGroupDialogOpen() {
-        CommonFunction.PleaseWaitShow(context);
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.group_create_manage_dialog);
@@ -169,10 +168,12 @@ public class MyCommunityActivity extends AppCompatActivity {
                 try {
                     if (groupLogoFile == null) {
                         Toast.makeText(context, "Please select logo!", Toast.LENGTH_SHORT).show();
+                        CommonFunction.dismissDialog();
                         return;
                     }
                     if (groupBannerFile == null) {
                         Toast.makeText(context, "Please select banner!", Toast.LENGTH_SHORT).show();
+                        CommonFunction.dismissDialog();
                         return;
                     }
                     File imgFileLogo = new Compressor(context)
@@ -232,6 +233,8 @@ public class MyCommunityActivity extends AppCompatActivity {
                         }
                     });
                 } catch (Exception e) {
+                    CommonFunction.dismissDialog();
+                    Toast.makeText(context, "Request Create group fail!", Toast.LENGTH_LONG).show();
                     Log.e(LogTag.EXCEPTION, "Image Compress from Business page create Exception", e);
                 }
             }

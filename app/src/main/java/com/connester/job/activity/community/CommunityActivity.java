@@ -279,7 +279,6 @@ public class CommunityActivity extends AppCompatActivity {
     }
 
     private void openGroupDetailsDialog() {
-        CommonFunction.PleaseWaitShow(context);
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.group_details_view_dialog);

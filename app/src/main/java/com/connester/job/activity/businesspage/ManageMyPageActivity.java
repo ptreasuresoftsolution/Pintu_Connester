@@ -248,7 +248,6 @@ public class ManageMyPageActivity extends AppCompatActivity {
     List<Integer> skillList = new ArrayList<>();
 
     private void openPageEditDialog() {
-        CommonFunction.PleaseWaitShow(context);
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.page_create_manage_dialog);

@@ -47,11 +47,11 @@ import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.OurEventPostRow;
 import com.connester.job.RetrofitConnection.jsontogson.OurJobPostRow;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
-import com.connester.job.activity.business.BusinessActivity;
-import com.connester.job.activity.community.CommunityActivity;
 import com.connester.job.activity.EditProfileActivity;
 import com.connester.job.activity.FeedFullViewActivity;
 import com.connester.job.activity.ProfileActivity;
+import com.connester.job.activity.business.BusinessActivity;
+import com.connester.job.activity.community.CommunityActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.CustomPager;
@@ -914,7 +914,7 @@ public class FeedsMaster {
                     @Override
                     public void onClick(View v) {
                         //call feeds save unsave api and set related icon (use feedMasterId / isSave)
-                        CommonFunction.PleaseWaitShow(context);
+                        //CommonFunction.PleaseWaitShow(context);
                         HashMap hashMap = new HashMap();
                         hashMap.put("user_master_id", sessionPref.getUserMasterId());
                         hashMap.put("apiKey", sessionPref.getApiKey());
@@ -1066,7 +1066,7 @@ public class FeedsMaster {
             @Override
             public void onClick(View v) {
                 //call feeds save unsave api and set related icon (use feedMasterId / isSave)
-                CommonFunction.PleaseWaitShow(context);
+                //CommonFunction.PleaseWaitShow(context);
                 HashMap hashMap = new HashMap();
                 hashMap.put("user_master_id", sessionPref.getUserMasterId());
                 hashMap.put("apiKey", sessionPref.getApiKey());
@@ -1102,7 +1102,7 @@ public class FeedsMaster {
             @Override
             public void onClick(View v) {
                 //call close api and remove feeds in list (use feedMasterId)
-                CommonFunction.PleaseWaitShow(context);
+                //CommonFunction.PleaseWaitShow(context);
                 HashMap hashMap = new HashMap();
                 hashMap.put("user_master_id", sessionPref.getUserMasterId());
                 hashMap.put("apiKey", sessionPref.getApiKey());
@@ -1299,7 +1299,7 @@ public class FeedsMaster {
         View.OnClickListener likeApiCall = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CommonFunction.PleaseWaitShow(context);
+                //CommonFunction.PleaseWaitShow(context);
                 HashMap hashMap = new HashMap();
                 hashMap.put("user_master_id", sessionPref.getUserMasterId());
                 hashMap.put("apiKey", sessionPref.getApiKey());
@@ -1337,7 +1337,6 @@ public class FeedsMaster {
         };
         like_iv.setOnClickListener(likeApiCall);
 
-        //comment (remain bottom dialog for list and add)
         comment_counter_txt.setText(feedsRow.comments);
         comment_iv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1348,7 +1347,7 @@ public class FeedsMaster {
                 View view = LayoutInflater.from(context).inflate(R.layout.feeds_comment_list_dialog_layout, null);
                 LinearLayout comment_ll = view.findViewById(R.id.comment_ll);
                 NestedScrollView nestedScrollView_commentList = view.findViewById(R.id.nestedScrollView_commentList);
-                loadCommentList(nestedScrollView_commentList, comment_ll, loginUserRow, feedsRow);
+                loadCommentList(nestedScrollView_commentList, comment_ll, loginUserRow, feedsRow, comment_counter_txt);
                 //comment place submit
                 ImageView loginUser_pic = view.findViewById(R.id.loginUser_pic);
                 Glide.with(context).load(imgPath + loginUserRow.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(loginUser_pic);
@@ -1357,7 +1356,7 @@ public class FeedsMaster {
                 comment_submit_iv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        CommonFunction.PleaseWaitShow(context);
+                        //CommonFunction.PleaseWaitShow(context);
                         HashMap hashMap = new HashMap();
                         hashMap.put("user_master_id", sessionPref.getUserMasterId());
                         hashMap.put("apiKey", sessionPref.getApiKey());
@@ -1371,7 +1370,7 @@ public class FeedsMaster {
                                     if (response.body() != null) {
                                         NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                         if (normalCommonResponse.status) {
-                                            loadCommentList(nestedScrollView_commentList, comment_ll, loginUserRow, feedsRow);
+                                            loadCommentList(nestedScrollView_commentList, comment_ll, loginUserRow, feedsRow, comment_counter_txt);
                                         } else {
                                             Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                                         }
@@ -1431,9 +1430,9 @@ public class FeedsMaster {
         });
     }
 
-    private void loadCommentList(NestedScrollView nestedScrollView_commentList, LinearLayout commentLl, UserRowResponse.Dt loginUserRow, FeedsRow feedsRow) {
+    private void loadCommentList(NestedScrollView nestedScrollView_commentList, LinearLayout commentLl, UserRowResponse.Dt loginUserRow, FeedsRow feedsRow, TextView comment_counter_txt) {
         commentLl.removeAllViews();
-        CommonFunction.PleaseWaitShow(context);
+        //CommonFunction.PleaseWaitShow(context);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
@@ -1447,7 +1446,9 @@ public class FeedsMaster {
                         FeedsCommentListResponse feedsCommentListResponse = (FeedsCommentListResponse) response.body();
                         if (feedsCommentListResponse.status) {
                             String imgPath = feedsCommentListResponse.imgPath;
-
+                            if (comment_counter_txt != null) {
+                                comment_counter_txt.setText(String.valueOf(feedsCommentListResponse.totalComment));
+                            }
                             new MyListRowSet(commentLl, feedsCommentListResponse.commentsRows, context) {
                                 @SuppressLint("MissingInflatedId")
                                 @Override
@@ -1614,7 +1615,7 @@ public class FeedsMaster {
                         @Override
                         public void onClick(View v) {
                             //call close api and remove feeds in list (use feedMasterId)
-                            CommonFunction.PleaseWaitShow(context);
+                            //CommonFunction.PleaseWaitShow(context);
                             HashMap hashMap = new HashMap();
                             hashMap.put("user_master_id", sessionPref.getUserMasterId());
                             hashMap.put("apiKey", sessionPref.getApiKey());
@@ -1649,7 +1650,7 @@ public class FeedsMaster {
                     @Override
                     public void onClick(View v) {
                         //call feeds save unsave api and set related icon (use feedMasterId / isSave)
-                        CommonFunction.PleaseWaitShow(context);
+                        //CommonFunction.PleaseWaitShow(context);
                         HashMap hashMap = new HashMap();
                         hashMap.put("user_master_id", sessionPref.getUserMasterId());
                         hashMap.put("apiKey", sessionPref.getApiKey());
@@ -1705,7 +1706,7 @@ public class FeedsMaster {
                         @Override
                         public void onClick(View v) {
                             //call unfollow profile and remove item in feed list(use feedsRowOptionalId/feedsRow.feedFor)
-                            CommonFunction.PleaseWaitShow(context);
+                            //CommonFunction.PleaseWaitShow(context);
                             HashMap hashMap = new HashMap();
                             hashMap.put("user_master_id", sessionPref.getUserMasterId());
                             hashMap.put("apiKey", sessionPref.getApiKey());
@@ -1872,7 +1873,6 @@ public class FeedsMaster {
         if (jobEventId != null) {
             title.setText("Edit a job");
             remove_mbtn.setVisibility(View.VISIBLE);
-            CommonFunction.PleaseWaitShow(context);
             HashMap hashMap = new HashMap();
             hashMap.put("user_master_id", sessionPref.getUserMasterId());
             hashMap.put("apiKey", sessionPref.getApiKey());
@@ -2034,11 +2034,16 @@ public class FeedsMaster {
                     }
                 });
             } catch (Exception e) {
+                CommonFunction.dismissDialog();
+                Toast.makeText(context, "request send Fail! Image issue", Toast.LENGTH_LONG).show();
                 Log.e(LogTag.EXCEPTION, "Image Compress from Business page create Exception", e);
             }
         });
 
         dialog.show();
+        if (jobEventId != null){
+            CommonFunction.PleaseWaitShow(context);
+        }
     }
 
     public void openAddEventDialog() {
@@ -2080,7 +2085,6 @@ public class FeedsMaster {
         HashMap hashMapDefault = new HashMap();
         hashMapDefault.put("user_master_id", sessionPref.getUserMasterId());
         hashMapDefault.put("apiKey", sessionPref.getApiKey());
-        CommonFunction.PleaseWaitShow(context);
         apiInterface.GET_SKILL_TBL(hashMapDefault).enqueue(new MyApiCallback() {
             @Override
             public void onResponse(Call call, Response response) {
@@ -2173,7 +2177,6 @@ public class FeedsMaster {
             //edit job
             title.setText("Edit a job");
             remove_mbtn.setVisibility(View.VISIBLE);
-            CommonFunction.PleaseWaitShow(context);
             HashMap hashMap = new HashMap();
             hashMap.put("user_master_id", sessionPref.getUserMasterId());
             hashMap.put("apiKey", sessionPref.getApiKey());
@@ -2296,6 +2299,8 @@ public class FeedsMaster {
             });
 
         dialog.show();
+
+        CommonFunction.PleaseWaitShow(context);
     }
 
     private void setSelectedSkills(List<String> fullList, String selectedSkills) {
