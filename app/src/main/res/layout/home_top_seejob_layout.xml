@@ -21,13 +21,14 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_marginBottom="12dp"
                 android:text="See best\nmatch jobs for you"
                 android:textColor="@color/secondary_5"
-                android:textSize="24dp" />
+                android:textSize="20dp" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/open_jobs"
                 android:layout_width="wrap_content"
                 android:layout_height="45dp"
                 android:backgroundTint="@color/primary_dark"

@@ -7,8 +7,8 @@ import java.io.File;
 
 public class Constant {
 
-    public static String DOMAIN = "https://androtech.online";
-//    public static String DOMAIN = "http://192.168.29.235";
+//    public static String DOMAIN = "https://androtech.online";
+    public static String DOMAIN = "http://192.168.29.235";
     public static String userEmail = "user@connester.com";
     public static String channel_id = "Connester";
 

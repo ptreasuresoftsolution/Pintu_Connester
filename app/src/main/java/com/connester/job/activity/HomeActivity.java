@@ -1,5 +1,6 @@
 package com.connester.job.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -20,6 +21,7 @@ import com.connester.job.R;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 import com.connester.job.module.SetTopBottomBar;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 
@@ -32,7 +34,7 @@ public class HomeActivity extends AppCompatActivity {
     ScrollView scrollView;
     FrameLayout progressBar;
     SetTopBottomBar setTopBottomBar;
-
+MaterialButton open_jobs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +49,10 @@ public class HomeActivity extends AppCompatActivity {
         feeds_mainList = findViewById(R.id.feeds_mainList);
         scrollView = findViewById(R.id.scrollView);
         progressBar = findViewById(R.id.progressBar);
-
+        open_jobs = findViewById(R.id.open_jobs);
+        open_jobs.setOnClickListener(v -> {
+            context.startActivity(new Intent(context, JobsEvents_Activity.class));
+        });
 
         feedsMaster = new FeedsMaster(context, activity);
         feedsMaster.setChkClose(true);
@@ -125,9 +130,9 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
-        onBackPressed();
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
         alertDialog.setMessage("Are you sure to exit?");
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -140,8 +145,7 @@ public class HomeActivity extends AppCompatActivity {
         alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                HomeActivity.super.onBackPressed();
-                ActivityCompat.finishAffinity(HomeActivity.this);
+                dialog.cancel();
             }
         });
         alertDialog.show();

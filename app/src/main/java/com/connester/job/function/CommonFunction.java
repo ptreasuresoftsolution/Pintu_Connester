@@ -81,7 +81,7 @@ public class CommonFunction {
     public static void PleaseWaitShowMessage(String message) {
         try {
             if (progressDialog != null)
-            progressDialog.setMessage(message);
+                progressDialog.setMessage(message);
         } catch (Exception e) {
             Log.e(LogTag.EXCEPTION, "Update Progress Alert", e);
         }
@@ -584,6 +584,7 @@ public class CommonFunction {
     public static String getFileExtension(String url) {
         return url.substring(url.lastIndexOf(".") + 1);
     }
+
     public static String getVersionCode(Context context) {
         try {
             return String.valueOf(context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);
