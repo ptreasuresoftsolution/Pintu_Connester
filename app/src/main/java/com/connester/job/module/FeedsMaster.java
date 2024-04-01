@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -62,6 +63,9 @@ import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.MyListRowSet;
 import com.connester.job.function.ScrollBottomListener;
 import com.connester.job.function.SessionPref;
+import com.connester.job.plugins.multipleselectedspinner.KeyPairBoolData;
+import com.connester.job.plugins.multipleselectedspinner.MultiSpinnerListener;
+import com.connester.job.plugins.multipleselectedspinner.MultiSpinnerSearch;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
@@ -87,7 +91,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -2049,7 +2052,7 @@ public class FeedsMaster {
         });
 
         dialog.show();
-        if (jobEventId != null){
+        if (jobEventId != null) {
             CommonFunction.PleaseWaitShow(context);
         }
     }
@@ -2059,12 +2062,12 @@ public class FeedsMaster {
     }
 
     private Calendar expireDateCalendar;
-    private boolean[] selectedSkill;
-    private List<Integer> skillList = new ArrayList<>();
     private List<String> fullSkills = null;
     private String slSkill = null;
 
     private void openEditJobDialog(String jobPostId, View feedView) {
+        slSkill = null;
+        fullSkills = null;
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.job_add_edit_manage_dialog);
@@ -2089,7 +2092,8 @@ public class FeedsMaster {
         Spinner payroll_sp = dialog.findViewById(R.id.payroll_sp);
         EditText job_salary_et = dialog.findViewById(R.id.job_salary_et);
         EditText experience_et = dialog.findViewById(R.id.experience_et);
-        TextView skills_selected = dialog.findViewById(R.id.skills_selected);
+
+        MultiSpinnerSearch skills_selected = dialog.findViewById(R.id.skills_selected);
         HashMap hashMapDefault = new HashMap();
         hashMapDefault.put("user_master_id", sessionPref.getUserMasterId());
         hashMapDefault.put("apiKey", sessionPref.getApiKey());
@@ -2103,63 +2107,63 @@ public class FeedsMaster {
                         if (normalCommonResponse.status) {
                             fullSkills = normalCommonResponse.dt;
 
-                            selectedSkill = new boolean[normalCommonResponse.dt.size()];
-                            String dt[] = normalCommonResponse.dt.toArray(new String[normalCommonResponse.dt.size()]);
-                            setSelectedSkills(fullSkills, slSkill);
-                            skills_selected.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
-                                    builder.setTitle("Select Skills");
-                                    builder.setCancelable(false);
+                            // Pass true If you want searchView above the list. Otherwise false. default = true.
+                            skills_selected.setSearchEnabled(true);
 
-                                    builder.setMultiChoiceItems(dt, selectedSkill, new DialogInterface.OnMultiChoiceClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                                            if (b) {
-                                                skillList.add(i);
-                                                Collections.sort(skillList);
-                                            } else {
-                                                skillList.remove(Integer.valueOf(i));
-                                            }
-                                        }
-                                    });
+                            // A text that will display in search hint.
+                            skills_selected.setSearchHint("Select your skill");
 
-                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            StringBuilder stringBuilder = new StringBuilder();
-                                            for (int j = 0; j < skillList.size(); j++) {
-                                                stringBuilder.append(dt[skillList.get(j)]);
-                                                if (j != skillList.size() - 1) {
-                                                    stringBuilder.append(", ");
-                                                }
-                                            }
-                                            // set text on textView
-                                            skills_selected.setText(stringBuilder.toString());
-                                        }
-                                    });
+                            // Set text that will display when search result not found...
+                            skills_selected.setEmptyTitle("Not Data Found!");
 
-                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            // dismiss dialog
-                                            dialogInterface.dismiss();
-                                        }
-                                    });
-                                    builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            // use for loop
-                                            Arrays.fill(selectedSkill, false);
-                                            skillList.clear();
-                                            skills_selected.setText("");
-                                        }
-                                    });
-                                    // show dialog
-                                    builder.show();
+
+                            //A text that will display in clear text button
+                            skills_selected.setClearText("Close & Clear");
+                            if (jobPostId == null) {
+                                //create arrayList of key with select or not
+                                List<KeyPairBoolData> listArray = new ArrayList<>();
+                                for (String skillItem : normalCommonResponse.dt) {
+                                    listArray.add(new KeyPairBoolData(skillItem, false));
                                 }
-                            });
+
+                                // Removed second parameter, position. Its not required now..
+                                // If you want to pass preselected items, you can do it while making listArray,
+                                // Pass true in setSelected of any item that you want to preselect
+                                skills_selected.setItems(listArray, new MultiSpinnerListener() {
+                                    @Override
+                                    public void onItemsSelected(List<KeyPairBoolData> items) {
+                                        for (int i = 0; i < items.size(); i++) {
+                                            if (items.get(i).isSelected()) {
+                                                Log.d(LogTag.CHECK_DEBUG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
+                                            }
+                                        }
+                                    }
+                                });
+                            } else if (jobPostId != null && slSkill != null && fullSkills != null) {
+                                ArrayList<String> selectedSkill = new ArrayList<>();
+                                //default selected
+                                if (slSkill != null) {
+                                    selectedSkill.addAll(Arrays.asList(slSkill.split(",")));
+                                }
+                                //create arrayList of key with select or not
+                                List<KeyPairBoolData> listArray = new ArrayList<>();
+                                for (String skillItem : normalCommonResponse.dt) {
+                                    if (selectedSkill.indexOf(skillItem) >= 0)
+                                        listArray.add(new KeyPairBoolData(skillItem, true));
+                                    else
+                                        listArray.add(new KeyPairBoolData(skillItem, false));
+                                }
+                                skills_selected.setItems(listArray, new MultiSpinnerListener() {
+                                    @Override
+                                    public void onItemsSelected(List<KeyPairBoolData> items) {
+                                        for (int i = 0; i < items.size(); i++) {
+                                            if (items.get(i).isSelected()) {
+                                                Log.d(LogTag.CHECK_DEBUG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
+                                            }
+                                        }
+                                    }
+                                });
+                            }
                         }
                     }
                 }
@@ -2223,8 +2227,31 @@ public class FeedsMaster {
 
                                 if (ourJobPostRow.dt.skills != null) {
                                     slSkill = ourJobPostRow.dt.skills;
-                                    setSelectedSkills(fullSkills, slSkill);
-                                    skills_selected.setText(ourJobPostRow.dt.skills.replace(",", ", "));
+                                    if (jobPostId != null && slSkill != null && fullSkills != null) {
+                                        ArrayList<String> selectedSkill = new ArrayList<>();
+                                        //default selected
+                                        if (slSkill != null) {
+                                            selectedSkill.addAll(Arrays.asList(slSkill.split(",")));
+                                        }
+                                        //create arrayList of key with select or not
+                                        List<KeyPairBoolData> listArray = new ArrayList<>();
+                                        for (String skillItem : fullSkills) {
+                                            if (selectedSkill.indexOf(skillItem) >= 0)
+                                                listArray.add(new KeyPairBoolData(skillItem, true));
+                                            else
+                                                listArray.add(new KeyPairBoolData(skillItem, false));
+                                        }
+                                        skills_selected.setItems(listArray, new MultiSpinnerListener() {
+                                            @Override
+                                            public void onItemsSelected(List<KeyPairBoolData> items) {
+                                                for (int i = 0; i < items.size(); i++) {
+                                                    if (items.get(i).isSelected()) {
+                                                        Log.d(LogTag.CHECK_DEBUG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
                                 }
 
                                 if (ourJobPostRow.dt.postExpire != null) {
@@ -2242,6 +2269,11 @@ public class FeedsMaster {
         save_mbtn.setOnClickListener(v -> {
             //add or edit call
             CommonFunction.PleaseWaitShow(context);
+            ArrayList<String> selectedSkills = new ArrayList<>();
+            for (KeyPairBoolData keyPairBoolData : skills_selected.getSelectedItems()) {
+                selectedSkills.add(keyPairBoolData.getName());
+            }
+
             HashMap hashMap = new HashMap();
             hashMap.put("user_master_id", sessionPref.getUserMasterId());
             hashMap.put("apiKey", sessionPref.getApiKey());
@@ -2258,7 +2290,7 @@ public class FeedsMaster {
             hashMap.put("salary_payroll", Arrays.asList(payRoll).get(payroll_sp.getSelectedItemPosition()));
             hashMap.put("salary", job_salary_et.getText().toString());
             hashMap.put("requirements", experience_et.getText().toString());//experience
-            hashMap.put("skills", skills_selected.getText().toString().replace(", ", ","));
+            hashMap.put("skills", TextUtils.join(",", selectedSkills.toArray(new String[selectedSkills.size()])));
             hashMap.put("post_expire", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", expire_et.getText().toString()));
             hashMap.put("job_description", description_et.getText().toString());
 
@@ -2311,17 +2343,6 @@ public class FeedsMaster {
         CommonFunction.PleaseWaitShow(context);
     }
 
-    private void setSelectedSkills(List<String> fullList, String selectedSkills) {
-        if (fullList != null && selectedSkills != null) {
-            for (String skill : selectedSkills.split(",")) {
-                int ind = fullList.indexOf(skill);
-                if (ind >= 0) {
-                    selectedSkill[ind] = true;
-                    skillList.add(ind);
-                }
-            }
-        }
-    }
 
     public void openAddJobDialog() {
         openEditJobDialog(null, null);

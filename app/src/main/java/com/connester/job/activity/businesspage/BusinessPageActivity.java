@@ -1,13 +1,12 @@
 package com.connester.job.activity.businesspage;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -36,14 +35,15 @@ import com.connester.job.function.FilePath;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
+import com.connester.job.plugins.multipleselectedspinner.KeyPairBoolData;
+import com.connester.job.plugins.multipleselectedspinner.MultiSpinnerListener;
+import com.connester.job.plugins.multipleselectedspinner.MultiSpinnerSearch;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -163,7 +163,8 @@ public class BusinessPageActivity extends AppCompatActivity {
         EditText location_input = dialog.findViewById(R.id.location_input);
         EditText description_et = dialog.findViewById(R.id.description_et);
 
-        TextView skills_selected = dialog.findViewById(R.id.skills_selected);
+        MultiSpinnerSearch skills_selected = dialog.findViewById(R.id.skills_selected);
+
         HashMap hashMapDefault = new HashMap();
         hashMapDefault.put("user_master_id", sessionPref.getUserMasterId());
         hashMapDefault.put("apiKey", sessionPref.getApiKey());
@@ -176,60 +177,36 @@ public class BusinessPageActivity extends AppCompatActivity {
                     if (response.body() != null) {
                         NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                         if (normalCommonResponse.status) {
-                            selectedSkill = new boolean[normalCommonResponse.dt.size()];
-                            String dt[] = normalCommonResponse.dt.toArray(new String[normalCommonResponse.dt.size()]);
-                            skills_selected.setOnClickListener(new View.OnClickListener() {
+                            // Pass true If you want searchView above the list. Otherwise false. default = true.
+                            skills_selected.setSearchEnabled(true);
+
+                            // A text that will display in search hint.
+                            skills_selected.setSearchHint("Select your skill");
+
+                            // Set text that will display when search result not found...
+                            skills_selected.setEmptyTitle("Not Data Found!");
+
+
+                            //A text that will display in clear text button
+                            skills_selected.setClearText("Close & Clear");
+
+                            //create arrayList of key with select or not
+                            List<KeyPairBoolData> listArray = new ArrayList<>();
+                            for (String skillItem : normalCommonResponse.dt) {
+                                    listArray.add(new KeyPairBoolData(skillItem, false));
+                            }
+
+                            // Removed second parameter, position. Its not required now..
+                            // If you want to pass preselected items, you can do it while making listArray,
+                            // Pass true in setSelected of any item that you want to preselect
+                            skills_selected.setItems(listArray, new MultiSpinnerListener() {
                                 @Override
-                                public void onClick(View view) {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                    builder.setTitle("Select Skills");
-                                    builder.setCancelable(false);
-
-                                    builder.setMultiChoiceItems(dt, selectedSkill, new DialogInterface.OnMultiChoiceClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                                            if (b) {
-                                                skillList.add(i);
-                                                Collections.sort(skillList);
-                                            } else {
-                                                skillList.remove(Integer.valueOf(i));
-                                            }
+                                public void onItemsSelected(List<KeyPairBoolData> items) {
+                                    for (int i = 0; i < items.size(); i++) {
+                                        if (items.get(i).isSelected()) {
+                                            Log.d(LogTag.CHECK_DEBUG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
                                         }
-                                    });
-
-                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            StringBuilder stringBuilder = new StringBuilder();
-                                            for (int j = 0; j < skillList.size(); j++) {
-                                                stringBuilder.append(dt[skillList.get(j)]);
-                                                if (j != skillList.size() - 1) {
-                                                    stringBuilder.append(", ");
-                                                }
-                                            }
-                                            // set text on textView
-                                            skills_selected.setText(stringBuilder.toString());
-                                        }
-                                    });
-
-                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            // dismiss dialog
-                                            dialogInterface.dismiss();
-                                        }
-                                    });
-                                    builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            // use for loop
-                                            Arrays.fill(selectedSkill, false);
-                                            skillList.clear();
-                                            skills_selected.setText("");
-                                        }
-                                    });
-                                    // show dialog
-                                    builder.show();
+                                    }
                                 }
                             });
                         }
@@ -272,6 +249,11 @@ public class BusinessPageActivity extends AppCompatActivity {
 
                     CommonFunction.PleaseWaitShowMessage("Files is compressed completed");
 
+                    ArrayList<String> selectedSkills = new ArrayList<>();
+                    for (KeyPairBoolData keyPairBoolData : skills_selected.getSelectedItems()) {
+                        selectedSkills.add(keyPairBoolData.getName());
+                    }
+
                     MultipartBody.Builder builder = new MultipartBody.Builder();
                     builder.setType(MultipartBody.FORM)
                             .addFormDataPart("user_master_id", sessionPref.getUserMasterId())
@@ -286,7 +268,7 @@ public class BusinessPageActivity extends AppCompatActivity {
                             .addFormDataPart("phone", phone_number_input.getText().toString())
                             .addFormDataPart("address", location_input.getText().toString())
                             .addFormDataPart("description", description_et.getText().toString())
-                            .addFormDataPart("skills", skills_selected.getText().toString());
+                            .addFormDataPart("skills", TextUtils.join(",", selectedSkills.toArray(new String[selectedSkills.size()])));
 
                     builder.addFormDataPart("logo", imgFileLogo.getName(),
                             RequestBody.create(MediaType.parse(FilePath.getMimeType(imgFileLogo)), imgFileLogo));
@@ -328,6 +310,4 @@ public class BusinessPageActivity extends AppCompatActivity {
         CommonFunction.PleaseWaitShow(context);
     }
 
-    boolean[] selectedSkill;
-    List<Integer> skillList = new ArrayList<>();
 }

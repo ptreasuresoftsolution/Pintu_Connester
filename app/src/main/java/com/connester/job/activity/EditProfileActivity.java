@@ -1,11 +1,9 @@
 package com.connester.job.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -63,7 +61,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -313,10 +310,7 @@ public class EditProfileActivity extends AppCompatActivity {
         });
     }
 
-    boolean[] selectedLanguage;
-    List<Integer> languageList = new ArrayList<>();
-
-    private void openEditLanguageDialog() {
+    private void openEditLanguageDialog(){
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.editprofile_language_dialog);
@@ -327,9 +321,7 @@ public class EditProfileActivity extends AppCompatActivity {
             dialog.dismiss();
         });
 
-        TextView language_selected = dialog.findViewById(R.id.language_selected);
-        if (userDt.language != null)
-            language_selected.setText(userDt.language.replace(",", ", "));
+        MultiSpinnerSearch language_selected = dialog.findViewById(R.id.language_selected);
         apiInterface.GET_LANGUAGE_TBL(hashMapDefault).enqueue(new MyApiCallback() {
             @Override
             public void onResponse(Call call, Response response) {
@@ -338,70 +330,45 @@ public class EditProfileActivity extends AppCompatActivity {
                     if (response.body() != null) {
                         NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                         if (normalCommonResponse.status) {
+                            // Pass true If you want searchView above the list. Otherwise false. default = true.
+                            language_selected.setSearchEnabled(true);
 
-                            selectedLanguage = new boolean[normalCommonResponse.dt.size()];
-                            String languageDt[] = new String[normalCommonResponse.dt.size()];
-                            String dt[] = normalCommonResponse.dt.toArray(languageDt);
-                            if (userDt.language != null)
-                                for (String language : userDt.language.split(",")) {
-                                    int ind = normalCommonResponse.dt.indexOf(language);
-                                    if (ind >= 0) {
-                                        selectedLanguage[ind] = true;
-                                        languageList.add(ind);
-                                    }
-                                }
-                            language_selected.setOnClickListener(new View.OnClickListener() {
+                            // A text that will display in search hint.
+                            language_selected.setSearchHint("Select your Languages");
+
+                            // Set text that will display when search result not found...
+                            language_selected.setEmptyTitle("Not Data Found!");
+
+
+                            //A text that will display in clear text button
+                            language_selected.setClearText("Close & Clear");
+
+                            ArrayList<String> selectedLanguage = new ArrayList<>();
+                            //default selected
+                            if (userDt.language != null) {
+                                selectedLanguage.addAll(Arrays.asList(userDt.language.split(",")));
+                            }
+                            //create arrayList of key with select or not
+                            List<KeyPairBoolData> listArray = new ArrayList<>();
+                            for (String LanguageItem : normalCommonResponse.dt) {
+                                if (selectedLanguage.indexOf(LanguageItem) >= 0)
+                                    listArray.add(new KeyPairBoolData(LanguageItem, true));
+                                else
+                                    listArray.add(new KeyPairBoolData(LanguageItem, false));
+                            }
+
+
+                            // Removed second parameter, position. Its not required now..
+                            // If you want to pass preselected items, you can do it while making listArray,
+                            // Pass true in setSelected of any item that you want to preselect
+                            language_selected.setItems(listArray, new MultiSpinnerListener() {
                                 @Override
-                                public void onClick(View view) {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                    builder.setTitle("Select language");
-                                    builder.setCancelable(false);
-
-                                    builder.setMultiChoiceItems(dt, selectedLanguage, new DialogInterface.OnMultiChoiceClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                                            if (b) {
-                                                languageList.add(i);
-                                                Collections.sort(languageList);
-                                            } else {
-                                                languageList.remove(Integer.valueOf(i));
-                                            }
+                                public void onItemsSelected(List<KeyPairBoolData> items) {
+                                    for (int i = 0; i < items.size(); i++) {
+                                        if (items.get(i).isSelected()) {
+                                            Log.d(LogTag.CHECK_DEBUG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
                                         }
-                                    });
-
-                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            StringBuilder stringBuilder = new StringBuilder();
-                                            for (int j = 0; j < languageList.size(); j++) {
-                                                stringBuilder.append(dt[languageList.get(j)]);
-                                                if (j != languageList.size() - 1) {
-                                                    stringBuilder.append(", ");
-                                                }
-                                            }
-                                            // set text on textView
-                                            language_selected.setText(stringBuilder.toString());
-                                        }
-                                    });
-
-                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            // dismiss dialog
-                                            dialogInterface.dismiss();
-                                        }
-                                    });
-                                    builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            // use for loop
-                                            Arrays.fill(selectedLanguage, false);
-                                            languageList.clear();
-                                            language_selected.setText("");
-                                        }
-                                    });
-                                    // show dialog
-                                    builder.show();
+                                    }
                                 }
                             });
                         }
@@ -413,11 +380,16 @@ public class EditProfileActivity extends AppCompatActivity {
         MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
         save_mbtn.setOnClickListener(v -> {
             CommonFunction.PleaseWaitShow(context);
+            ArrayList<String> selectedLanguages = new ArrayList<>();
+            for (KeyPairBoolData keyPairBoolData : language_selected.getSelectedItems()) {
+                selectedLanguages.add(keyPairBoolData.getName());
+            }
+
             HashMap hashMap = new HashMap();
             hashMap.put("user_master_id", sessionPref.getUserMasterId());
             hashMap.put("apiKey", sessionPref.getApiKey());
             hashMap.put("key", "language");
-            hashMap.put("val", language_selected.getText().toString().replace(", ", ","));
+            hashMap.put("val", TextUtils.join(",", selectedLanguages.toArray(new String[selectedLanguages.size()])));
             hashMap.put("update", "single");
 
             apiInterface.EDIT_PROFILE_INFO_OR_CLM_ITEM(hashMap).enqueue(new MyApiCallback() {
@@ -441,17 +413,17 @@ public class EditProfileActivity extends AppCompatActivity {
         CommonFunction.PleaseWaitShow(context);
     }
 
-    boolean[] selectedSkill;
-    List<Integer> skillList = new ArrayList<>();
-
-    //selection proper not working and default select also proper not working (Both: Skill / language)
     private void openEditSkillDialog() {
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.editprofile_skills_dialog);
         setDialogFullScreenSetting(dialog);
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
 
-        MultiSpinnerSearch multiSelectSpinnerWithSearch = dialog.findViewById(R.id.skills_selected);
+        MultiSpinnerSearch skills_selected = dialog.findViewById(R.id.skills_selected);
         apiInterface.GET_SKILL_TBL(hashMapDefault).enqueue(new MyApiCallback() {
             @Override
             public void onResponse(Call call, Response response) {
@@ -462,17 +434,17 @@ public class EditProfileActivity extends AppCompatActivity {
                         if (normalCommonResponse.status) {
 
                             // Pass true If you want searchView above the list. Otherwise false. default = true.
-                            multiSelectSpinnerWithSearch.setSearchEnabled(true);
+                            skills_selected.setSearchEnabled(true);
 
                             // A text that will display in search hint.
-                            multiSelectSpinnerWithSearch.setSearchHint("Select your skill");
+                            skills_selected.setSearchHint("Select your skill");
 
                             // Set text that will display when search result not found...
-                            multiSelectSpinnerWithSearch.setEmptyTitle("Not Data Found!");
+                            skills_selected.setEmptyTitle("Not Data Found!");
 
 
                             //A text that will display in clear text button
-                            multiSelectSpinnerWithSearch.setClearText("Close & Clear");
+                            skills_selected.setClearText("Close & Clear");
 
                             ArrayList<String> selectedSkill = new ArrayList<>();
                             //default selected
@@ -492,7 +464,7 @@ public class EditProfileActivity extends AppCompatActivity {
                             // Removed second parameter, position. Its not required now..
                             // If you want to pass preselected items, you can do it while making listArray,
                             // Pass true in setSelected of any item that you want to preselect
-                            multiSelectSpinnerWithSearch.setItems(listArray, new MultiSpinnerListener() {
+                            skills_selected.setItems(listArray, new MultiSpinnerListener() {
                                 @Override
                                 public void onItemsSelected(List<KeyPairBoolData> items) {
                                     for (int i = 0; i < items.size(); i++) {
@@ -512,7 +484,7 @@ public class EditProfileActivity extends AppCompatActivity {
         save_mbtn.setOnClickListener(v -> {
             CommonFunction.PleaseWaitShow(context);
             ArrayList<String> selectedSkills = new ArrayList<>();
-            for (KeyPairBoolData keyPairBoolData : multiSelectSpinnerWithSearch.getSelectedItems()) {
+            for (KeyPairBoolData keyPairBoolData : skills_selected.getSelectedItems()) {
                 selectedSkills.add(keyPairBoolData.getName());
             }
 
@@ -521,130 +493,6 @@ public class EditProfileActivity extends AppCompatActivity {
             hashMap.put("apiKey", sessionPref.getApiKey());
             hashMap.put("key", "skill");
             hashMap.put("val", TextUtils.join(",", selectedSkills.toArray(new String[selectedSkills.size()])));
-            hashMap.put("update", "single");
-
-            apiInterface.EDIT_PROFILE_INFO_OR_CLM_ITEM(hashMap).enqueue(new MyApiCallback() {
-                @Override
-                public void onResponse(Call call, Response response) {
-                    super.onResponse(call, response);
-                    if (response.isSuccessful()) {
-                        if (response.body() != null) {
-                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                            if (normalCommonResponse.status) {
-                                setData();
-                                dialog.dismiss();
-                            }
-                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-            });
-        });
-        dialog.show();
-        CommonFunction.PleaseWaitShow(context);
-    }
-
-    private void openEditSkillDialog2() {
-        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.editprofile_skills_dialog);
-        setDialogFullScreenSetting(dialog);
-
-        ImageView back_iv = dialog.findViewById(R.id.back_iv);
-        back_iv.setOnClickListener(v -> {
-            dialog.dismiss();
-        });
-
-        TextView skills_selected = dialog.findViewById(R.id.skills_selected);
-        if (userDt.skill != null)
-            skills_selected.setText(userDt.skill.replace(",", ", "));
-        apiInterface.GET_SKILL_TBL(hashMapDefault).enqueue(new MyApiCallback() {
-            @Override
-            public void onResponse(Call call, Response response) {
-                super.onResponse(call, response);
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                        if (normalCommonResponse.status) {
-                            selectedSkill = new boolean[normalCommonResponse.dt.size()];
-                            String skillDt[] = new String[normalCommonResponse.dt.size()];
-                            String dt[] = normalCommonResponse.dt.toArray(skillDt);
-                            if (userDt.skill != null)
-                                for (String skill : userDt.skill.split(",")) {
-                                    int ind = normalCommonResponse.dt.indexOf(skill);
-                                    if (ind >= 0) {
-                                        selectedSkill[ind] = true;
-                                        skillList.add(ind);
-                                    }
-                                }
-                            skills_selected.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                    builder.setTitle("Select Skills");
-                                    builder.setCancelable(false);
-
-                                    builder.setMultiChoiceItems(dt, selectedSkill, new DialogInterface.OnMultiChoiceClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                                            if (b) {
-                                                skillList.add(i);
-                                                Collections.sort(skillList);
-                                            } else {
-                                                skillList.remove(Integer.valueOf(i));
-                                            }
-                                        }
-                                    });
-
-                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            StringBuilder stringBuilder = new StringBuilder();
-                                            for (int j = 0; j < skillList.size(); j++) {
-                                                stringBuilder.append(dt[skillList.get(j)]);
-                                                if (j != skillList.size() - 1) {
-                                                    stringBuilder.append(", ");
-                                                }
-                                            }
-                                            // set text on textView
-                                            skills_selected.setText(stringBuilder.toString());
-                                        }
-                                    });
-
-                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            // dismiss dialog
-                                            dialogInterface.dismiss();
-                                        }
-                                    });
-                                    builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            // use for loop
-                                            Arrays.fill(selectedSkill, false);
-                                            skillList.clear();
-                                            skills_selected.setText("");
-                                        }
-                                    });
-                                    // show dialog
-                                    builder.show();
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-        });
-
-        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
-        save_mbtn.setOnClickListener(v -> {
-            CommonFunction.PleaseWaitShow(context);
-            HashMap hashMap = new HashMap();
-            hashMap.put("user_master_id", sessionPref.getUserMasterId());
-            hashMap.put("apiKey", sessionPref.getApiKey());
-            hashMap.put("key", "skill");
-            hashMap.put("val", skills_selected.getText().toString().replace(", ", ","));
             hashMap.put("update", "single");
 
             apiInterface.EDIT_PROFILE_INFO_OR_CLM_ITEM(hashMap).enqueue(new MyApiCallback() {

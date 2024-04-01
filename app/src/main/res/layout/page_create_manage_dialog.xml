@@ -383,19 +383,14 @@
                             app:cardElevation="2dp"
                             app:strokeWidth="0dp">
 
-                            <TextView
+                            <com.connester.job.plugins.multipleselectedspinner.MultiSpinnerSearch
                                 android:id="@+id/skills_selected"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="4dp"
-                                android:backgroundTint="@android:color/transparent"
-                                android:gravity="center_vertical"
-                                android:hint="Add Skills known"
-                                android:paddingLeft="4dp"
-                                android:paddingTop="4dp"
-                                android:paddingRight="4dp"
-                                android:paddingBottom="4dp"
-                                android:textSize="@dimen/small_lg" />
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginBottom="8dp"
+                                app:hintText="Add Skills known" />
                         </com.google.android.material.card.MaterialCardView>
 
                         <FrameLayout
