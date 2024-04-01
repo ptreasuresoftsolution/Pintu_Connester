@@ -1,5 +1,6 @@
 package com.connester.job.RetrofitConnection;
 
+import com.connester.job.RetrofitConnection.jsontogson.AllInOneSearchResponse;
 import com.connester.job.RetrofitConnection.jsontogson.BusinessPageRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.ChatUserListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.EducationListResponse;
@@ -49,7 +50,7 @@ import retrofit2.http.POST;
 public interface ApiInterface {
 
     String OFFLINE_FOLDER = "/JobPortal";
-//        String OFFLINE_FOLDER = "";
+    //        String OFFLINE_FOLDER = "";
     String PRE_FIX = OFFLINE_FOLDER + "/api/";
 
     @FormUrlEncoded
@@ -87,6 +88,10 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/StepOne")
     Call<NormalCommonResponse> STEP_1_SUBMIT(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/searchForAll")
+    Call<AllInOneSearchResponse> SEARCH_ALL_IN_ONE(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedsLikeUnLink")
