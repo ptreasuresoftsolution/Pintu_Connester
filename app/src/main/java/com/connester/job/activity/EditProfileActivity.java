@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -50,6 +51,9 @@ import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 import com.connester.job.module.UserMaster;
+import com.connester.job.plugins.multipleselectedspinner.KeyPairBoolData;
+import com.connester.job.plugins.multipleselectedspinner.MultiSpinnerListener;
+import com.connester.job.plugins.multipleselectedspinner.MultiSpinnerSearch;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
@@ -442,6 +446,105 @@ public class EditProfileActivity extends AppCompatActivity {
 
     //selection proper not working and default select also proper not working (Both: Skill / language)
     private void openEditSkillDialog() {
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.editprofile_skills_dialog);
+        setDialogFullScreenSetting(dialog);
+
+        MultiSpinnerSearch multiSelectSpinnerWithSearch = dialog.findViewById(R.id.skills_selected);
+        apiInterface.GET_SKILL_TBL(hashMapDefault).enqueue(new MyApiCallback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                        if (normalCommonResponse.status) {
+
+                            // Pass true If you want searchView above the list. Otherwise false. default = true.
+                            multiSelectSpinnerWithSearch.setSearchEnabled(true);
+
+                            // A text that will display in search hint.
+                            multiSelectSpinnerWithSearch.setSearchHint("Select your skill");
+
+                            // Set text that will display when search result not found...
+                            multiSelectSpinnerWithSearch.setEmptyTitle("Not Data Found!");
+
+
+                            //A text that will display in clear text button
+                            multiSelectSpinnerWithSearch.setClearText("Close & Clear");
+
+                            ArrayList<String> selectedSkill = new ArrayList<>();
+                            //default selected
+                            if (userDt.skill != null) {
+                                selectedSkill.addAll(Arrays.asList(userDt.skill.split(",")));
+                            }
+                            //create arrayList of key with select or not
+                            List<KeyPairBoolData> listArray = new ArrayList<>();
+                            for (String skillItem : normalCommonResponse.dt) {
+                                if (selectedSkill.indexOf(skillItem) >= 0)
+                                    listArray.add(new KeyPairBoolData(skillItem, true));
+                                else
+                                    listArray.add(new KeyPairBoolData(skillItem, false));
+                            }
+
+
+                            // Removed second parameter, position. Its not required now..
+                            // If you want to pass preselected items, you can do it while making listArray,
+                            // Pass true in setSelected of any item that you want to preselect
+                            multiSelectSpinnerWithSearch.setItems(listArray, new MultiSpinnerListener() {
+                                @Override
+                                public void onItemsSelected(List<KeyPairBoolData> items) {
+                                    for (int i = 0; i < items.size(); i++) {
+                                        if (items.get(i).isSelected()) {
+                                            Log.d(LogTag.CHECK_DEBUG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        });
+
+        MaterialButton save_mbtn = dialog.findViewById(R.id.save_mbtn);
+        save_mbtn.setOnClickListener(v -> {
+            CommonFunction.PleaseWaitShow(context);
+            ArrayList<String> selectedSkills = new ArrayList<>();
+            for (KeyPairBoolData keyPairBoolData : multiSelectSpinnerWithSearch.getSelectedItems()) {
+                selectedSkills.add(keyPairBoolData.getName());
+            }
+
+            HashMap hashMap = new HashMap();
+            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+            hashMap.put("apiKey", sessionPref.getApiKey());
+            hashMap.put("key", "skill");
+            hashMap.put("val", TextUtils.join(",", selectedSkills.toArray(new String[selectedSkills.size()])));
+            hashMap.put("update", "single");
+
+            apiInterface.EDIT_PROFILE_INFO_OR_CLM_ITEM(hashMap).enqueue(new MyApiCallback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                            if (normalCommonResponse.status) {
+                                setData();
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+        });
+        dialog.show();
+        CommonFunction.PleaseWaitShow(context);
+    }
+
+    private void openEditSkillDialog2() {
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.editprofile_skills_dialog);

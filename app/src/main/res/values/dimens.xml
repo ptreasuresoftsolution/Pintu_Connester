@@ -14,4 +14,8 @@
     <dimen name="bottomNavHeight">65dp</dimen>
     <dimen name="feedsPaddingLeft">15dp</dimen>
     <dimen name="feedsPaddingRight">15dp</dimen>
+
+<!--    plugins dimens-->
+    <dimen name="margin_basic_25">0.25dp</dimen>
+    <dimen name="font_size">15sp</dimen>
 </resources>

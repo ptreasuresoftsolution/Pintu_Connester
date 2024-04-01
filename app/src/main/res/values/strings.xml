@@ -33,8 +33,14 @@
     <string name="facebook_app_id">1339961970044280</string>
     <string name="fb_login_protocol_scheme">fb1339961970044280</string>
     <string name="facebook_client_token">0aab2d3760c8dd687ef4eeef569fbee1</string>
-</resources><!--/** fb
+    <!--/** fb
     app id : 1339961970044280
     token : 0aab2d3760c8dd687ef4eeef569fbee1
     app secret : dab961adadb5698f7051a4cd0f5857fe
     */-->
+
+<!--    plugins string-->
+    <string name="type_to_search">Type to Search</string>
+    <string name="string_item_name">Item Name</string>
+    <string name="not_found">Not Found!</string>
+</resources>
