@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -50,7 +51,9 @@ public class NotificationActivity extends AppCompatActivity {
     ScrollView scrollView;
     FrameLayout progressBar;
     ApiInterface apiInterface;
-ImageView back_iv;
+    ImageView back_iv;
+    SwipeRefreshLayout swipe_refresh;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +72,15 @@ ImageView back_iv;
             onBackPressed();
         });
         setData();
+
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+            }
+        });
     }
 
     List<NotificationListResponse.Dt> notificationList = new ArrayList<>();
@@ -86,6 +98,9 @@ ImageView back_iv;
                 super.onResponse(call, response);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                            swipe_refresh.setRefreshing(false);
+                        }
                         NotificationListResponse notificationListResponse = (NotificationListResponse) response.body();
                         if (notificationListResponse.status) {
                             chatImgPath = notificationListResponse.chatImgPath;
@@ -330,7 +345,7 @@ ImageView back_iv;
         public void onReceive(Context context, Intent intent) {
             String jsonData = intent.getExtras().getString("jsonData");
             NotificationJsonData notificationJsonData = new Gson().fromJson(jsonData, NotificationJsonData.class);
-            if (notificationJsonData.notificationId != null && !notificationJsonData.notificationId.equalsIgnoreCase("")){
+            if (notificationJsonData.notificationId != null && !notificationJsonData.notificationId.equalsIgnoreCase("")) {
                 setData();
             }
         }

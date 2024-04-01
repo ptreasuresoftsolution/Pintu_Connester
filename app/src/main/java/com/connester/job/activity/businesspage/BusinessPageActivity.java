@@ -30,6 +30,8 @@ import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.activity.EditProfileActivity;
+import com.connester.job.activity.businesspage.fragment.MyPagesFragment;
+import com.connester.job.activity.businesspage.fragment.RecommendedPagesFragment;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.FilePath;
 import com.connester.job.function.LogTag;

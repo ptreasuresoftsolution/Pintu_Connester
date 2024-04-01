@@ -10,6 +10,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.connester.job.R;
 import com.connester.job.function.SessionPref;
@@ -25,7 +26,9 @@ public class PageJobMangeActivity extends AppCompatActivity {
     FrameLayout progressBar;
     ImageView back_iv;
     String business_page_id;
-TextView create_job;
+    TextView create_job;
+    SwipeRefreshLayout swipe_refresh;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,11 +65,27 @@ TextView create_job;
 
         feedsMaster.setJobEventEdit(true);
 
-       feedsMaster.loadFeedMaster(list_ll, scrollView);
+        feedsMaster.loadFeedMaster(list_ll, scrollView);
 
-       TextView create_job = findViewById(R.id.create_job);
+        create_job = findViewById(R.id.create_job);
         create_job.setOnClickListener(v -> {
             feedsMaster.openAddJobDialog();
+        });
+
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                feedsMaster.setMainLinearLayoutChange(new FeedsMaster.MainLinearLayoutChange() {
+                    @Override
+                    public void itemAddEditChange(LinearLayout linearLayout) {
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing())
+                            swipe_refresh.setRefreshing(false);
+                    }
+                });
+                feedsMaster.loadFeedMaster(list_ll, scrollView);
+            }
         });
     }
 }

@@ -8,7 +8,7 @@
     android:paddingLeft="10dp"
     android:paddingTop="20dp"
     android:paddingRight="10dp"
-    tools:context=".activity.businesspage.PageJobApplicationFragment">
+    tools:context=".activity.businesspage.fragment.PageJobApplicationFragment">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/open_active_list"

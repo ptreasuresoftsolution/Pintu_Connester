@@ -35,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
@@ -101,6 +102,8 @@ public class ChatActivity extends AppCompatActivity {
 
     WorkManager workManager;
     NotificationManager notificationManager;
+
+    SwipeRefreshLayout swipe_refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -378,6 +381,15 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         tableChatData(start);
+
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                tableChatData(0);
+            }
+        });
     }
 
     ArrayList<MessageListResponse.Dt> tableChatDatas = new ArrayList<>();
@@ -571,6 +583,10 @@ public class ChatActivity extends AppCompatActivity {
         chatModule.getCusMessage(user_master_id, start, new ChatModule.MessageListCallBack() {
             @Override
             public void callBack(MessageListResponse messageListResponse) {
+                if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                    swipe_refresh.setRefreshing(false);
+                }
+
                 chatImgPath = messageListResponse.chatImgPath;
                 if (messageListResponse.dt.size() > 0 && start == 0) {
                     if (!messageListResponse.dt.get(0).msgStatus.equalsIgnoreCase("READ")) {

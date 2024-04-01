@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -57,6 +58,8 @@ public class NetworkActivity extends AppCompatActivity {
     ApiInterface apiInterface;
     SetTopBottomBar setTopBottomBar;
 
+    SwipeRefreshLayout swipe_refresh;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +85,14 @@ public class NetworkActivity extends AppCompatActivity {
 
         setTopBottomBar.setTopBar();
         setTopBottomBar.setBottomNavBar(SetTopBottomBar.MenuItem.navNetwork_btn);
-
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                loadDefaultView();
+            }
+        });
         loadDefaultView();
     }
 
@@ -111,6 +121,9 @@ public class NetworkActivity extends AppCompatActivity {
                 super.onResponse(call, response);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                            swipe_refresh.setRefreshing(false);
+                        }
                         NetworkSuggestedListResponse networkSuggestedListResponse = (NetworkSuggestedListResponse) response.body();
                         if (networkSuggestedListResponse.status) {
                             View divider_v = null;

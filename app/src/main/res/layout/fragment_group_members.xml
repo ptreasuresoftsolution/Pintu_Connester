@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:paddingLeft="12dp"
     android:paddingRight="12dp"
-    tools:context=".activity.mycommunity.GroupMembersFragment">
+    tools:context=".activity.mycommunity.fragment.GroupMembersFragment">
 
     <LinearLayout
         android:id="@+id/main_ll"

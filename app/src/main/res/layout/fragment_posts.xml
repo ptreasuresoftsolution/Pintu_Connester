@@ -3,24 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.mysaveditem.PostsFragment">
+    tools:context=".activity.mysaveditem.fragment.PostsFragment">
 
-
-    <ScrollView
-        android:id="@+id/scrollView"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/feeds_save_post_list"
+        <ScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            android:paddingBottom="20dp" />
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
-    </ScrollView>
+            <LinearLayout
+                android:id="@+id/feeds_save_post_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:paddingBottom="20dp" />
+
+        </ScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <FrameLayout
         android:id="@+id/progressBar"

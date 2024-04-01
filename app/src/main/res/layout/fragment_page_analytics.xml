@@ -8,7 +8,7 @@
     android:paddingLeft="10dp"
     android:paddingTop="20dp"
     android:paddingRight="10dp"
-    tools:context=".activity.businesspage.PageAnalyticsFragment">
+    tools:context=".activity.businesspage.fragment.PageAnalyticsFragment">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"

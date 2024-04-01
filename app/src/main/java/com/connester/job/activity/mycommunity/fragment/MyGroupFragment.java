@@ -1,4 +1,4 @@
-package com.connester.job.activity.mycommunity;
+package com.connester.job.activity.mycommunity.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -23,6 +24,7 @@ import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.MyGroupListResponse;
 import com.connester.job.activity.community.CommunityActivity;
+import com.connester.job.activity.mycommunity.ManageMyCommunityActivity;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -38,6 +40,8 @@ public class MyGroupFragment extends Fragment {
     FrameLayout progressBar;
     ListView grid_lt;
 
+    SwipeRefreshLayout swipe_refresh;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,6 +54,20 @@ public class MyGroupFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         grid_lt = view.findViewById(R.id.grid_lt);
 
+        swipe_refresh = view.findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+            }
+        });
+        setData();
+        return view;
+    }
+
+    private void setData() {
+
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
@@ -61,6 +79,9 @@ public class MyGroupFragment extends Fragment {
                 super.onResponse(call, response);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                            swipe_refresh.setRefreshing(false);
+                        }
                         MyGroupListResponse myGroupListResponse = (MyGroupListResponse) response.body();
                         if (myGroupListResponse.status) {
                             grid_lt.setAdapter(getMyGroupAdapter(myGroupListResponse));
@@ -72,7 +93,6 @@ public class MyGroupFragment extends Fragment {
                 }
             }
         });
-        return view;
     }
 
     private ListAdapter getMyGroupAdapter(MyGroupListResponse myGroupListResponse) {

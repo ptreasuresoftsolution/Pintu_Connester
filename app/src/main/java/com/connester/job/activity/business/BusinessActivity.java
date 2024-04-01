@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -20,6 +21,10 @@ import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.BusinessPageRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
+import com.connester.job.activity.business.fragment.BusinessAboutFragment;
+import com.connester.job.activity.business.fragment.BusinessJobsFragment;
+import com.connester.job.activity.business.fragment.BusinessPeopleFragment;
+import com.connester.job.activity.business.fragment.BusinessPostsFragment;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.MyApiCallback;
@@ -53,6 +58,8 @@ public class BusinessActivity extends AppCompatActivity {
     ScrollView scrollView;
     FrameLayout progressBar;
     HashMap hashMapMain = new HashMap();
+
+    SwipeRefreshLayout swipe_refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +147,17 @@ public class BusinessActivity extends AppCompatActivity {
         });
         CommonFunction._LoadFirstFragment(BusinessActivity.this, R.id.container, fragments.get(0));
         new VisitMaster(context, activity).visitedBusinessPage(business_page_id);
+
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+                tab_layout.selectTab(tab_layout.getTabAt(tab_layout.getSelectedTabPosition()));
+            }
+        });
+
     }
 
 
@@ -187,6 +205,9 @@ public class BusinessActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                            swipe_refresh.setRefreshing(false);
+                        }
                         businessPageRowResponse = (BusinessPageRowResponse) response.body();
                         if (businessPageRowResponse.status) {
                             businessPageRow = businessPageRowResponse.businessPageRow;

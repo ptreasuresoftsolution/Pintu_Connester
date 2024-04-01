@@ -1,4 +1,4 @@
-package com.connester.job.activity.business;
+package com.connester.job.activity.business.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

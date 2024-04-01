@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -38,6 +39,8 @@ public class Blocking_PersonActivity extends AppCompatActivity {
     Context context;
     Activity activity;
     ApiInterface apiInterface;
+    ListView list_lt;
+    SwipeRefreshLayout swipe_refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,21 @@ public class Blocking_PersonActivity extends AppCompatActivity {
         back_iv.setOnClickListener(v -> {
             onBackPressed();
         });
-        ListView list_lt = findViewById(R.id.list_lt);
+        list_lt = findViewById(R.id.list_lt);
+
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+            }
+        });
+        setData();
+    }
+
+    private void setData() {
+
         CommonFunction.PleaseWaitShow(context);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
@@ -65,6 +82,9 @@ public class Blocking_PersonActivity extends AppCompatActivity {
                 super.onResponse(call, response);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                            swipe_refresh.setRefreshing(false);
+                        }
                         MembersListResponse membersListResponse = (MembersListResponse) response.body();
                         if (membersListResponse.status) {
                             list_lt.setAdapter(getBlockedMemberAdapter(membersListResponse));

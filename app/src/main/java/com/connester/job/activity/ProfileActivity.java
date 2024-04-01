@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -73,8 +74,18 @@ public class ProfileActivity extends AppCompatActivity {
         initView();
         setData();
         new VisitMaster(context, activity).visitedUserProfile(user_master_id);
+
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+            }
+        });
     }
 
+    SwipeRefreshLayout swipe_refresh;
     TextView userFullName_txt, user_position_tv, user_bio_tv, followers_tv, following_tv, about_me_tv;
     ImageView user_banner_iv, user_pic;
     MaterialCardView back_cv;
@@ -154,6 +165,9 @@ public class ProfileActivity extends AppCompatActivity {
         userMaster.getUserClmData(new UserMaster.CallBack() {
             @Override
             public void DataCallBack(Response response) {
+                if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                    swipe_refresh.setRefreshing(false);
+                }
                 UserRowResponse loginUserRowResponse = (UserRowResponse) response.body();
                 if (loginUserRowResponse.status) {
                     loginUserDt = loginUserRowResponse.dt;

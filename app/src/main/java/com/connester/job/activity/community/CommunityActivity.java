@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -23,6 +24,8 @@ import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.GroupRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.activity.EditProfileActivity;
+import com.connester.job.activity.community.fragment.CommunityMembersFragment;
+import com.connester.job.activity.community.fragment.CommunityPostFragment;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.MyApiCallback;
@@ -55,6 +58,8 @@ public class CommunityActivity extends AppCompatActivity {
     MaterialButton join_exit_mbtn, more_option_mbtn;
     ScrollView scrollView;
     FrameLayout progressBar;
+
+    SwipeRefreshLayout swipe_refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +135,15 @@ public class CommunityActivity extends AppCompatActivity {
         CommonFunction._LoadFirstFragment(CommunityActivity.this, R.id.container, fragments.get(0));
 
         new VisitMaster(context, activity).visitedCommunity(community_master_id);
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+                tab_layout.selectTab(tab_layout.getTabAt(tab_layout.getSelectedTabPosition()));
+            }
+        });
     }
 
     GroupRowResponse.GroupRow groupRow;
@@ -151,6 +165,9 @@ public class CommunityActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                            swipe_refresh.setRefreshing(false);
+                        }
                         groupRowResponse = (GroupRowResponse) response.body();
                         if (groupRowResponse.status) {
                             groupRow = groupRowResponse.groupRow;
@@ -192,8 +209,7 @@ public class CommunityActivity extends AppCompatActivity {
                                                 if (response.isSuccessful()) {
                                                     if (response.body() != null) {
                                                         NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                                                        if (normalCommonResponse.status)
-                                                            setData();
+                                                        if (normalCommonResponse.status) setData();
                                                         else
                                                             Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                                                     }
@@ -223,8 +239,7 @@ public class CommunityActivity extends AppCompatActivity {
                                                 if (response.isSuccessful()) {
                                                     if (response.body() != null) {
                                                         NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                                                        if (normalCommonResponse.status)
-                                                            setData();
+                                                        if (normalCommonResponse.status) setData();
                                                         else
                                                             Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                                                     }

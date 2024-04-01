@@ -1,4 +1,4 @@
-package com.connester.job.activity.businesspage;
+package com.connester.job.activity.businesspage.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.PageJobApplicationResponse;
+import com.connester.job.activity.businesspage.JobApplicationListActivity;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.google.gson.Gson;

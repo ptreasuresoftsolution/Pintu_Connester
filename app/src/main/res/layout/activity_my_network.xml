@@ -67,38 +67,44 @@
             </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <FrameLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ScrollView
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="true">
+                android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:id="@+id/main_ll"
+                <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:fillViewport="true">
 
-                    <include layout="@layout/network_grid_st" />
-                </LinearLayout>
-            </ScrollView>
+                    <LinearLayout
+                        android:id="@+id/main_ll"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
-            <FrameLayout
-                android:id="@+id/progressBar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#5CFFFFFF"
-                android:visibility="gone">
+                        <include layout="@layout/network_grid_st" />
+                    </LinearLayout>
+                </ScrollView>
 
-                <ProgressBar
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center" />
+                <FrameLayout
+                    android:id="@+id/progressBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#5CFFFFFF"
+                    android:visibility="gone">
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" />
+                </FrameLayout>
             </FrameLayout>
-        </FrameLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
 
     <include

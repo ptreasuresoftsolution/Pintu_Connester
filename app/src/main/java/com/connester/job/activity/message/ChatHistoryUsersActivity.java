@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -120,6 +121,8 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
         unregisterReceiver(msgReceived);
     }
 
+    SwipeRefreshLayout swipe_refresh;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -181,6 +184,14 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
             }
         };
         setData();
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+            }
+        });
     }
 
     ActionCallBack manageRedirect;
@@ -358,6 +369,9 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
                 super.onResponse(call, response);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                            swipe_refresh.setRefreshing(false);
+                        }
                         chatUserListResponse = (ChatUserListResponse) response.body();
                         if (chatUserListResponse.status) {
                             if (chatUserListResponse.dt.size() > 0) {

@@ -4,168 +4,162 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.business.BusinessAboutFragment">
+    tools:context=".activity.business.fragment.BusinessAboutFragment">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="20dp">
 
-        <LinearLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="4dp"
+            android:text="About"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/about_tv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="15dp"
-            android:orientation="vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="20dp">
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:textSize="@dimen/small_xs" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:layout_marginBottom="4dp"
-                android:text="About"
-                android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp"
+            android:text="Website"
+            android:textStyle="bold" />
 
 
-            <TextView
-                android:id="@+id/about_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:textSize="@dimen/small_xs" />
+        <TextView
+            android:id="@+id/website_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:textSize="@dimen/small_xs" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="4dp"
-                android:text="Website"
-                android:textStyle="bold" />
-
-
-            <TextView
-                android:id="@+id/website_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:textSize="@dimen/small_xs" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="4dp"
-                android:text="Phone"
-                android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp"
+            android:text="Phone"
+            android:textStyle="bold" />
 
 
-            <TextView
-                android:id="@+id/phone_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:textSize="@dimen/small_xs" />
+        <TextView
+            android:id="@+id/phone_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:textSize="@dimen/small_xs" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="4dp"
-                android:text="Industry"
-                android:textStyle="bold" />
-
-
-            <TextView
-                android:id="@+id/industry_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:textSize="@dimen/small_xs" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="4dp"
-                android:text="Company Size"
-                android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp"
+            android:text="Industry"
+            android:textStyle="bold" />
 
 
-            <TextView
-                android:id="@+id/company_size_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:textSize="@dimen/small_xs" />
+        <TextView
+            android:id="@+id/industry_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:textSize="@dimen/small_xs" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="4dp"
-                android:text="Location "
-                android:textStyle="bold" />
-
-
-            <TextView
-                android:id="@+id/location_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:textSize="@dimen/small_xs" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="4dp"
-                android:text="Company Type"
-                android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp"
+            android:text="Company Size"
+            android:textStyle="bold" />
 
 
-            <TextView
-                android:id="@+id/company_type_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:textSize="@dimen/small_xs" />
+        <TextView
+            android:id="@+id/company_size_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:textSize="@dimen/small_xs" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="4dp"
-                android:text="Founded"
-                android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp"
+            android:text="Location "
+            android:textStyle="bold" />
 
 
-            <TextView
-                android:id="@+id/founded_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:textSize="@dimen/small_xs" />
+        <TextView
+            android:id="@+id/location_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:textSize="@dimen/small_xs" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="4dp"
-                android:text="Specialities/Skills/Technologies"
-                android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp"
+            android:text="Company Type"
+            android:textStyle="bold" />
 
-            <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/skill_tag_fbl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:alignContent="stretch"
-                app:alignItems="stretch"
-                app:flexWrap="wrap">
 
-                <include layout="@layout/skill_tag_item" />
-            </com.google.android.flexbox.FlexboxLayout>
-        </LinearLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <TextView
+            android:id="@+id/company_type_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:textSize="@dimen/small_xs" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp"
+            android:text="Founded"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/founded_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:textSize="@dimen/small_xs" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp"
+            android:text="Specialities/Skills/Technologies"
+            android:textStyle="bold" />
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/skill_tag_fbl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:alignContent="stretch"
+            app:alignItems="stretch"
+            app:flexWrap="wrap">
+
+            <include layout="@layout/skill_tag_item" />
+        </com.google.android.flexbox.FlexboxLayout>
+    </LinearLayout>
 </FrameLayout>

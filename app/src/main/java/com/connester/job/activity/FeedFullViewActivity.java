@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.connester.job.R;
 import com.connester.job.function.SessionPref;
@@ -64,7 +65,26 @@ public class FeedFullViewActivity extends AppCompatActivity {
         feedsMaster.setTitleView(title);
 
         new VisitMaster(context, activity).visitedFeedsItem(feed_master_id);
+
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                feedsMaster.setMainLinearLayoutChange(new FeedsMaster.MainLinearLayoutChange() {
+                    @Override
+                    public void itemAddEditChange(LinearLayout linearLayout) {
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                            swipe_refresh.setRefreshing(false);
+                        }
+                    }
+                });
+                feedsMaster.loadSingleFeeds(feeds_mainList, scrollView, feed_master_id);
+            }
+        });
     }
+
+    SwipeRefreshLayout swipe_refresh;
 
     @Override
     public void onStop() {

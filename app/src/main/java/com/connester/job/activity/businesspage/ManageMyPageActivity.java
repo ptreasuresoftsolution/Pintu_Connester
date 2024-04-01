@@ -24,6 +24,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -32,6 +33,10 @@ import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.BusinessPageRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.activity.EditProfileActivity;
+import com.connester.job.activity.businesspage.fragment.PageAnalyticsFragment;
+import com.connester.job.activity.businesspage.fragment.PageJobApplicationFragment;
+import com.connester.job.activity.businesspage.fragment.PagePeopleFragment;
+import com.connester.job.activity.businesspage.fragment.PagePostFragment;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.FilePath;
@@ -76,6 +81,8 @@ public class ManageMyPageActivity extends AppCompatActivity {
     MaterialButton jobs_mbtn, events_mbtn, setting_open_mbtn;
     ScrollView scrollView;
     FrameLayout progressBar;
+
+    SwipeRefreshLayout swipe_refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,6 +190,17 @@ public class ManageMyPageActivity extends AppCompatActivity {
             }
         });
         CommonFunction._LoadFirstFragment(ManageMyPageActivity.this, R.id.container, fragments.get(0));
+
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+                tab_layout.selectTab(tab_layout.getTabAt(0));
+                CommonFunction._LoadFirstFragment(ManageMyPageActivity.this, R.id.container, new PagePostFragment(scrollView, business_page_id, progressBar));
+            }
+        });
     }
 
 
@@ -486,6 +504,9 @@ public class ManageMyPageActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                            swipe_refresh.setRefreshing(false);
+                        }
                         businessPageRowResponse = (BusinessPageRowResponse) response.body();
                         if (businessPageRowResponse.status) {
                             businessPageRow = businessPageRowResponse.businessPageRow;

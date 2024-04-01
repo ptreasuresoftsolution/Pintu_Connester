@@ -1,4 +1,4 @@
-package com.connester.job.activity.mycommunity;
+package com.connester.job.activity.businesspage.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -21,7 +22,7 @@ import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.NetworkSuggestedListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
-import com.connester.job.activity.community.CommunityActivity;
+import com.connester.job.activity.business.BusinessActivity;
 import com.connester.job.activity.NetworkActivity;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
@@ -33,17 +34,19 @@ import java.util.HashMap;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class RecommendedGroupFragment extends Fragment {
+public class RecommendedPagesFragment extends Fragment {
     SessionPref sessionPref;
     ApiInterface apiInterface;
     FrameLayout progressBar;
     GridView grid_lt;
 
+    SwipeRefreshLayout swipe_refresh;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_recommended_group, container, false);
+        View view = inflater.inflate(R.layout.fragment_recommended_pages, container, false);
         sessionPref = new SessionPref(getContext());
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
@@ -51,47 +54,61 @@ public class RecommendedGroupFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         grid_lt = view.findViewById(R.id.grid_lt);
 
+        swipe_refresh = view.findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+            }
+        });
+        setData();
+        return view;
+    }
+
+    private void setData() {
+
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
         hashMap.put("device", "ANDROID");
         //connectReqUsersMaster / connectUsers / followReqUsers / followerUsers / followingUsers / userCommunitys / userBusinessPages / userEvents /
         //suggestedCityUser / suggestedIndustryUser / suggestedGroup / suggestedBusPages
-        hashMap.put("fnName", NetworkActivity.SeeAllFnName.suggestedGroup.getVal());
+        hashMap.put("fnName", NetworkActivity.SeeAllFnName.suggestedBusPages.getVal());
         apiInterface.NETWORK_SEE_ALL_LIST(hashMap).enqueue(new MyApiCallback(progressBar) {
             @Override
             public void onResponse(Call call, Response response) {
                 super.onResponse(call, response);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        NetworkSuggestedListResponse.JsonDt.SugGroup sugGroup =  new Gson().fromJson(new Gson().toJson(response.body()),NetworkSuggestedListResponse.JsonDt.SugGroup.class);
-                        if (sugGroup.status) {
-                            grid_lt.setAdapter(getSuggestedGroupAdapter(sugGroup));
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                            swipe_refresh.setRefreshing(false);
+                        }
+                        NetworkSuggestedListResponse.JsonDt.SugBusPages sugBusPages = new Gson().fromJson(new Gson().toJson(response.body()), NetworkSuggestedListResponse.JsonDt.SugBusPages.class);
+                        if (sugBusPages.status) {
+                            grid_lt.setAdapter(getSuggestedPagesAdapter(sugBusPages));
                         } else
-                            Toast.makeText(getContext(), sugGroup.msg, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), sugBusPages.msg, Toast.LENGTH_SHORT).show();
 
                         progressBar.setVisibility(View.GONE);
                     }
                 }
             }
-
-
         });
-        return view;
     }
 
-    private BaseAdapter getSuggestedGroupAdapter(NetworkSuggestedListResponse.JsonDt.SugGroup sugGroup) {
-        String imgPath = sugGroup.imgPath;
+    private BaseAdapter getSuggestedPagesAdapter(NetworkSuggestedListResponse.JsonDt.SugBusPages sugBusPages) {
+        String imgPath = sugBusPages.imgPath;
         Context context = getContext();
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
             public int getCount() {
-                return sugGroup.dt.size();
+                return sugBusPages.dt.size();
             }
 
             @Override
-            public NetworkSuggestedListResponse.JsonDt.SugGroup.Dt getItem(int position) {
-                return sugGroup.dt.get(position);
+            public NetworkSuggestedListResponse.JsonDt.SugBusPages.Dt getItem(int position) {
+                return sugBusPages.dt.get(position);
             }
 
             @Override
@@ -102,35 +119,35 @@ public class RecommendedGroupFragment extends Fragment {
             @Override
             public View getView(int position, View view, ViewGroup parent) {
                 if (view == null)
-                    view = LayoutInflater.from(context).inflate(R.layout.network_card_group, parent, false);
+                    view = LayoutInflater.from(context).inflate(R.layout.network_card_pages, parent, false);
 
-                NetworkSuggestedListResponse.JsonDt.SugGroup.Dt row = getItem(position);
-                View.OnClickListener openGroup = v -> {
-                    Intent intent = new Intent(context, CommunityActivity.class);
-                    intent.putExtra("community_master_id", row.communityMasterId);
+                NetworkSuggestedListResponse.JsonDt.SugBusPages.Dt row = getItem(position);
+                View.OnClickListener openBusinessPage = v -> {
+                    Intent intent = new Intent(context, BusinessActivity.class);
+                    intent.putExtra("business_page_id", row.businessPageId);
                     startActivity(intent);
                 };
 
-                ImageView group_logo_iv = view.findViewById(R.id.group_logo_iv);
-                Glide.with(context).load(imgPath + row.logo).placeholder(R.drawable.default_groups_pic).into(group_logo_iv);
-                group_logo_iv.setOnClickListener(openGroup);
-                TextView group_name_tv = view.findViewById(R.id.group_name_tv);
-                group_name_tv.setText(row.name);
-                group_name_tv.setOnClickListener(openGroup);
-                TextView group_members = view.findViewById(R.id.group_members);
-                group_members.setText(row.members + " members");
+                ImageView page_logo_iv = view.findViewById(R.id.page_logo_iv);
+                Glide.with(context).load(imgPath + row.logo).placeholder(R.drawable.default_groups_pic).into(page_logo_iv);
+                page_logo_iv.setOnClickListener(openBusinessPage);
+                TextView page_name_tv = view.findViewById(R.id.page_name_tv);
+                page_name_tv.setText(row.busName);
+                page_name_tv.setOnClickListener(openBusinessPage);
+                TextView page_member_tv = view.findViewById(R.id.page_member_tv);
+                page_member_tv.setText(row.members + " members");
 
-                MaterialButton join_btn = view.findViewById(R.id.join_btn);
-                join_btn.setOnClickListener(new View.OnClickListener() {
+                MaterialButton page_follow_btn = view.findViewById(R.id.page_follow_btn);
+                page_follow_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // call join group request api
+                        // call follow page request api
                         progressBar.setVisibility(View.VISIBLE);
                         HashMap hashMap = new HashMap();
                         hashMap.put("user_master_id", sessionPref.getUserMasterId());
                         hashMap.put("apiKey", sessionPref.getApiKey());
-                        hashMap.put("community_master_id", row.communityMasterId);
-                        apiInterface.GROUP_JOIN_REQUEST(hashMap).enqueue(new MyApiCallback(progressBar) {
+                        hashMap.put("business_page_id", row.businessPageId);
+                        apiInterface.PAGE_FOLLOW_REQUEST(hashMap).enqueue(new MyApiCallback(progressBar) {
                             @Override
                             public void onResponse(Call call, Response response) {
                                 super.onResponse(call, response);
@@ -152,7 +169,7 @@ public class RecommendedGroupFragment extends Fragment {
             }
 
             private void removeItem(int position) {
-                sugGroup.dt.remove(position);
+                sugBusPages.dt.remove(position);
                 notifyDataSetChanged();
             }
         };

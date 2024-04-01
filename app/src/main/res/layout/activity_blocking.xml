@@ -36,12 +36,18 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/list_lt"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="3dp"
-        android:layout_marginVertical="3dp"
-        android:nestedScrollingEnabled="false"
-        android:scrollbars="none" />
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/list_lt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="3dp"
+            android:layout_marginVertical="3dp"
+            android:nestedScrollingEnabled="false"
+            android:scrollbars="none" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

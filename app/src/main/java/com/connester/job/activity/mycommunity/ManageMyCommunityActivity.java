@@ -29,6 +29,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -39,6 +40,9 @@ import com.connester.job.RetrofitConnection.jsontogson.GroupRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.activity.EditProfileActivity;
 import com.connester.job.activity.ProfileActivity;
+import com.connester.job.activity.mycommunity.fragment.GroupMembersFragment;
+import com.connester.job.activity.mycommunity.fragment.GroupPostFragment;
+import com.connester.job.activity.mycommunity.fragment.MemberRequestFragment;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.FilePath;
@@ -81,6 +85,8 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
     ScrollView scrollView;
     FrameLayout progressBar;
     GroupMembersFragment groupMembersFragment;
+
+    SwipeRefreshLayout swipe_refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,6 +180,17 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
             }
         });
         CommonFunction._LoadFirstFragment(ManageMyCommunityActivity.this, R.id.container, fragments.get(0));
+
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+                tab_layout.selectTab(tab_layout.getTabAt(0));
+                CommonFunction._LoadFirstFragment(ManageMyCommunityActivity.this, R.id.container, new GroupPostFragment(scrollView, community_master_id, progressBar));
+            }
+        });
     }
 
     private void openGroupDetailsDialog() {
@@ -542,6 +559,9 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                            swipe_refresh.setRefreshing(false);
+                        }
                         groupRowResponse = (GroupRowResponse) response.body();
                         if (groupRowResponse.status) {
                             groupRow = groupRowResponse.groupRow;
@@ -563,7 +583,7 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
                                 if (groupRow.type.equalsIgnoreCase("PUBLIC")) {
                                     privacy_img.setImageResource(R.drawable.people_fill_public);
                                     if (tab_layout != null) {
-                                        if (tab_layout.getSelectedTabPosition() == 2){
+                                        if (tab_layout.getSelectedTabPosition() == 2) {
                                             tab_layout.selectTab(tab_layout.getTabAt(1));
                                         }
                                         tab_layout.getTabAt(2).view.setVisibility(View.GONE);

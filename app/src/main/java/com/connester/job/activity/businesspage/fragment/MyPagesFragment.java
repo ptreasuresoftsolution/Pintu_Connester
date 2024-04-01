@@ -1,4 +1,4 @@
-package com.connester.job.activity.businesspage;
+package com.connester.job.activity.businesspage.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -22,6 +23,7 @@ import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.MyPagesListResponse;
 import com.connester.job.activity.business.BusinessActivity;
+import com.connester.job.activity.businesspage.ManageMyPageActivity;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.google.android.material.button.MaterialButton;
@@ -37,6 +39,8 @@ public class MyPagesFragment extends Fragment {
     FrameLayout progressBar;
     GridView grid_lt;
 
+    SwipeRefreshLayout swipe_refresh;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,6 +53,20 @@ public class MyPagesFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         grid_lt = view.findViewById(R.id.grid_lt);
 
+        swipe_refresh = view.findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+            }
+        });
+        setData();
+        return view;
+    }
+
+    private void setData() {
+
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
@@ -60,6 +78,9 @@ public class MyPagesFragment extends Fragment {
                 super.onResponse(call, response);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                            swipe_refresh.setRefreshing(false);
+                        }
                         MyPagesListResponse myPagesListResponse = (MyPagesListResponse) response.body();
                         if (myPagesListResponse.status) {
                             grid_lt.setAdapter(getMyPagesAdapter(myPagesListResponse));
@@ -71,7 +92,6 @@ public class MyPagesFragment extends Fragment {
                 }
             }
         });
-        return view;
     }
 
     private ListAdapter getMyPagesAdapter(MyPagesListResponse myPagesListResponse) {

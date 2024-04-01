@@ -1,4 +1,4 @@
-package com.connester.job.activity.mysaveditem;
+package com.connester.job.activity.mysaveditem.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.connester.job.R;
 import com.connester.job.function.SessionPref;
@@ -21,6 +22,8 @@ public class EventFragment extends Fragment {
 
     FeedsMaster feedsMaster;
     SessionPref sessionPref;
+    SwipeRefreshLayout swipe_refresh;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,6 +43,23 @@ public class EventFragment extends Fragment {
             feedsMaster.setTblName("EVENT");
             feedsMaster.setChkClose(false);
             feedsMaster.loadFeedMaster(feeds_event_list, scrollView, 25);
+
+            swipe_refresh = view.findViewById(R.id.swipe_refresh);
+            swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    swipe_refresh.setRefreshing(true);
+                    feedsMaster.setMainLinearLayoutChange(new FeedsMaster.MainLinearLayoutChange() {
+                        @Override
+                        public void itemAddEditChange(LinearLayout linearLayout) {
+                            if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                                swipe_refresh.setRefreshing(false);
+                            }
+                        }
+                    });
+                    feedsMaster.loadFeedMaster(feeds_event_list, scrollView, 25);
+                }
+            });
         }
         return view;
     }

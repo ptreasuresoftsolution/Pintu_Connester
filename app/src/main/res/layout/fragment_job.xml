@@ -3,30 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.mysaveditem.JobFragment">
+    tools:context=".activity.mysaveditem.fragment.JobFragment">
 
-    <ScrollView
-        android:id="@+id/scrollView"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/feeds_job_list"
+        <ScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            android:paddingBottom="20dp" />
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
-    </ScrollView>
+            <LinearLayout
+                android:id="@+id/feeds_job_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:paddingBottom="20dp" />
+
+        </ScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <FrameLayout
         android:id="@+id/progressBar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="#5CFFFFFF">
+        android:background="#5CFFFFFF"
+        android:visibility="gone">
 
         <ProgressBar
             android:layout_width="wrap_content"

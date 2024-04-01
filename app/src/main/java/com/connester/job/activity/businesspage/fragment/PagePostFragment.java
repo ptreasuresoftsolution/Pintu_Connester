@@ -1,4 +1,4 @@
-package com.connester.job.activity.mycommunity;
+package com.connester.job.activity.businesspage.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,18 +17,18 @@ import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 import com.google.android.material.card.MaterialCardView;
 
-public class GroupPostFragment extends Fragment {
+public class PagePostFragment extends Fragment {
     ScrollView scrollView;
-    String communityMasterId;
-    FrameLayout progressBar;
+    String business_page_id;
     LinearLayout main_ll;
     MaterialCardView feeds_add_ly;
     FeedsMaster feedsMaster;
     SessionPref sessionPref;
+    FrameLayout progressBar;
 
-    public GroupPostFragment(ScrollView scrollView, String communityMasterId, FrameLayout progressBar) {
+    public PagePostFragment(ScrollView scrollView, String business_page_id, FrameLayout progressBar) {
         this.scrollView = scrollView;
-        this.communityMasterId = communityMasterId;
+        this.business_page_id = business_page_id;
         this.progressBar = progressBar;
     }
 
@@ -36,33 +36,29 @@ public class GroupPostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_group_post, container, false);
-
+        View view = inflater.inflate(R.layout.fragment_page_post, container, false);
         main_ll = view.findViewById(R.id.main_ll);
         feeds_add_ly = view.findViewById(R.id.feeds_add_ly);
         feeds_add_ly.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), AddFeedsActivity.class);
-            intent.putExtra("feed_for", "COMMUNITY");
-            intent.putExtra("community_master_id", communityMasterId);
+            intent.putExtra("feed_for", "BUSINESS");
+            intent.putExtra("business_page_id", business_page_id);
             startActivity(intent);
         });
 
         sessionPref = new SessionPref(getContext());
         feedsMaster = new FeedsMaster(getContext(), getActivity());
         feedsMaster.setProgressBar(progressBar);
-        feedsMaster.setFeedForForward("COMMUNITY");
-        feedsMaster.setFeedForIdForward(communityMasterId);
-        feedsMaster.setFeedForId(communityMasterId);
-        feedsMaster.setFeedFor("COMMUNITY");
+        feedsMaster.setFeedForForward("BUSINESS");
+        feedsMaster.setFeedForIdForward(business_page_id);
+        feedsMaster.setFeedForId(business_page_id);
+        feedsMaster.setFeedFor("BUSINESS");
         feedsMaster.setTblName("MEDIA,POST");
+        feedsMaster.loadFeedMaster(main_ll, scrollView);
+
 
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (feedsMaster != null)
-            feedsMaster.loadFeedMaster(main_ll, scrollView);
-    }
+
 }

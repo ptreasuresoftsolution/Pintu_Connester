@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -67,7 +68,17 @@ public class ShowPortfolioApplyJobActivity extends AppCompatActivity {
 
         initView();
         setData();
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+            }
+        });
     }
+
+    SwipeRefreshLayout swipe_refresh;
 
     TextView userFullName_txt, birth_date_tv, phone_tv, email_tv, gender_tv, location_tv, about_me_tv, share_web_portfolio;
     ImageView back_iv, user_pic;
@@ -108,6 +119,9 @@ public class ShowPortfolioApplyJobActivity extends AppCompatActivity {
         userMaster.getUserClmData(new UserMaster.CallBack() {
             @Override
             public void DataCallBack(Response response) {
+                if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                    swipe_refresh.setRefreshing(false);
+                }
                 UserRowResponse userRowResponse = (UserRowResponse) response.body();
                 if (userRowResponse.status) {
                     userDt = userRowResponse.dt;

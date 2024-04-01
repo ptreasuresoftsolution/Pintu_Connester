@@ -3,29 +3,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.businesspage.RecommendedPagesFragment">
+    tools:context=".activity.businesspage.fragment.RecommendedPagesFragment">
 
-    <GridView
-        android:id="@+id/grid_lt"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="3dp"
-        android:layout_marginVertical="3dp"
-        android:nestedScrollingEnabled="false"
-        android:numColumns="2"
-        android:scrollbars="none"
-        android:stretchMode="columnWidth" />
+        android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/progressBar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#5CFFFFFF"
-        android:visibility="gone">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
+        <GridView
+            android:id="@+id/grid_lt"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-    </FrameLayout>
+            android:layout_marginHorizontal="3dp"
+            android:layout_marginVertical="3dp"
+            android:nestedScrollingEnabled="false"
+            android:numColumns="2"
+            android:scrollbars="none"
+            android:stretchMode="columnWidth" />
+
+        <FrameLayout
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#5CFFFFFF"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </FrameLayout>

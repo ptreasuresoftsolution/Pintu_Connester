@@ -26,6 +26,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.connester.job.R;
@@ -93,8 +94,18 @@ public class EditProfileActivity extends AppCompatActivity {
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
         initView();
         setData();
+
+        swipe_refresh = findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+            }
+        });
     }
 
+    SwipeRefreshLayout swipe_refresh;
 
     TextView userFullName_txt, user_position_tv, user_bio_tv, followers_tv, following_tv, about_me_tv;
     ImageView user_banner_iv, user_pic, about_edit, profile_option_iv, work_experience_add, education_add, project_add, skill_edit, language_edit;
@@ -310,7 +321,7 @@ public class EditProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void openEditLanguageDialog(){
+    private void openEditLanguageDialog() {
         Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.editprofile_language_dialog);
@@ -1324,6 +1335,9 @@ public class EditProfileActivity extends AppCompatActivity {
             public void DataCallBack(Response response) {
                 UserRowResponse userRowResponse = (UserRowResponse) response.body();
                 if (userRowResponse.status) {
+                    if (swipe_refresh != null && swipe_refresh.isRefreshing()) {
+                        swipe_refresh.setRefreshing(false);
+                    }
                     userDt = userRowResponse.dt;
                     imgPath = userRowResponse.imgPath;
 

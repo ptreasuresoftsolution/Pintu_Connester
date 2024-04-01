@@ -1,4 +1,4 @@
-package com.connester.job.activity.community;
+package com.connester.job.activity.community.fragment;
 
 import android.content.Context;
 import android.content.Intent;

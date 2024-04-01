@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:paddingLeft="12dp"
     android:paddingRight="12dp"
-    tools:context=".activity.business.BusinessPeopleFragment">
+    tools:context=".activity.business.fragment.BusinessPeopleFragment">
 
     <LinearLayout
         android:id="@+id/main_ll"

@@ -13,6 +13,9 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.connester.job.R;
+import com.connester.job.activity.mysaveditem.fragment.EventFragment;
+import com.connester.job.activity.mysaveditem.fragment.JobFragment;
+import com.connester.job.activity.mysaveditem.fragment.PostsFragment;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.UserMaster;
 import com.google.android.material.tabs.TabLayout;
