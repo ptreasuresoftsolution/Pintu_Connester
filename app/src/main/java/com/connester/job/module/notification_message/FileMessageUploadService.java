@@ -116,7 +116,7 @@ public class FileMessageUploadService extends Worker {
 
                 String mimeType = FilePath.getMimeType(compressFile);
                 builder.addFormDataPart("msg_file", compressFile.getName(), RequestBody.create(MediaType.parse(mimeType), compressFile));
-
+                String fileName = compressFile.getName();
                 requestBody = builder.build();
                 CountingFileRequestBody countingFileRequestBody = new CountingFileRequestBody(requestBody, "msg_file", new CountingFileRequestBody.ProgressListener() {
                     @Override
@@ -136,8 +136,8 @@ public class FileMessageUploadService extends Worker {
 
                             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constant.channel_id);
-                            builder.setContentTitle("File Sending")
-                                    .setContentText("Sending file in progress")
+                            builder.setContentTitle("File uploading")
+                                    .setContentText("Sending " + fileName != null ? fileName : "")
                                     .setWhen(System.currentTimeMillis())
                                     .setSmallIcon(R.drawable.cloud_upload_fill)
                                     .setProgress(100, num, false)

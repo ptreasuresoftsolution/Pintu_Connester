@@ -177,6 +177,12 @@ public class FilePath {
     public static String getMimeType(@NonNull File file) {
         String type = null;
         final String url = file.toString();
+        return getMimeType(url);
+    }
+
+    @NonNull
+    public static String getMimeType(@NonNull String url) {
+        String type = null;
         final String extension = MimeTypeMap.getFileExtensionFromUrl(url);
         if (extension != null) {
             type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());

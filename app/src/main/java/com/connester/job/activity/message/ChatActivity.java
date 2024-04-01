@@ -493,38 +493,6 @@ public class ChatActivity extends AppCompatActivity {
             });*/
         }
     };
-/*  do in sendChatMessage function for file
-    BroadcastReceiver fileUploadStartReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String chat_master_id = intent.getExtras().getString("chat_master_id");
-            String pushJsonString = intent.getExtras().getString("pushJson");//normal format
-            if (pushJsonString != null) {
-                SendMessageResponse.PushJson pushJson = new Gson().fromJson(pushJsonString, SendMessageResponse.PushJson.class);
-                MessageListResponse.Dt tableChatData = new MessageListResponse().new Dt();
-                tableChatData.chatMasterId = pushJson.chatData.chatMasterId;
-                tableChatData.sendUserMasterId = pushJson.chatData.sendUserMasterId;
-                tableChatData.recUserMasterId = pushJson.chatData.recUserMasterId;
-                tableChatData.msgType = pushJson.chatData.msgType;
-                tableChatData.msg = pushJson.chatData.msg;
-                tableChatData.msgFile = pushJson.chatData.msgFile;
-                tableChatData.fileType = pushJson.chatData.fileType;
-                tableChatData.msgSendTime = pushJson.chatData.msgSendTime;
-                tableChatData.msgStatus = pushJson.chatData.msgStatus;
-                tableChatData.msgError = "wait";
-                if (pushJson.chatData.msgError != null) {
-                    tableChatData.msgError = pushJson.chatData.msgError;
-                }
-                tableChatDatas.add(0, tableChatData);
-                if (message_list != null) {
-                    if (message_list.getAdapter() != null) {
-                        message_list.getAdapter().notifyDataSetChanged();
-                        message_list.smoothScrollToPosition(0);
-                    }
-                }
-            }
-        }
-    };*/
 
     BroadcastReceiver fileCompleteUploadReceiver = new BroadcastReceiver() {
         @Override
@@ -573,8 +541,6 @@ public class ChatActivity extends AppCompatActivity {
         IntentFilter statusUpdate = new IntentFilter(ChatModule.CHAT_STATUS_UPDATE_FILTER);
         registerReceiver(statusChange, statusUpdate);
 
-//        IntentFilter startUpload = new IntentFilter(UploadService.UPLOAD_FILE_START);
-//        registerReceiver(fileUploadStartReceiver, startUpload);
 
         IntentFilter process = new IntentFilter(FileMessageUploadService.UPLOAD_FILE_PROCESS);
         registerReceiver(fileUploadProcessReceiver, process);
@@ -593,7 +559,6 @@ public class ChatActivity extends AppCompatActivity {
         unregisterReceiver(msgReadDelivered);
         unregisterReceiver(statusChange);
 
-//        unregisterReceiver(fileUploadStartReceiver);
         unregisterReceiver(fileUploadProcessReceiver);
         unregisterReceiver(fileCompleteUploadReceiver);
     }
@@ -717,56 +682,12 @@ public class ChatActivity extends AppCompatActivity {
                                                 long thumb = 150 * 150;
                                                 RequestOptions options = new RequestOptions().frame(thumb);
                                                 Glide.with(ChatActivity.this).load(chatImgPath + tableChatData.msgFile).apply(options).into(holder.video_thumb);
-/*  //setting up open video file
-                                                holder.video_file_area.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
 
-                                                        Dialog VideoDialog = new Dialog(ChatActivity.this);
-                                                        VideoDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                                        VideoDialog.setContentView(R.layout.view_video_full_screen);
-                                                        VideoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
-                                                        int width = ViewGroup.LayoutParams.MATCH_PARENT;
-                                                        int height = ViewGroup.LayoutParams.MATCH_PARENT;
-                                                        VideoDialog.getWindow().setLayout(width, height);
-
-                                                        video = VideoDialog.findViewById(R.id.video_full);
-
-                                                        player = ExoPlayerFactory.newSimpleInstance(ChatActivity.this, new DefaultRenderersFactory(ChatActivity.this), new DefaultTrackSelector(), new DefaultLoadControl());
-                                                        player.setPlayWhenReady(true);
-                                                        cache = new SimpleCache(new File(getCacheDir(), "random" + tableChatData.file), new LeastRecentlyUsedCacheEvictor(1024 * 1024 * 50));// new okhttp3.Cache(new File("temp"),100*1024*1024);
-                                                        MediaSource mediaSource = new ExtractorMediaSource.Factory(new CacheDataSourceFactory(cache, new DefaultHttpDataSourceFactory(Util.getUserAgent(ChatActivity.this, getPackageName())), CacheDataSource.FLAG_BLOCK_ON_CACHE | CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)).createMediaSource(Uri.parse(tableChatData.file));
-                                                        player.prepare(mediaSource);
-                                                        video.setPlayer(player);
-                                                        player.addListener(new Player.EventListener() {
-                                                            @Override
-                                                            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                                                                switch (playbackState) {
-                                                                    case Player.STATE_READY:
-                                                                        if (playWhenReady) {
-                                                                            Log.i("Video Player", "State Ready " + tableChatData.file);
-                                                                        }
-                                                                        break;
-                                                                    case Player.STATE_BUFFERING:
-                                                                        Log.i("Video Player", "Buffering " + tableChatData.file);
-                                                                        break;
-                                                                }
-                                                            }
-                                                        });
-
-                                                        VideoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                                            @Override
-                                                            public void onDismiss(DialogInterface dialog) {
-                                                                if (player != null) {
-                                                                    player.release();
-                                                                    cache.release();
-                                                                }
-                                                            }
-                                                        });
-
-                                                        VideoDialog.show();
-                                                    }
-                                                });*/
+                                                holder.video_file_area.setOnClickListener(v -> {
+                                                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                                                    intent.setDataAndType(Uri.parse(chatImgPath + tableChatData.msgFile), "video/*");
+                                                    startActivity(intent);
+                                                });
 
                                             } else if (tableChatData.fileType.equalsIgnoreCase(ChatModule.FileType.IMAGE.getVal())) {
                                                 holder.photo_thumb_layout.setVisibility(View.VISIBLE);
@@ -775,29 +696,29 @@ public class ChatActivity extends AppCompatActivity {
                                                 holder.overlay_img.setVisibility(View.GONE);
                                                 Glide.with(ChatActivity.this).load(chatImgPath + tableChatData.msgFile).into(holder.photo_thumb);
 
-                                                /*
-                                                //setting up open image file
-                                                holder.photo_thumb_layout.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
-                                                        Dialog ImageDialog = new Dialog(ChatActivity.this);
-                                                        ImageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                                        ImageDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
-                                                        ImageDialog.setContentView(R.layout.view_image_full_screen);
-                                                        int width = ViewGroup.LayoutParams.MATCH_PARENT;
-                                                        int height = ViewGroup.LayoutParams.MATCH_PARENT;
-                                                        ImageDialog.getWindow().setLayout(width, height);
-
-                                                        ImageView img = ImageDialog.findViewById(R.id.img);
-                                                        Glide.with(ChatActivity.this).load(tableChatData.file).into(img);
-                                                        ImageDialog.show();
-                                                    }
-                                                });*/
+                                                holder.photo_thumb_layout.setOnClickListener(v -> {
+                                                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                                                    intent.setDataAndType(Uri.parse(chatImgPath + tableChatData.msgFile), "image/*");
+                                                    startActivity(intent);
+                                                });
                                             } else {//DOC file
                                                 holder.photo_thumb_layout.setVisibility(View.VISIBLE);
                                                 holder.photo_thumb.setVisibility(View.VISIBLE);
                                                 holder.photo_thumb.setPadding(4, 4, 4, 4);
                                                 holder.photo_thumb.setImageResource(ChatModule.getDocFileResource(tableChatData.msgFile));
+
+                                                holder.photo_thumb_layout.setOnClickListener(v -> {
+                                                    try {
+                                                        String mimeType = FilePath.getMimeType(tableChatData.msgFile);
+                                                        Log.d(LogTag.CHECK_DEBUG, "Document file open mime type :" + mimeType);
+                                                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                                                        intent.setDataAndType(Uri.parse(chatImgPath + tableChatData.msgFile), mimeType != null ? mimeType : "*/*");
+                                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                        startActivity(intent);
+                                                    } catch (Exception e) {
+                                                        Toast.makeText(context, "file open application not found", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
                                             }
                                         }
                                     }
@@ -848,56 +769,13 @@ public class ChatActivity extends AppCompatActivity {
                                                     long thumb = 150 * 150;
                                                     RequestOptions options = new RequestOptions().frame(thumb);
                                                     Glide.with(ChatActivity.this).load(chatImgPath + tableChatData.msgFile).apply(options).into(holder.video_thumb);
-                                                /*
-                                                //setting up open video file
-                                                holder.video_file_area.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
 
-                                                        Dialog VideoDialog = new Dialog(ChatActivity.this);
-                                                        VideoDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                                        VideoDialog.setContentView(R.layout.view_video_full_screen);
-                                                        VideoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
-                                                        int width = ViewGroup.LayoutParams.MATCH_PARENT;
-                                                        int height = ViewGroup.LayoutParams.MATCH_PARENT;
-                                                        VideoDialog.getWindow().setLayout(width, height);
-                                                        video = VideoDialog.findViewById(R.id.video_full);
+                                                    holder.video_file_area.setOnClickListener(v -> {
+                                                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                                                        intent.setDataAndType(Uri.parse(chatImgPath + tableChatData.msgFile), "video/*");
+                                                        startActivity(intent);
+                                                    });
 
-                                                        player = ExoPlayerFactory.newSimpleInstance(ChatActivity.this, new DefaultRenderersFactory(ChatActivity.this), new DefaultTrackSelector(), new DefaultLoadControl());
-                                                        player.setPlayWhenReady(true);
-                                                        cache = new SimpleCache(new File(getCacheDir(), "random" + tableChatData.file), new LeastRecentlyUsedCacheEvictor(1024 * 1024 * 50));// new okhttp3.Cache(new File("temp"),100*1024*1024);
-                                                        MediaSource mediaSource = new ExtractorMediaSource.Factory(new CacheDataSourceFactory(cache, new DefaultHttpDataSourceFactory(Util.getUserAgent(ChatActivity.this, getPackageName())), CacheDataSource.FLAG_BLOCK_ON_CACHE | CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)).createMediaSource(Uri.parse(tableChatData.file));
-                                                        player.prepare(mediaSource);
-                                                        video.setPlayer(player);
-                                                        player.addListener(new Player.EventListener() {
-                                                            @Override
-                                                            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                                                                switch (playbackState) {
-                                                                    case Player.STATE_READY:
-                                                                        if (playWhenReady) {
-                                                                            Log.i("Video Player", "State Ready " + tableChatData.file);
-                                                                        }
-                                                                        break;
-                                                                    case Player.STATE_BUFFERING:
-                                                                        Log.i("Video Player", "Buffering " + tableChatData.file);
-                                                                        break;
-                                                                }
-                                                            }
-                                                        });
-
-                                                        VideoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                                            @Override
-                                                            public void onDismiss(DialogInterface dialog) {
-                                                                if (player != null) {
-                                                                    player.release();
-                                                                    cache.release();
-                                                                }
-                                                            }
-                                                        });
-
-                                                        VideoDialog.show();
-                                                    }
-                                                });*/
 
                                                 } else if (tableChatData.fileType.equalsIgnoreCase(ChatModule.FileType.IMAGE.getVal())) {
                                                     holder.photo_thumb_layout.setVisibility(View.VISIBLE);
@@ -905,31 +783,23 @@ public class ChatActivity extends AppCompatActivity {
                                                     holder.photo_thumb.setPadding(0, 0, 0, 0);
                                                     holder.overlay_img.setVisibility(View.GONE);
                                                     Glide.with(ChatActivity.this).load(chatImgPath + tableChatData.msgFile).into(holder.photo_thumb);
-
-                                                /*
-                                                //setting up open image file
-                                                holder.photo_thumb_layout.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
-                                                        Dialog ImageDialog = new Dialog(ChatActivity.this);
-                                                        ImageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                                        ImageDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
-                                                        ImageDialog.setContentView(R.layout.view_image_full_screen);
-                                                        int width = ViewGroup.LayoutParams.MATCH_PARENT;
-                                                        int height = ViewGroup.LayoutParams.MATCH_PARENT;
-                                                        ImageDialog.getWindow().setLayout(width, height);
-
-                                                        ImageView img = ImageDialog.findViewById(R.id.img);
-                                                        Glide.with(ChatActivity.this).load(tableChatData.file).into(img);
-                                                        ImageDialog.show();
-                                                    }
-                                                });*/
+                                                    holder.photo_thumb_layout.setOnClickListener(v -> {
+                                                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                                                        intent.setDataAndType(Uri.parse(chatImgPath + tableChatData.msgFile), "image/*");
+                                                        startActivity(intent);
+                                                    });
 
                                                 } else {//DOC
                                                     holder.photo_thumb_layout.setVisibility(View.VISIBLE);
                                                     holder.photo_thumb.setVisibility(View.VISIBLE);
                                                     holder.photo_thumb.setPadding(4, 4, 4, 4);
                                                     holder.photo_thumb.setImageResource(ChatModule.getDocFileResource(tableChatData.msgFile));
+
+                                                    holder.photo_thumb_layout.setOnClickListener(v -> {
+                                                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                                                        intent.setDataAndType(Uri.parse(chatImgPath + tableChatData.msgFile), ChatModule.getDocFileOpenType(tableChatData.msgFile));
+                                                        startActivity(intent);
+                                                    });
                                                 }
                                             }
                                         }
@@ -1080,7 +950,7 @@ public class ChatActivity extends AppCompatActivity {
                             if (message_list != null) {
                                 if (message_list.getAdapter() != null) {
                                     int index = tableChatDatas.indexOf(tableChatData);
-                                    Toast.makeText(context, "index : " + index, Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(context, "index : " + index, Toast.LENGTH_LONG).show();
                                     tableChatData.msgStatus = sendMessageResponse.pushJson.chatData.msgStatus;
                                     if (!tableChatData.msgStatus.equalsIgnoreCase("ERROR"))
                                         tableChatData.msgError = "";
@@ -1100,7 +970,8 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void uploadFileProcess(String chat_master_id, String fileType, String msgFileLocalUri) {
+    private void uploadFileProcess(String chat_master_id, String fileType, String
+            msgFileLocalUri) {
         try {
             List<WorkInfo> workInfos = workManager.getWorkInfosByTag(chat_master_id).get();
             WorkInfo.State state = workInfos != null && workInfos.size() > 0 ? workInfos.get(0).getState() : null;
@@ -1241,25 +1112,28 @@ public class ChatActivity extends AppCompatActivity {
                 if (userRowResponse.status) {
                     userDt = userRowResponse.dt;
                     imgPath = userRowResponse.imgPath;
-
-                    Glide.with(context).load(imgPath + userDt.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(profile_pic);
-                    name.setText(userDt.name);
-                    statusTxt.setText(userDt.chatStatus);
-                    if (userDt.chatStatus.equalsIgnoreCase("Offline") && userDt.chatStatusTime != null) {
-                        Date statusDatetime = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", userDt.chatStatusTime);
-                        String stTxt = "last seen ";
-                        if (DateUtils.getStringDate("yyyy-MM-dd", new Date()).equals(DateUtils.getStringDate("yyyy-MM-dd", statusDatetime))) {
-                            stTxt += DateUtils.getStringDate("hh:mm a", statusDatetime);
-                        } else {
-                            stTxt += DateUtils.getStringDate("dd MMM, hh:mm a", statusDatetime);
+                    try {
+                        Glide.with(context).load(imgPath + userDt.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(profile_pic);
+                        name.setText(userDt.name);
+                        statusTxt.setText(userDt.chatStatus);
+                        if (userDt.chatStatus.equalsIgnoreCase("Offline") && userDt.chatStatusTime != null) {
+                            Date statusDatetime = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", userDt.chatStatusTime);
+                            String stTxt = "last seen ";
+                            if (DateUtils.getStringDate("yyyy-MM-dd", new Date()).equals(DateUtils.getStringDate("yyyy-MM-dd", statusDatetime))) {
+                                stTxt += DateUtils.getStringDate("hh:mm a", statusDatetime);
+                            } else {
+                                stTxt += DateUtils.getStringDate("dd MMM, hh:mm a", statusDatetime);
+                            }
+                            statusTxt.setText(stTxt);
                         }
-                        statusTxt.setText(stTxt);
+                        if (userDt.blockedUser != null && !userDt.blockedUser.equalsIgnoreCase(""))
+                            iAmBlock = UserMaster.findIdInIds(sessionPref.getUserMasterId(), userDt.blockedUser);
+                    } catch (Exception e) {
+                        Log.e(LogTag.EXCEPTION, "Profile set Exception", e);
                     }
-                    if (userDt.blockedUser != null && !userDt.blockedUser.equalsIgnoreCase(""))
-                        iAmBlock = UserMaster.findIdInIds(sessionPref.getUserMasterId(), userDt.blockedUser);
                 }
             }
-        }, "name,user_name,profile_link,profile_pic,position,chat_status,chat_status_time,blocked_user", true, user_master_id);
+        }, "name,user_name,profile_link,profile_pic,position,chat_status,chat_status_time,blocked_user", false, user_master_id);
     }
 
     //if require cancel
