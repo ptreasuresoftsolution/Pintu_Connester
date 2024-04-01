@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
@@ -36,7 +37,7 @@ public class BusinessAboutFragment extends Fragment {
     TextView about_tv, website_tv, phone_tv, industry_tv, company_size_tv, location_tv, company_type_tv, founded_tv;
     FlexboxLayout skill_tag_fbl;
     SessionPref sessionPref;
-
+SwipeRefreshLayout swipe_refresh;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,6 +55,15 @@ public class BusinessAboutFragment extends Fragment {
         company_type_tv = view.findViewById(R.id.company_type_tv);
         founded_tv = view.findViewById(R.id.founded_tv);
         skill_tag_fbl = view.findViewById(R.id.skill_tag_fbl);
+
+        swipe_refresh = view.findViewById(R.id.swipe_refresh);
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe_refresh.setRefreshing(true);
+                setData();
+            }
+        });
 
         setData();
 
@@ -76,6 +86,9 @@ public class BusinessAboutFragment extends Fragment {
                 progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        if (swipe_refresh != null && swipe_refresh.isRefreshing()){
+                            swipe_refresh.setRefreshing(false);
+                        }
                         BusinessPageRowResponse businessPageRowResponse = (BusinessPageRowResponse) response.body();
                         if (businessPageRowResponse.status) {
                             BusinessPageRowResponse.BusinessPageRow businessPageRow = businessPageRowResponse.businessPageRow;

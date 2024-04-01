@@ -710,6 +710,8 @@ public class ChatActivity extends AppCompatActivity {
                                                 holder.photo_thumb_layout.setOnClickListener(v -> {
                                                     try {
                                                         String mimeType = FilePath.getMimeType(tableChatData.msgFile);
+                                                        mimeType = ChatModule.getDocFileOpenType(tableChatData.msgFile);
+//                                                        mimeType= URLConnection.guessContentTypeFromName(tableChatData.msgFile);
                                                         Log.d(LogTag.CHECK_DEBUG, "Document file open mime type :" + mimeType);
                                                         Intent intent = new Intent(Intent.ACTION_VIEW);
                                                         intent.setDataAndType(Uri.parse(chatImgPath + tableChatData.msgFile), mimeType != null ? mimeType : "*/*");
@@ -717,6 +719,12 @@ public class ChatActivity extends AppCompatActivity {
                                                         startActivity(intent);
                                                     } catch (Exception e) {
                                                         Toast.makeText(context, "file open application not found", Toast.LENGTH_SHORT).show();
+                                                        Intent intent = new Intent();
+                                                        intent.setAction(Intent.ACTION_VIEW);
+                                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                        intent.addCategory("android.intent.category.DEFAULT");
+                                                        intent.setData(Uri.parse(chatImgPath + tableChatData.msgFile));
+                                                        startActivity(intent);
                                                     }
                                                 });
                                             }

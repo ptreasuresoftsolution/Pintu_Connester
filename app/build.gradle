@@ -93,4 +93,7 @@ dependencies {
     implementation "androidx.work:work-gcm:2.9.0"
     // optional - Multiprocess support
     implementation "androidx.work:work-multiprocess:2.9.0"
+
+    //swipe refresh layout
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
 }
