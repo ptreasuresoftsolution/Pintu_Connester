@@ -313,7 +313,7 @@ public class NetworkActivity extends AppCompatActivity {
         networkSeeAllList(new NetworkSeeAllCallback() {
             @Override
             public void apiCallBack(Object responseBody) {
-                NetworkSuggestedListResponse.JsonDt.SugBusPages sugBusPages = (NetworkSuggestedListResponse.JsonDt.SugBusPages) responseBody;
+                NetworkSuggestedListResponse.JsonDt.SugBusPages sugBusPages = new Gson().fromJson(new Gson().toJson(responseBody), NetworkSuggestedListResponse.JsonDt.SugBusPages.class);
                 if (sugBusPages.status) {
                     View blankGridSt = layoutInflater.inflate(R.layout.network_grid_st, null);
                     TextView nt_list_title = blankGridSt.findViewById(R.id.nt_list_title);
