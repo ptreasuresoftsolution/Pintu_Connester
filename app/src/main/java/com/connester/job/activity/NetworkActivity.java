@@ -141,7 +141,7 @@ public class NetworkActivity extends AppCompatActivity {
                                     }
                                 });
                                 GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                                grid_lt.setAdapter(getInvitationReqAdapter(networkSuggestedListResponse.jsonDt.connReq));
+                                grid_lt.setAdapter(getInvitationReqAdapter(networkSuggestedListResponse.jsonDt.connReq, grid_lt));
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                                 divider_v = blankGridSt.findViewById(R.id.divider_v);
                                 main_ll.addView(blankGridSt);
@@ -159,7 +159,7 @@ public class NetworkActivity extends AppCompatActivity {
                                     }
                                 });
                                 GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                                grid_lt.setAdapter(getSuggestedCityUserAdapter(networkSuggestedListResponse.jsonDt.sugUserCity));
+                                grid_lt.setAdapter(getSuggestedCityUserAdapter(networkSuggestedListResponse.jsonDt.sugUserCity, grid_lt));
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                                 divider_v = blankGridSt.findViewById(R.id.divider_v);
                                 main_ll.addView(blankGridSt);
@@ -177,7 +177,7 @@ public class NetworkActivity extends AppCompatActivity {
                                     }
                                 });
                                 GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                                grid_lt.setAdapter(getSuggestedIndustryUserAdapter(networkSuggestedListResponse.jsonDt.sugUserIndustry));
+                                grid_lt.setAdapter(getSuggestedIndustryUserAdapter(networkSuggestedListResponse.jsonDt.sugUserIndustry, grid_lt));
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                                 divider_v = blankGridSt.findViewById(R.id.divider_v);
                                 main_ll.addView(blankGridSt);
@@ -195,7 +195,7 @@ public class NetworkActivity extends AppCompatActivity {
                                     }
                                 });
                                 GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                                grid_lt.setAdapter(getSuggestedGroupAdapter(networkSuggestedListResponse.jsonDt.sugGroup));
+                                grid_lt.setAdapter(getSuggestedGroupAdapter(networkSuggestedListResponse.jsonDt.sugGroup, grid_lt));
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                                 divider_v = blankGridSt.findViewById(R.id.divider_v);
                                 main_ll.addView(blankGridSt);
@@ -213,7 +213,7 @@ public class NetworkActivity extends AppCompatActivity {
                                     }
                                 });
                                 GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                                grid_lt.setAdapter(getSuggestedPagesAdapter(networkSuggestedListResponse.jsonDt.sugBusPages));
+                                grid_lt.setAdapter(getSuggestedPagesAdapter(networkSuggestedListResponse.jsonDt.sugBusPages, grid_lt));
                                 CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                                 divider_v = blankGridSt.findViewById(R.id.divider_v);
                                 main_ll.addView(blankGridSt);
@@ -229,7 +229,7 @@ public class NetworkActivity extends AppCompatActivity {
         });
     }
 
-    private BaseAdapter getSuggestedPagesAdapter(NetworkSuggestedListResponse.JsonDt.SugBusPages sugBusPages) {
+    private BaseAdapter getSuggestedPagesAdapter(NetworkSuggestedListResponse.JsonDt.SugBusPages sugBusPages, GridView grid_lt) {
         String imgPath = sugBusPages.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -302,6 +302,7 @@ public class NetworkActivity extends AppCompatActivity {
             private void removeItem(int position) {
                 sugBusPages.dt.remove(position);
                 notifyDataSetChanged();
+                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
             }
         };
         return baseAdapter;
@@ -320,7 +321,7 @@ public class NetworkActivity extends AppCompatActivity {
                     MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
                     nt_list_seeall.setVisibility(View.GONE);
                     GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                    grid_lt.setAdapter(getSuggestedPagesAdapter(sugBusPages));
+                    grid_lt.setAdapter(getSuggestedPagesAdapter(sugBusPages, grid_lt));
                     CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                     main_ll.addView(blankGridSt);
                 } else Toast.makeText(context, sugBusPages.msg, Toast.LENGTH_SHORT).show();
@@ -328,7 +329,7 @@ public class NetworkActivity extends AppCompatActivity {
         }, SeeAllFnName.suggestedBusPages);
     }
 
-    private BaseAdapter getSuggestedGroupAdapter(NetworkSuggestedListResponse.JsonDt.SugGroup sugGroup) {
+    private BaseAdapter getSuggestedGroupAdapter(NetworkSuggestedListResponse.JsonDt.SugGroup sugGroup, GridView grid_lt) {
         String imgPath = sugGroup.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -401,6 +402,7 @@ public class NetworkActivity extends AppCompatActivity {
             private void removeItem(int position) {
                 sugGroup.dt.remove(position);
                 notifyDataSetChanged();
+                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
             }
         };
         return baseAdapter;
@@ -419,7 +421,7 @@ public class NetworkActivity extends AppCompatActivity {
                     MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
                     nt_list_seeall.setVisibility(View.GONE);
                     GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                    grid_lt.setAdapter(getSuggestedGroupAdapter(sugGroup));
+                    grid_lt.setAdapter(getSuggestedGroupAdapter(sugGroup, grid_lt));
                     CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                     main_ll.addView(blankGridSt);
                 } else Toast.makeText(context, sugGroup.msg, Toast.LENGTH_SHORT).show();
@@ -427,7 +429,7 @@ public class NetworkActivity extends AppCompatActivity {
         }, SeeAllFnName.suggestedGroup);
     }
 
-    private BaseAdapter getSuggestedIndustryUserAdapter(NetworkSuggestedListResponse.JsonDt.SugUserIndustry sugUserIndustry) {
+    private BaseAdapter getSuggestedIndustryUserAdapter(NetworkSuggestedListResponse.JsonDt.SugUserIndustry sugUserIndustry, GridView grid_lt) {
         String imgPath = sugUserIndustry.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -487,6 +489,7 @@ public class NetworkActivity extends AppCompatActivity {
             private void removeItem(int position) {
                 sugUserIndustry.dt.remove(position);
                 notifyDataSetChanged();
+                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
             }
         };
         return baseAdapter;
@@ -505,16 +508,16 @@ public class NetworkActivity extends AppCompatActivity {
                     MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
                     nt_list_seeall.setVisibility(View.GONE);
                     GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                    grid_lt.setAdapter(getSuggestedIndustryUserAdapter(sugUserIndustry));
+                    grid_lt.setAdapter(getSuggestedIndustryUserAdapter(sugUserIndustry, grid_lt));
                     CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                     main_ll.addView(blankGridSt);
                 } else Toast.makeText(context, sugUserIndustry.msg, Toast.LENGTH_SHORT).show();
             }
-        }, SeeAllFnName.suggestedCityUser);
+        }, SeeAllFnName.suggestedIndustryUser);
     }
 
 
-    private BaseAdapter getSuggestedCityUserAdapter(NetworkSuggestedListResponse.JsonDt.SugUserCity sugUserCity) {
+    private BaseAdapter getSuggestedCityUserAdapter(NetworkSuggestedListResponse.JsonDt.SugUserCity sugUserCity, GridView grid_lt) {
         String imgPath = sugUserCity.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -574,6 +577,7 @@ public class NetworkActivity extends AppCompatActivity {
             private void removeItem(int position) {
                 sugUserCity.dt.remove(position);
                 notifyDataSetChanged();
+                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
             }
         };
         return baseAdapter;
@@ -592,7 +596,7 @@ public class NetworkActivity extends AppCompatActivity {
                     MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
                     nt_list_seeall.setVisibility(View.GONE);
                     GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                    grid_lt.setAdapter(getSuggestedCityUserAdapter(sugUserCity));
+                    grid_lt.setAdapter(getSuggestedCityUserAdapter(sugUserCity, grid_lt));
                     CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                     main_ll.addView(blankGridSt);
                 } else Toast.makeText(context, sugUserCity.msg, Toast.LENGTH_SHORT).show();
@@ -639,7 +643,7 @@ public class NetworkActivity extends AppCompatActivity {
                         MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
                         nt_list_seeall.setVisibility(View.GONE);
                         ListView list_lt = blankGridSt.findViewById(R.id.list_lt);
-                        list_lt.setAdapter(getConnectionAdapter(connectionListResponse));
+                        list_lt.setAdapter(getConnectionAdapter(connectionListResponse, list_lt));
                         CommonFunction.setViewHeightBasedOnChildren(list_lt);
                         main_ll.addView(blankGridSt);
                     } else
@@ -674,7 +678,7 @@ public class NetworkActivity extends AppCompatActivity {
                         MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
                         nt_list_seeall.setVisibility(View.GONE);
                         GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                        grid_lt.setAdapter(getFollowReqAdapter(followReqListResponse));
+                        grid_lt.setAdapter(getFollowReqAdapter(followReqListResponse, grid_lt));
                         CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                         main_ll.addView(blankGridSt);
                     } else
@@ -699,7 +703,7 @@ public class NetworkActivity extends AppCompatActivity {
                         MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
                         nt_list_seeall.setVisibility(View.GONE);
                         GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                        grid_lt.setAdapter(getFollowerAdapter(followerListResponse));
+                        grid_lt.setAdapter(getFollowerAdapter(followerListResponse, grid_lt));
                         CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                         main_ll.addView(blankGridSt);
                     } else
@@ -724,7 +728,7 @@ public class NetworkActivity extends AppCompatActivity {
                         MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
                         nt_list_seeall.setVisibility(View.GONE);
                         GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                        grid_lt.setAdapter(getFollowingsAdapter(followingsListResponse));
+                        grid_lt.setAdapter(getFollowingsAdapter(followingsListResponse, grid_lt));
                         CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                         main_ll.addView(blankGridSt);
                     } else
@@ -749,7 +753,7 @@ public class NetworkActivity extends AppCompatActivity {
                         MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
                         nt_list_seeall.setVisibility(View.GONE);
                         GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                        grid_lt.setAdapter(getCommunityGroupAdapter(communitysListResponse));
+                        grid_lt.setAdapter(getCommunityGroupAdapter(communitysListResponse, grid_lt));
                         CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                         main_ll.addView(blankGridSt);
                     } else
@@ -774,7 +778,7 @@ public class NetworkActivity extends AppCompatActivity {
                         MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
                         nt_list_seeall.setVisibility(View.GONE);
                         GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                        grid_lt.setAdapter(getBusPageAdapter(businessPagesListResponse));
+                        grid_lt.setAdapter(getBusPageAdapter(businessPagesListResponse, grid_lt));
                         CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                         main_ll.addView(blankGridSt);
                     } else
@@ -809,7 +813,7 @@ public class NetworkActivity extends AppCompatActivity {
         CommonFunction.PleaseWaitShow(context);
     }
 
-    private BaseAdapter getBusPageAdapter(NetworkSeeAllCommonResponse.BusinessPagesListResponse businessPagesListResponse) {
+    private BaseAdapter getBusPageAdapter(NetworkSeeAllCommonResponse.BusinessPagesListResponse businessPagesListResponse, GridView grid_lt) {
         String imgPath = businessPagesListResponse.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -881,12 +885,13 @@ public class NetworkActivity extends AppCompatActivity {
             private void removeItem(int position) {
                 businessPagesListResponse.dt.remove(position);
                 notifyDataSetChanged();
+                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
             }
         };
         return baseAdapter;
     }
 
-    private BaseAdapter getCommunityGroupAdapter(NetworkSeeAllCommonResponse.CommunitysListResponse communitysListResponse) {
+    private BaseAdapter getCommunityGroupAdapter(NetworkSeeAllCommonResponse.CommunitysListResponse communitysListResponse, GridView grid_lt) {
         String imgPath = communitysListResponse.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -959,12 +964,13 @@ public class NetworkActivity extends AppCompatActivity {
             private void removeItem(int position) {
                 communitysListResponse.dt.remove(position);
                 notifyDataSetChanged();
+                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
             }
         };
         return baseAdapter;
     }
 
-    private BaseAdapter getFollowingsAdapter(NetworkSeeAllCommonResponse.FollowingsListResponse followingsListResponse) {
+    private BaseAdapter getFollowingsAdapter(NetworkSeeAllCommonResponse.FollowingsListResponse followingsListResponse, GridView grid_lt) {
         String imgPath = followingsListResponse.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -1025,12 +1031,13 @@ public class NetworkActivity extends AppCompatActivity {
             private void removeItem(int position) {
                 followingsListResponse.dt.remove(position);
                 notifyDataSetChanged();
+                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
             }
         };
         return baseAdapter;
     }
 
-    private BaseAdapter getFollowerAdapter(NetworkSeeAllCommonResponse.FollowerListResponse followerListResponse) {
+    private BaseAdapter getFollowerAdapter(NetworkSeeAllCommonResponse.FollowerListResponse followerListResponse, GridView grid_lt) {
         String imgPath = followerListResponse.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -1091,12 +1098,13 @@ public class NetworkActivity extends AppCompatActivity {
             private void removeItem(int position) {
                 followerListResponse.dt.remove(position);
                 notifyDataSetChanged();
+                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
             }
         };
         return baseAdapter;
     }
 
-    private BaseAdapter getFollowReqAdapter(NetworkSeeAllCommonResponse.FollowReqListResponse followReqListResponse) {
+    private BaseAdapter getFollowReqAdapter(NetworkSeeAllCommonResponse.FollowReqListResponse followReqListResponse, GridView grid_lt) {
         String imgPath = followReqListResponse.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -1169,12 +1177,13 @@ public class NetworkActivity extends AppCompatActivity {
             private void removeItem(int position) {
                 followReqListResponse.dt.remove(position);
                 notifyDataSetChanged();
+                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
             }
         };
         return baseAdapter;
     }
 
-    private BaseAdapter getConnectionAdapter(NetworkSeeAllCommonResponse.ConnectionListResponse connectionListResponse) {
+    private BaseAdapter getConnectionAdapter(NetworkSeeAllCommonResponse.ConnectionListResponse connectionListResponse, ListView list_lt) {
         String imgPath = connectionListResponse.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -1238,8 +1247,10 @@ public class NetworkActivity extends AppCompatActivity {
                                 networkActionMange(new NetworkActionCallback() {
                                     @Override
                                     public void apiCallBack(NormalCommonResponse normalCommonResponse) {
-                                        if (normalCommonResponse.status) removeItem(position);
-                                        else
+                                        if (normalCommonResponse.status) {
+                                            removeItem(position);
+                                            optionDialog.dismiss();
+                                        } else
                                             Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                                     }
                                 }, ActionName.RemoveConnection, row.userMasterId);
@@ -1254,12 +1265,13 @@ public class NetworkActivity extends AppCompatActivity {
             private void removeItem(int position) {
                 connectionListResponse.dt.remove(position);
                 notifyDataSetChanged();
+                CommonFunction.setViewHeightBasedOnChildren(list_lt);
             }
         };
         return baseAdapter;
     }
 
-    private BaseAdapter getInvitationReqAdapter(NetworkSuggestedListResponse.JsonDt.ConnReq connReq) {
+    private BaseAdapter getInvitationReqAdapter(NetworkSuggestedListResponse.JsonDt.ConnReq connReq, GridView grid_lt) {
         String imgPath = connReq.imgPath;
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
@@ -1339,6 +1351,7 @@ public class NetworkActivity extends AppCompatActivity {
             private void removeItem(int position) {
                 connReq.dt.remove(position);
                 notifyDataSetChanged();
+                CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
             }
         };
         return baseAdapter;
@@ -1357,7 +1370,7 @@ public class NetworkActivity extends AppCompatActivity {
                     MaterialButton nt_list_seeall = blankGridSt.findViewById(R.id.nt_list_seeall);
                     nt_list_seeall.setVisibility(View.GONE);
                     GridView grid_lt = blankGridSt.findViewById(R.id.grid_lt);
-                    grid_lt.setAdapter(getInvitationReqAdapter(connReq));
+                    grid_lt.setAdapter(getInvitationReqAdapter(connReq, grid_lt));
                     CommonFunction.setGridViewHeightBasedOnChildren(grid_lt);
                     main_ll.addView(blankGridSt);
                 } else Toast.makeText(context, connReq.msg, Toast.LENGTH_SHORT).show();
