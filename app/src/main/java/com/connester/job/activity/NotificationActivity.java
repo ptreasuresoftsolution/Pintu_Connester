@@ -88,6 +88,7 @@ public class NotificationActivity extends AppCompatActivity {
 
     private void setData() {
         main_ll.removeAllViews();
+        notificationList.clear();
         progressBar.setVisibility(View.VISIBLE);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
@@ -141,6 +142,7 @@ public class NotificationActivity extends AppCompatActivity {
 
                 TextView req_accept = view.findViewById(R.id.req_accept);
                 TextView req_decline = view.findViewById(R.id.req_decline);
+                req_decline.setText("Decline");
                 TextView view_msg_job = view.findViewById(R.id.view_msg_job);
                 TextView delete_notification = view.findViewById(R.id.delete_notification);
 
@@ -218,6 +220,7 @@ public class NotificationActivity extends AppCompatActivity {
                         }, NetworkActivity.ActionName.FollowReqAccept, dt.fromUserMasterId, context);
                     });
                     req_decline.setVisibility(View.VISIBLE);
+                    req_decline.setText("Reject");
                     req_decline.setOnClickListener(v -> {
                         ProfileActivity.networkActionMange(new NetworkActivity.NetworkActionCallback() {
                             @Override
