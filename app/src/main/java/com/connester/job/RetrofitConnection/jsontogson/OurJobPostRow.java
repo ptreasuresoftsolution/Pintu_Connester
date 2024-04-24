@@ -37,6 +37,9 @@ public class OurJobPostRow {
         @SerializedName("requirements")
         @Expose
         public String requirements;
+        @SerializedName("no_of_vacancies")
+        @Expose
+        public String noOfVacancies;
         @SerializedName("skills")
         @Expose
         public String skills;

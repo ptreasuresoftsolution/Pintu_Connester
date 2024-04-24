@@ -31,6 +31,7 @@ import com.connester.job.R;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 //https://github.com/pratikbutani/MultiSelectSpinner
 public class MultiSpinnerSearch extends AppCompatSpinner implements OnCancelListener {
 
@@ -210,7 +211,16 @@ public class MultiSpinnerSearch extends AppCompatSpinner implements OnCancelList
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    adapter.getFilter().filter(s.toString());
+//                    adapter.getFilter().filter(s.toString());
+                    adapter.getFilter().filter(s.toString(), new Filter.FilterListener() {
+                        @Override
+                        public void onFilterComplete(int count) {
+                            if (count < 0) {
+//                                items.add(new KeyPairBoolData(s.toString(), true)); test progress
+//                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    });
                 }
 
                 @Override

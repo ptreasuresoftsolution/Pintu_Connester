@@ -1231,6 +1231,9 @@ public class FeedsMaster {
         TextView experience_tv = view.findViewById(R.id.experience_tv);
         experience_tv.setText(feedsRow.tblJobPost.requirements);
 
+        TextView no_of_vacancies_tv = view.findViewById(R.id.no_of_vacancies_tv);
+        no_of_vacancies_tv.setText(feedsRow.tblJobPost.noOfVacancies);
+
         TextView job_salary = view.findViewById(R.id.job_salary);
         job_salary.setText(feedsRow.tblJobPost.salaryCurrency + " " + CommonFunction.convertAmountUnitForm(Double.parseDouble(feedsRow.tblJobPost.salary)) + "/ " + feedsRow.tblJobPost.salaryPayroll);
 
@@ -2092,6 +2095,7 @@ public class FeedsMaster {
         Spinner payroll_sp = dialog.findViewById(R.id.payroll_sp);
         EditText job_salary_et = dialog.findViewById(R.id.job_salary_et);
         EditText experience_et = dialog.findViewById(R.id.experience_et);
+        EditText no_of_vacancies_et = dialog.findViewById(R.id.no_of_vacancies_et);
 
         MultiSpinnerSearch skills_selected = dialog.findViewById(R.id.skills_selected);
         HashMap hashMapDefault = new HashMap();
@@ -2144,6 +2148,14 @@ public class FeedsMaster {
                                 //default selected
                                 if (slSkill != null) {
                                     selectedSkill.addAll(Arrays.asList(slSkill.split(",")));
+                                }
+                                //add other skill / out of list
+                                if (slSkill != null && fullSkills != null) {
+                                    for (String iSkill : selectedSkill) {
+                                        if (fullSkills.indexOf(iSkill) < 0) { //not find in full list
+                                            fullSkills.add(iSkill);
+                                        }
+                                    }
                                 }
                                 //create arrayList of key with select or not
                                 List<KeyPairBoolData> listArray = new ArrayList<>();
@@ -2225,6 +2237,9 @@ public class FeedsMaster {
                                 if (ourJobPostRow.dt.requirements != null)
                                     experience_et.setText(ourJobPostRow.dt.requirements);
 
+                                if (ourJobPostRow.dt.noOfVacancies != null)
+                                    no_of_vacancies_et.setText(ourJobPostRow.dt.noOfVacancies);
+
                                 if (ourJobPostRow.dt.skills != null) {
                                     slSkill = ourJobPostRow.dt.skills;
                                     if (jobPostId != null && slSkill != null && fullSkills != null) {
@@ -2233,6 +2248,16 @@ public class FeedsMaster {
                                         if (slSkill != null) {
                                             selectedSkill.addAll(Arrays.asList(slSkill.split(",")));
                                         }
+
+                                        //add other skill / out of list
+                                        if (slSkill != null && fullSkills != null) {
+                                            for (String iSkill : selectedSkill) {
+                                                if (fullSkills.indexOf(iSkill) < 0) { //not find in full list
+                                                    fullSkills.add(iSkill);
+                                                }
+                                            }
+                                        }
+
                                         //create arrayList of key with select or not
                                         List<KeyPairBoolData> listArray = new ArrayList<>();
                                         for (String skillItem : fullSkills) {
@@ -2290,6 +2315,7 @@ public class FeedsMaster {
             hashMap.put("salary_payroll", Arrays.asList(payRoll).get(payroll_sp.getSelectedItemPosition()));
             hashMap.put("salary", job_salary_et.getText().toString());
             hashMap.put("requirements", experience_et.getText().toString());//experience
+            hashMap.put("no_of_vacancies", no_of_vacancies_et.getText().toString());//experience
             hashMap.put("skills", TextUtils.join(",", selectedSkills.toArray(new String[selectedSkills.size()])));
             hashMap.put("post_expire", DateUtils.getStringDate("dd-MMM-yyyy", "yyyy-MM-dd", expire_et.getText().toString()));
             hashMap.put("job_description", description_et.getText().toString());

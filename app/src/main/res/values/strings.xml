@@ -14,10 +14,10 @@
         <item>Full-Time</item>
     </string-array>
     <string-array name="job_payroll">
-        <item>Monthly</item>
-        <item>Yearly</item>
-        <item>Hourly</item>
-        <item>Weekly</item>
+        <item>Month</item>
+        <item>Annual</item>
+        <item>Hour</item>
+        <item>Week</item>
     </string-array>
 
     <string-array name="event_type">
