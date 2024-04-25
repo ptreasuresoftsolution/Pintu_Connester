@@ -99,7 +99,6 @@ public class ChatActivity extends AppCompatActivity {
 
     HashMap defaultUserData = new HashMap();
 
-
     WorkManager workManager;
     NotificationManager notificationManager;
 
@@ -112,9 +111,10 @@ public class ChatActivity extends AppCompatActivity {
         context = this;
         activity = this;
         sessionPref = new SessionPref(context);
-        userMaster = new UserMaster(context);
         chatModule = new ChatModule(context, activity);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        userMaster = new UserMaster(context, ChatActivity.this);
+        userMaster.initReportAttachmentLauncher();
 
         workManager = WorkManager.getInstance(getApplication());
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -253,7 +253,7 @@ public class ChatActivity extends AppCompatActivity {
             });
             report_LL.setOnClickListener(v1 -> {
                 //call user chat report
-
+                userMaster.openReportDialog("Profile", "user_master", user_master_id, context);
                 chatOptionBottomSheetDialog.dismiss();
             });
             chatOptionBottomSheetDialog.show();

@@ -16,7 +16,7 @@ import com.connester.job.R;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 
-public class BusinessJobsFragment extends Fragment {
+public class BusinessEventFragment extends Fragment {
     SessionPref sessionPref;
     Context context;
     Activity activity;
@@ -26,7 +26,7 @@ public class BusinessJobsFragment extends Fragment {
     FrameLayout progressBar;
     String business_page_id;
 
-    public BusinessJobsFragment(ScrollView scrollView, String business_page_id, FrameLayout progressBar) {
+    public BusinessEventFragment(ScrollView scrollView, String business_page_id, FrameLayout progressBar) {
         this.business_page_id = business_page_id;
         this.progressBar = progressBar;
         this.scrollView = scrollView;
@@ -36,7 +36,7 @@ public class BusinessJobsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_business_jobs, container, false);
+        View view = inflater.inflate(R.layout.fragment_business_event, container, false);
         context = getContext();
         activity = getActivity();
         sessionPref = new SessionPref(context);
@@ -50,7 +50,7 @@ public class BusinessJobsFragment extends Fragment {
 
         feedsMaster.setFeedForId(business_page_id);
         feedsMaster.setFeedFor("BUSINESS");
-        feedsMaster.setTblName("JOB");
+        feedsMaster.setTblName("EVENT");
         feedsMaster.setStart(-1);
 
         feedsMaster.loadFeedMaster(list_ll, scrollView);

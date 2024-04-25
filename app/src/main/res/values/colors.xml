@@ -8,8 +8,10 @@
     <color name="success">#198754</color>
     <color name="light">#f8f9fa</color>
     <color name="info">#0dcaf0</color>
+    <color name="info_dark">#1877F2</color>
     <color name="tags">#3DA6A4A4</color>
     <color name="overlayBlur">#C4EFECFF</color>
+
 
     <color name="primary">#B5333F</color>
     <color name="primary_2">#242331</color>

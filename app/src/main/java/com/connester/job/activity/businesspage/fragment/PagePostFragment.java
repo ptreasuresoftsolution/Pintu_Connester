@@ -47,7 +47,7 @@ public class PagePostFragment extends Fragment {
         });
 
         sessionPref = new SessionPref(getContext());
-        feedsMaster = new FeedsMaster(getContext(), getActivity());
+        feedsMaster = new FeedsMaster(getContext(), getActivity(),getActivity());
         feedsMaster.setProgressBar(progressBar);
         feedsMaster.setFeedForForward("BUSINESS");
         feedsMaster.setFeedForIdForward(business_page_id);

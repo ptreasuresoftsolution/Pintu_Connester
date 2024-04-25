@@ -207,8 +207,8 @@ public class ShowPortfolioApplyJobActivity extends AppCompatActivity {
                                 TextView item_duration = profile_project_ed_work_item.findViewById(R.id.item_duration);
                                 String startTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.startDate);
                                 String endTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.endDate);
-                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate).replace("ago", "");
-                                item_duration.setText(startTime + " - " + endTime + "-" + gap);
+                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate, "M-Y").replace("ago", "");
+                                item_duration.setText(startTime + " - " + endTime + "(" + gap + ")");
                                 project_ll.addView(profile_project_ed_work_item);
                             }
                         }
@@ -241,8 +241,8 @@ public class ShowPortfolioApplyJobActivity extends AppCompatActivity {
                                 TextView item_duration = profile_project_ed_work_item.findViewById(R.id.item_duration);
                                 String startTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.startDate);
                                 String endTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.endDate);
-                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate).replace("ago", "");
-                                item_duration.setText(startTime + " - " + endTime + "-" + gap);
+                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate, "M-Y").replace("ago", "");
+                                item_duration.setText(startTime + " - " + endTime + "(" + gap + ")");
                                 education_ll.addView(profile_project_ed_work_item);
                             }
                         }
@@ -276,7 +276,7 @@ public class ShowPortfolioApplyJobActivity extends AppCompatActivity {
                                 TextView item_duration = profile_project_ed_work_item.findViewById(R.id.item_duration);
                                 String startTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.startDate);
                                 String endTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.endDate);
-                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate).replace("ago", "");
+                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate, "M-Y").replace("ago", "");
                                 item_duration.setText(startTime + " - " + endTime + "-" + gap);
                                 work_experience_ll.addView(profile_project_ed_work_item);
                             }

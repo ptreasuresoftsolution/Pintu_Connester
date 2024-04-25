@@ -332,6 +332,29 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/post_LL"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_marginBottom="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="20dp"
+                android:src="@drawable/post_btn_collection"
+                app:tint="@color/secondary_3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Post"
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/label" />
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/report_LL"
             android:layout_width="match_parent"
             android:layout_height="26dp"

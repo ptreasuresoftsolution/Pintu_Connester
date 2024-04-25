@@ -2,6 +2,7 @@ package com.connester.job.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -26,7 +27,7 @@ public class Activity_Activity extends AppCompatActivity {
     ScrollView scrollView;
     FrameLayout progressBar;
     ImageView back_iv;
-
+    String user_master_id;
     SwipeRefreshLayout swipe_refresh;
 
     @Override
@@ -37,6 +38,13 @@ public class Activity_Activity extends AppCompatActivity {
         context = this;
         activity = this;
         sessionPref = new SessionPref(context);
+        user_master_id = sessionPref.getUserMasterId();
+        if (getIntent() != null) {
+            Intent gIntent = getIntent();
+            if (gIntent.getStringExtra("user_master_id") != null && gIntent.getStringExtra("user_master_id") != "") {
+                user_master_id = gIntent.getStringExtra("user_master_id");
+            }
+        }
 
         back_iv = findViewById(R.id.back_iv);
         back_iv.setOnClickListener(v -> {
@@ -46,9 +54,9 @@ public class Activity_Activity extends AppCompatActivity {
         scrollView = findViewById(R.id.scrollView);
         progressBar = findViewById(R.id.progressBar);
 
-        feedsMaster = new FeedsMaster(context, activity);
+        feedsMaster = new FeedsMaster(context, activity, Activity_Activity.this);
         feedsMaster.setProgressBar(progressBar);
-        feedsMaster.setFeedForId(sessionPref.getUserMasterId());
+        feedsMaster.setFeedForId(user_master_id);
         feedsMaster.setFeedFor("USER");
         feedsMaster.setTblName("MEDIA,POST");
         feedsMaster.loadFeedMaster(feeds_mainList, scrollView, 25);

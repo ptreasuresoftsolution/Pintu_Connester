@@ -30,6 +30,7 @@ import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
+import com.connester.job.module.UserMaster;
 import com.connester.job.module.VisitMaster;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
@@ -58,7 +59,7 @@ public class CommunityActivity extends AppCompatActivity {
     MaterialButton join_exit_mbtn, more_option_mbtn;
     ScrollView scrollView;
     FrameLayout progressBar;
-
+    UserMaster userMaster;
     SwipeRefreshLayout swipe_refresh;
 
     @Override
@@ -82,6 +83,8 @@ public class CommunityActivity extends AppCompatActivity {
         activity = CommunityActivity.this;
         sessionPref = new SessionPref(context);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        userMaster = new UserMaster(context, CommunityActivity.this);
+        userMaster.initReportAttachmentLauncher();
 
         scrollView = findViewById(R.id.scrollView);
         progressBar = findViewById(R.id.progressBar);
@@ -287,6 +290,7 @@ public class CommunityActivity extends AppCompatActivity {
         report_LL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                userMaster.openReportDialog("Group", "community_master", community_master_id, context);
                 optionDialog.dismiss();
             }
         });

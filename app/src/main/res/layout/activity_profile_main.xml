@@ -236,7 +236,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="10dp"
-                                        android:text="about me"
+                                        android:text=""
                                         android:textSize="@dimen/small_lg" />
                                 </LinearLayout>
 
@@ -286,10 +286,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="10dp"
-                                        android:orientation="vertical">
-
-                                        <include layout="@layout/profile_project_ed_work_item" />
-                                    </LinearLayout>
+                                        android:orientation="vertical"></LinearLayout>
                                 </LinearLayout>
 
                             </com.google.android.material.card.MaterialCardView>
@@ -338,10 +335,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="10dp"
-                                        android:orientation="vertical">
-
-                                        <include layout="@layout/profile_project_ed_work_item" />
-                                    </LinearLayout>
+                                        android:orientation="vertical"></LinearLayout>
                                 </LinearLayout>
 
                             </com.google.android.material.card.MaterialCardView>
@@ -390,10 +384,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="10dp"
-                                        android:orientation="vertical">
-
-                                        <include layout="@layout/profile_project_ed_work_item" />
-                                    </LinearLayout>
+                                        android:orientation="vertical"></LinearLayout>
                                 </LinearLayout>
 
                             </com.google.android.material.card.MaterialCardView>
@@ -447,7 +438,6 @@
                                         app:alignItems="stretch"
                                         app:flexWrap="wrap">
 
-                                        <include layout="@layout/skill_tag_item" />
                                     </com.google.android.flexbox.FlexboxLayout>
                                 </LinearLayout>
 
@@ -499,10 +489,7 @@
                                         android:layout_marginTop="10dp"
                                         app:alignContent="stretch"
                                         app:alignItems="stretch"
-                                        app:flexWrap="wrap">
-
-                                        <include layout="@layout/skill_tag_item" />
-                                    </com.google.android.flexbox.FlexboxLayout>
+                                        app:flexWrap="wrap"></com.google.android.flexbox.FlexboxLayout>
                                 </LinearLayout>
 
                             </com.google.android.material.card.MaterialCardView>

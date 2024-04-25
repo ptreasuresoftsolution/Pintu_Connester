@@ -7,8 +7,8 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:layout_marginLeft="4dp"
+        android:layout_marginTop="4dp"
         android:layout_marginRight="4dp"
         app:cardBackgroundColor="@color/secondary_6"
         app:strokeWidth="0dp">
@@ -89,6 +89,15 @@
                 </LinearLayout>
 
                 <ImageView
+                    android:id="@+id/feed_forward_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="top"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/forward_feeds_bottom"
+                    app:tint="@color/black" />
+
+                <ImageView
                     android:id="@+id/feed_save_unsave_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
@@ -138,8 +147,8 @@
                         android:layout_gravity="right"
                         android:backgroundTint="@color/primary"
                         android:padding="0dp"
-                        android:textColor="@color/white"
                         android:text="Apply"
+                        android:textColor="@color/white"
                         app:cornerRadius="8dp" />
                 </FrameLayout>
             </LinearLayout>

@@ -59,7 +59,8 @@ public class ProfileActivity extends AppCompatActivity {
         context = this;
         activity = this;
         sessionPref = new SessionPref(context);
-        userMaster = new UserMaster(context);
+        userMaster = new UserMaster(context, ProfileActivity.this);
+        userMaster.initReportAttachmentLauncher();
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         if (getIntent() != null) {
@@ -141,11 +142,46 @@ public class ProfileActivity extends AppCompatActivity {
                 intent.putExtra("user_master_id", user_master_id);
                 startActivity(intent);
             });
+            LinearLayout post_LL = profileOptionDialog.findViewById(R.id.post_LL);
+            post_LL.setVisibility(View.VISIBLE);
+            post_LL.setOnClickListener(v1 -> {
+                profileOptionDialog.dismiss();
+                Intent intent = new Intent(context, Activity_Activity.class);
+                intent.putExtra("user_master_id", user_master_id);
+                startActivity(intent);
+            });
+            LinearLayout blocking_person_ll = profileOptionDialog.findViewById(R.id.blocking_person_ll);
+            if (!user_master_id.equalsIgnoreCase(sessionPref.getUserMasterId())) {
+                blocking_person_ll.setVisibility(View.VISIBLE);
+                blocking_person_ll.setOnClickListener(v1 -> {
+                    //call block member api
+                    CommonFunction.PleaseWaitShow(context);
+                    HashMap hashMap = new HashMap();
+                    hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                    hashMap.put("apiKey", sessionPref.getApiKey());
+                    hashMap.put("id", user_master_id);
+                    apiInterface.BLOCKED_USER(hashMap).enqueue(new MyApiCallback() {
+                        @Override
+                        public void onResponse(Call call, Response response) {
+                            super.onResponse(call, response);
+                            if (response.isSuccessful()) {
+                                if (response.body() != null) {
+                                    NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                    if (normalCommonResponse.status)
+                                        profileOptionDialog.dismiss();
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    });
+                });
+            }
             LinearLayout report_LL = profileOptionDialog.findViewById(R.id.report_LL);
             if (!user_master_id.equalsIgnoreCase(sessionPref.getUserMasterId())) {
                 report_LL.setVisibility(View.VISIBLE);
                 report_LL.setOnClickListener(v1 -> {
                     //call report this profile
+                    userMaster.openReportDialog("Profile", "user_master", user_master_id, context);
                 });
             }
             profileOptionDialog.show();
@@ -320,8 +356,8 @@ public class ProfileActivity extends AppCompatActivity {
                                 TextView item_duration = profile_project_ed_work_item.findViewById(R.id.item_duration);
                                 String startTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.startDate);
                                 String endTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.endDate);
-                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate).replace("ago", "");
-                                item_duration.setText(startTime + " - " + endTime + "-" + gap);
+                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate,"M-Y").replace("ago", "");
+                                item_duration.setText(startTime + " - " + endTime + "(" + gap + ")");
                                 project_ll.addView(profile_project_ed_work_item);
                             }
                         }
@@ -354,8 +390,8 @@ public class ProfileActivity extends AppCompatActivity {
                                 TextView item_duration = profile_project_ed_work_item.findViewById(R.id.item_duration);
                                 String startTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.startDate);
                                 String endTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.endDate);
-                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate).replace("ago", "");
-                                item_duration.setText(startTime + " - " + endTime + "-" + gap);
+                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate,"M-Y").replace("ago", "");
+                                item_duration.setText(startTime + " - " + endTime + "(" + gap + ")");
                                 education_ll.addView(profile_project_ed_work_item);
                             }
                         }
@@ -389,8 +425,8 @@ public class ProfileActivity extends AppCompatActivity {
                                 TextView item_duration = profile_project_ed_work_item.findViewById(R.id.item_duration);
                                 String startTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.startDate);
                                 String endTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.endDate);
-                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate).replace("ago", "");
-                                item_duration.setText(startTime + " - " + endTime + "-" + gap);
+                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate,"M-Y").replace("ago", "");
+                                item_duration.setText(startTime + " - " + endTime + "(" + gap + ")");
                                 work_experience_ll.addView(profile_project_ed_work_item);
                             }
                         }

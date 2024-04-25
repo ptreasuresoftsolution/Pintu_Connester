@@ -32,7 +32,9 @@ import com.bumptech.glide.Glide;
 import com.connester.job.R;
 import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
+import com.connester.job.RetrofitConnection.jsontogson.BusinessPageRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.GetLinkMetaDataResponse;
+import com.connester.job.RetrofitConnection.jsontogson.GroupRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
@@ -77,6 +79,8 @@ public class AddFeedsActivity extends AppCompatActivity {
     String feedFor = "USER";
     String business_page_id = "0";
     String community_master_id = "0";
+    String businessName, groupName, businessLogo, groupLogo;
+    String imgPath = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/upload/images/auto/"; //overwrite on api call
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +97,55 @@ public class AddFeedsActivity extends AppCompatActivity {
             feedFor = getIntent().getStringExtra("feed_for") != null ? getIntent().getStringExtra("feed_for") : "USER";
             if (feedFor.equalsIgnoreCase("BUSINESS")) {
                 business_page_id = getIntent().getStringExtra("business_page_id");
+                CommonFunction.PleaseWaitShow(context);
+                HashMap hashMap = new HashMap();
+                hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                hashMap.put("apiKey", sessionPref.getApiKey());
+                hashMap.put("device", "ANDROID");
+                hashMap.put("business_page_id", business_page_id);
+                ApiClient.getClient().create(ApiInterface.class).BUSINESS_PAGE_ROW(hashMap).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                BusinessPageRowResponse businessPageRowResponse = (BusinessPageRowResponse) response.body();
+                                if (businessPageRowResponse.status) {
+                                    BusinessPageRowResponse.BusinessPageRow businessPageRow = businessPageRowResponse.businessPageRow;
+                                    imgPath = businessPageRowResponse.imgPath;
+                                    businessName = businessPageRow.busName;
+                                    businessLogo = businessPageRow.logo;
+                                }
+
+                            }
+                        }
+                    }
+                });
             } else if (feedFor.equalsIgnoreCase("COMMUNITY")) {
                 community_master_id = getIntent().getStringExtra("community_master_id");
+                CommonFunction.PleaseWaitShow(context);
+                HashMap hashMap = new HashMap();
+                hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                hashMap.put("apiKey", sessionPref.getApiKey());
+                hashMap.put("device", "ANDROID");
+                hashMap.put("community_master_id", community_master_id);
+
+                apiInterface.GROUP_ROW(hashMap).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                GroupRowResponse groupRowResponse = (GroupRowResponse) response.body();
+                                if (groupRowResponse.status) {
+                                    imgPath = groupRowResponse.imgPath;
+                                    groupName = groupRowResponse.groupRow.name;
+                                    groupLogo = groupRowResponse.groupRow.logo;
+                                }
+                            }
+                        }
+                    }
+                });
             }
         }
 
@@ -162,10 +213,18 @@ public class AddFeedsActivity extends AppCompatActivity {
         View view = layoutInflater.inflate(R.layout.feed_add_photos_layout, null);
         TextView time_ago_txt = view.findViewById(R.id.time_ago_txt);
         time_ago_txt.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "EE, MMM dd, hh:mma", DateUtils.TODAYDATETIMEforDB()));
+
         ImageView feeds_title_img = view.findViewById(R.id.feeds_title_img);
         Glide.with(context).load(sessionPref.getUserProfilePic()).placeholder(R.drawable.default_user_pic).into(feeds_title_img);
         TextView fullname_txt = view.findViewById(R.id.fullname_txt);
         fullname_txt.setText(sessionPref.getUserFullName());
+        if (feedFor.equalsIgnoreCase("BUSINESS")) {
+            fullname_txt.setText(businessName);
+            Glide.with(context).load(imgPath+businessLogo).placeholder(R.drawable.default_business_pic).into(feeds_title_img);
+        } else if (feedFor.equalsIgnoreCase("COMMUNITY")) {
+            fullname_txt.setText(groupName);
+            Glide.with(context).load(imgPath+groupLogo).placeholder(R.drawable.default_groups_pic).into(feeds_title_img);
+        }
 
         EditText pt_title = view.findViewById(R.id.pt_title);
         grid_img = view.findViewById(R.id.grid_img);
@@ -307,11 +366,18 @@ public class AddFeedsActivity extends AppCompatActivity {
         TextView time_ago_txt = view.findViewById(R.id.time_ago_txt);
         time_ago_txt.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "EE, MMM dd, hh:mma", DateUtils.TODAYDATETIMEforDB()));
         EditText pt_title = view.findViewById(R.id.pt_title);
+
         ImageView feeds_title_img = view.findViewById(R.id.feeds_title_img);
         Glide.with(context).load(sessionPref.getUserProfilePic()).placeholder(R.drawable.default_user_pic).into(feeds_title_img);
         TextView fullname_txt = view.findViewById(R.id.fullname_txt);
         fullname_txt.setText(sessionPref.getUserFullName());
-
+        if (feedFor.equalsIgnoreCase("BUSINESS")) {
+            fullname_txt.setText(businessName);
+            Glide.with(context).load(imgPath+businessLogo).placeholder(R.drawable.default_business_pic).into(feeds_title_img);
+        } else if (feedFor.equalsIgnoreCase("COMMUNITY")) {
+            fullname_txt.setText(groupName);
+            Glide.with(context).load(imgPath+groupLogo).placeholder(R.drawable.default_groups_pic).into(feeds_title_img);
+        }
         submit_post.setOnClickListener(v -> {
             if (pt_title.getText().toString().trim().equalsIgnoreCase("")) {
                 Toast.makeText(context, "Please post title/text/description...", Toast.LENGTH_SHORT).show();
@@ -436,11 +502,18 @@ public class AddFeedsActivity extends AppCompatActivity {
         View view = layoutInflater.inflate(R.layout.feed_add_text_link_layout, null);
         TextView time_ago_txt = view.findViewById(R.id.time_ago_txt);
         time_ago_txt.setText(DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "EE, MMM dd, hh:mma", DateUtils.TODAYDATETIMEforDB()));
+
         ImageView feeds_title_img = view.findViewById(R.id.feeds_title_img);
         Glide.with(context).load(sessionPref.getUserProfilePic()).placeholder(R.drawable.default_user_pic).into(feeds_title_img);
         TextView fullname_txt = view.findViewById(R.id.fullname_txt);
         fullname_txt.setText(sessionPref.getUserFullName());
-
+        if (feedFor.equalsIgnoreCase("BUSINESS")) {
+            fullname_txt.setText(businessName);
+            Glide.with(context).load(imgPath+businessLogo).placeholder(R.drawable.default_business_pic).into(feeds_title_img);
+        } else if (feedFor.equalsIgnoreCase("COMMUNITY")) {
+            fullname_txt.setText(groupName);
+            Glide.with(context).load(imgPath+groupLogo).placeholder(R.drawable.default_groups_pic).into(feeds_title_img);
+        }
         EditText pt_title = view.findViewById(R.id.pt_title);
         EditText link_et = view.findViewById(R.id.link_et);
         MaterialCardView link_details_cv = view.findViewById(R.id.link_details_cv);

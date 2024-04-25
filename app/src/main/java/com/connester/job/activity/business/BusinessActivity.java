@@ -22,6 +22,7 @@ import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.BusinessPageRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.activity.business.fragment.BusinessAboutFragment;
+import com.connester.job.activity.business.fragment.BusinessEventFragment;
 import com.connester.job.activity.business.fragment.BusinessJobsFragment;
 import com.connester.job.activity.business.fragment.BusinessPeopleFragment;
 import com.connester.job.activity.business.fragment.BusinessPostsFragment;
@@ -29,6 +30,7 @@ import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
+import com.connester.job.module.UserMaster;
 import com.connester.job.module.VisitMaster;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
@@ -58,7 +60,7 @@ public class BusinessActivity extends AppCompatActivity {
     ScrollView scrollView;
     FrameLayout progressBar;
     HashMap hashMapMain = new HashMap();
-
+    UserMaster userMaster;
     SwipeRefreshLayout swipe_refresh;
 
     @Override
@@ -84,6 +86,8 @@ public class BusinessActivity extends AppCompatActivity {
         activity = this;
         sessionPref = new SessionPref(context);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        userMaster = new UserMaster(context, BusinessActivity.this);
+        userMaster.initReportAttachmentLauncher();
 
         hashMapMain.put("user_master_id", sessionPref.getUserMasterId());
         hashMapMain.put("apiKey", sessionPref.getApiKey());
@@ -124,6 +128,8 @@ public class BusinessActivity extends AppCompatActivity {
         fragmentsTitle.add("Posts");
         fragments.add(new BusinessJobsFragment(scrollView, business_page_id, progressBar));
         fragmentsTitle.add("Jobs");
+        fragments.add(new BusinessEventFragment(scrollView, business_page_id, progressBar));
+        fragmentsTitle.add("Events");
         fragments.add(new BusinessPeopleFragment(scrollView, business_page_id, progressBar));
         fragmentsTitle.add("People");
 
@@ -179,6 +185,7 @@ public class BusinessActivity extends AppCompatActivity {
         report_LL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                userMaster.openReportDialog("Business", "business_page", business_page_id, context);
                 optionDialog.dismiss();
             }
         });

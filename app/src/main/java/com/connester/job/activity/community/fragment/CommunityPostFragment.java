@@ -18,7 +18,6 @@ import com.connester.job.RetrofitConnection.ApiClient;
 import com.connester.job.RetrofitConnection.ApiInterface;
 import com.connester.job.RetrofitConnection.jsontogson.GroupRowResponse;
 import com.connester.job.activity.nonslug.AddFeedsActivity;
-import com.connester.job.function.CommonFunction;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
@@ -97,7 +96,7 @@ public class CommunityPostFragment extends Fragment {
         });
 
         sessionPref = new SessionPref(getContext());
-        feedsMaster = new FeedsMaster(getContext(), getActivity());
+        feedsMaster = new FeedsMaster(getContext(), getActivity(),getActivity());
         feedsMaster.setProgressBar(progressBar);
         feedsMaster.setFeedForForward("COMMUNITY");
         feedsMaster.setFeedForIdForward(communityMasterId);

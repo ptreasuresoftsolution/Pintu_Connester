@@ -174,14 +174,14 @@
                 app:cardElevation="2dp"
                 app:strokeWidth="0dp">
 
-                <EditText
-                    android:id="@+id/currency_et"
+                <Spinner
+                    android:id="@+id/currency_sp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:backgroundTint="@android:color/transparent"
+                    android:drawSelectorOnTop="true"
+                    android:entries="@array/currency_sort"
                     android:gravity="center_vertical"
-                    android:hint="Ex: USD/INR/EUR"
-                    android:singleLine="true"
                     android:textSize="@dimen/small_lg" />
             </com.google.android.material.card.MaterialCardView>
 
@@ -309,7 +309,7 @@
                 app:cardCornerRadius="6dp"
                 app:cardElevation="2dp"
                 app:strokeWidth="0dp">
-                
+
                 <com.connester.job.plugins.multipleselectedspinner.MultiSpinnerSearch
                     android:id="@+id/skills_selected"
                     android:layout_width="match_parent"

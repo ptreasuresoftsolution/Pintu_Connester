@@ -93,6 +93,8 @@ public interface ApiInterface {
     @POST(PRE_FIX + "UserMange/searchForAll")
     Call<AllInOneSearchResponse> SEARCH_ALL_IN_ONE(@FieldMap Map<String, String> params);
 
+    @POST(PRE_FIX + "UserMange/submitAllReport")
+    Call<NormalCommonResponse> SUBMIT_ALL_REPORT(@Body RequestBody body);
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedsLikeUnLink")
     Call<NormalCommonResponse> CALL_LIKE_UNLIKE(@FieldMap Map<String, String> params);
@@ -204,6 +206,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/changePassword")
     Call<NormalCommonResponse> CHANGE_PASSWORD_CALL(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "UserMange/updateUserName")
+    Call<NormalCommonResponse> CHANGE_USERNAME_CALL(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/unBlockedUser")

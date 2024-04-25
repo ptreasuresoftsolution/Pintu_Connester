@@ -61,4 +61,9 @@ public class NormalCommonResponse {
     @SerializedName("totalMessage")
     @Expose
     public String totalMessage;
+
+    //for report submit
+    @SerializedName("report_master_id")
+    @Expose
+    public String reportMasterId;
 }

@@ -538,6 +538,56 @@
                 android:visibility="gone" />
 
             <LinearLayout
+                android:id="@+id/change_username_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/account_details_outline_username"
+                        android:drawablePadding="10dp"
+                        android:text="Change Username"
+                        android:textColor="@color/secondary_3"
+                        android:textSize="@dimen/small" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginTop="1dp"
+                        android:gravity="center"
+                        android:text="You add special username, change username"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:src="@drawable/arrow_right_go" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/secondary_6"
+                android:visibility="gone" />
+
+            <LinearLayout
                 android:id="@+id/blocking_person_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -6,7 +6,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
@@ -29,10 +28,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.ComponentActivity;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
 import androidx.viewpager.widget.PagerAdapter;
 
@@ -44,12 +43,15 @@ import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsRow;
 import com.connester.job.RetrofitConnection.jsontogson.JobsEventMasterResponse;
+import com.connester.job.RetrofitConnection.jsontogson.MyPagesListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.NetworkSeeAllCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.NormalCommonResponse;
 import com.connester.job.RetrofitConnection.jsontogson.OurEventPostRow;
 import com.connester.job.RetrofitConnection.jsontogson.OurJobPostRow;
 import com.connester.job.RetrofitConnection.jsontogson.UserRowResponse;
 import com.connester.job.activity.EditProfileActivity;
 import com.connester.job.activity.FeedFullViewActivity;
+import com.connester.job.activity.NetworkActivity;
 import com.connester.job.activity.ProfileActivity;
 import com.connester.job.activity.business.BusinessActivity;
 import com.connester.job.activity.community.CommunityActivity;
@@ -252,16 +254,22 @@ public class FeedsMaster {
             }
         });
     }
-    //master call define ----------- End -------//
 
-    public FeedsMaster(Context context, Activity activity) {
+    //master call define ----------- End -------//
+    UserMaster userMaster;
+    ComponentActivity componentActivity;
+
+    public FeedsMaster(Context context, Activity activity, ComponentActivity componentActivity) {
         this.context = context;
         this.activity = activity;
+        this.componentActivity = componentActivity;
         visitMaster = new VisitMaster(context, activity);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
         sessionPref = new SessionPref(context);
         loginUserRow = sessionPref.getUserMasterRowInObject();
         layoutInflater = LayoutInflater.from(context);
+        userMaster = new UserMaster(context, componentActivity);
+        userMaster.initReportAttachmentLauncher();
     }
 
     VisitMaster visitMaster;
@@ -873,14 +881,8 @@ public class FeedsMaster {
         };
         event_img.setOnClickListener(fullViewFeeds);
         event_nm.setOnClickListener(fullViewFeeds);
+        setEventLabel(view, feedsRow.tblJobEvent.endDate, feedsRow.tblJobEvent.startDate);
 
-        LinearLayout event_finish_ll = view.findViewById(R.id.event_finish_ll);
-        event_finish_ll.setVisibility(View.GONE);
-        Date currDate = new Date();
-        Date endDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", feedsRow.tblJobEvent.endDate);
-        if (currDate.getTime() > endDate.getTime()) {
-            event_finish_ll.setVisibility(View.VISIBLE);
-        }
         TextView event_time = view.findViewById(R.id.event_time);
         String startTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "EE, MMM dd, hh:mma", feedsRow.tblJobEvent.startDate);
         String endTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "EE, MMM dd, hh:mma", feedsRow.tblJobEvent.endDate);
@@ -946,6 +948,12 @@ public class FeedsMaster {
                     }
                 });
 
+                LinearLayout feed_share = feedsOptionDialog.findViewById(R.id.feed_share);
+                feed_share.setVisibility(View.VISIBLE);
+                feed_share.setOnClickListener(v1 -> {
+                    feedForwardDialog(feedsRow.feedMasterId);
+                });
+
                 LinearLayout feed_link_copy = feedsOptionDialog.findViewById(R.id.feed_link_copy);
                 feed_link_copy.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -961,6 +969,8 @@ public class FeedsMaster {
                     @Override
                     public void onClick(View v) {
                         //send report data
+                        userMaster.openReportDialog("Event", "feed_master", feedsRow.feedMasterId, context);
+                        feedsOptionDialog.dismiss();
                     }
                 });
 
@@ -993,13 +1003,9 @@ public class FeedsMaster {
         TextView event_nm = view.findViewById(R.id.event_nm);
         event_nm.setText(feedsRow.tblJobEvent.title);
 
-        LinearLayout event_finish_ll = view.findViewById(R.id.event_finish_ll);
-        event_finish_ll.setVisibility(View.GONE);
-        Date currDate = new Date();
-        Date endDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", feedsRow.tblJobEvent.endDate);
-        if (currDate.getTime() > endDate.getTime()) {
-            event_finish_ll.setVisibility(View.VISIBLE);
-        }
+        setEventLabel(view, feedsRow.tblJobEvent.endDate, feedsRow.tblJobEvent.startDate);
+
+
         TextView event_time = view.findViewById(R.id.event_time);
         String startTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "EE, MMM dd, hh:mma", feedsRow.tblJobEvent.startDate);
         String endTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "EE, MMM dd, hh:mma", feedsRow.tblJobEvent.endDate);
@@ -1021,6 +1027,9 @@ public class FeedsMaster {
         if (feedsRow.tblJobEvent.eventType.equalsIgnoreCase("ONLINE")) {
             location_or_broadcast_title_tv.setText("Broadcast Link");
             location_or_broadcast_tv.setText(feedsRow.tblJobEvent.contactNumber);
+            location_or_broadcast_tv.setOnClickListener(v -> {
+                CommonFunction._OpenLink(context, feedsRow.tblJobEvent.contactNumber);
+            });
         } else {//Offline
             location_or_broadcast_title_tv.setText("Location");
             Type type = new TypeToken<HashMap<String, String>>() {
@@ -1035,7 +1044,74 @@ public class FeedsMaster {
                 location += location.equalsIgnoreCase("") ? hashMap.get("region_country") : ", " + hashMap.get("region_country");
             location_or_broadcast_tv.setText(location);
         }
+        //interest count
+        LinearLayout interested_ll = view.findViewById(R.id.interested_ll);
+        TextView event_ind_txt = view.findViewById(R.id.event_ind_txt);
+        ImageView event_ind_iv = view.findViewById(R.id.event_ind_iv);
+        final boolean isLike = Integer.parseInt(feedsRow.isLike) > 0;
+        event_ind_txt.setText(feedsRow.likes);
+        if (isLike) {
+            event_ind_iv.setImageResource(R.drawable.account_multiple_check);
+        }
+        interested_ll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap hashMap = new HashMap();
+                hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                hashMap.put("apiKey", sessionPref.getApiKey());
+                hashMap.put("feed_master_id", feedsRow.feedMasterId);
+                apiInterface.CALL_LIKE_UNLIKE(hashMap).enqueue(new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        CommonFunction.dismissDialog();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status) {
+                                    int counter = Integer.parseInt(event_ind_txt.getText().toString());
+                                    if (normalCommonResponse.msg.equalsIgnoreCase("Like!")) {
+                                        event_ind_iv.setImageResource(R.drawable.account_multiple_check);
+                                        event_ind_txt.setText(String.valueOf(counter + 1));
+                                    } else {
+                                        event_ind_iv.setImageResource(R.drawable.account_multiple);
+                                        if (counter > 0)
+                                            event_ind_txt.setText(String.valueOf(counter - 1));
+                                    }
+                                } else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call call, Throwable t) {
+                        CommonFunction.dismissDialog();
+                        Log.d(LogTag.API_EXCEPTION, "CALL_LIKE_UNLIKE", t);
+                    }
+                });
+            }
+        });
         return view;
+    }
+
+    private void setEventLabel(View view, String eventEndDate, String eventStartDate) {
+        LinearLayout event_finish_ll = view.findViewById(R.id.event_finish_ll);
+        ImageView event_ind_iv = view.findViewById(R.id.event_ind_iv);
+        TextView event_ind_txt = view.findViewById(R.id.event_ind_txt);
+        Date currDate = new Date();
+        Date endDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", eventEndDate);
+        Date startDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", eventStartDate);
+        if (currDate.getTime() > endDate.getTime()) { //end
+            event_ind_txt.setText("Event Finished");
+            event_ind_iv.setImageResource(R.drawable.calendar_check);
+        } else if (currDate.getTime() < endDate.getTime() && currDate.getTime() > startDate.getTime()) {//ongoing
+            event_ind_txt.setText("Event Ongoing");
+            event_ind_iv.setImageResource(R.drawable.calendar_ongoing);
+        } else {//upcoming
+            event_ind_txt.setText("Event Upcoming");
+            event_ind_iv.setImageResource(R.drawable.calendar_event_upcoming);
+        }
+        event_finish_ll.setVisibility(View.VISIBLE);
     }
 
     public View getFeedsJobsView(FeedsRow feedsRow) {
@@ -1060,6 +1136,11 @@ public class FeedsMaster {
         job_business_page_nm_txt.setText(feedsRow.tblBusinessPage.busName);
         TextView job_location = view.findViewById(R.id.job_location);
         job_location.setText(feedsRow.tblJobPost.jobLocation);
+        ImageView feed_forward_icon = view.findViewById(R.id.feed_forward_icon);
+        feed_forward_icon.setOnClickListener(v -> {
+            feedForwardDialog(feedsRow.feedMasterId);
+        });
+
         ImageView feed_save_unsave_icon = view.findViewById(R.id.feed_save_unsave_icon);
         final boolean[] isSave = {Integer.parseInt(feedsRow.isSave) > 0};
         if (isSave[0]) {
@@ -1395,43 +1476,7 @@ public class FeedsMaster {
         feed_fwd_iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //open confirm box and forward and push top of list
-                AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-                alertDialog.setMessage("Are you sure share this post on your post timeline?");
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        CommonFunction.PleaseWaitShow(context);
-                        HashMap hashMap = new HashMap();
-                        hashMap.put("user_master_id", sessionPref.getUserMasterId());
-                        hashMap.put("apiKey", sessionPref.getApiKey());
-                        hashMap.put("feed_master_id", feedsRow.feedMasterId);
-                        hashMap.put("feed_for", feedForForward);
-                        hashMap.put("feed_for_id", feedForIdForward);
-                        apiInterface.FEEDS_SHARE_FORWARD(hashMap).enqueue(new MyApiCallback() {
-                            @Override
-                            public void onResponse(Call call, Response response) {
-                                super.onResponse(call, response);
-                                if (response.isSuccessful()) {
-                                    if (response.body() != null) {
-                                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                                        if (normalCommonResponse.status) {
-                                            //reload activity page OR add forwarded feed on top of the list
-                                            reloadOrAddTopFeeds();
-                                        } else
-                                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-                        });
-                    }
-                });
-                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                alertDialog.show();
+                feedForwardDialog(feedsRow.feedMasterId);
             }
         });
     }
@@ -1511,6 +1556,8 @@ public class FeedsMaster {
         TextView feeds_shareBy_User_name = view.findViewById(R.id.feeds_shareBy_User_name);
 //        group icon userpic elements
         MaterialCardView title_gMember_view = view.findViewById(R.id.title_gMember_view);
+        LinearLayout with_user_dt_ll = view.findViewById(R.id.with_user_dt_ll);
+        TextView user_fullname_txt = view.findViewById(R.id.user_fullname_txt);
         ImageView title_gMember_pic = view.findViewById(R.id.title_gMember_pic);
 //        main elements
         ImageView feeds_title_img = view.findViewById(R.id.feeds_title_img);
@@ -1588,17 +1635,22 @@ public class FeedsMaster {
 
         //group feeds set group extra elements
         title_gMember_view.setVisibility(View.GONE);
+        with_user_dt_ll.setVisibility(View.GONE);
         if (feedsRow.feedFor.equalsIgnoreCase("COMMUNITY")) {
             title_gMember_view.setVisibility(View.VISIBLE);
+            with_user_dt_ll.setVisibility(View.VISIBLE);
+            user_fullname_txt.setText(feedsRow.name);
             Glide.with(context).load(imgPath + feedsRow.profilePic).centerCrop().placeholder(R.drawable.default_user_pic).into(title_gMember_pic);
-            title_gMember_view.setOnClickListener(new View.OnClickListener() {
+            View.OnClickListener openUserProfile = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(context, ProfileActivity.class);
                     i.putExtra("user_master_id", feedsRow.userMasterId);
                     context.startActivity(i);
                 }
-            });
+            };
+            title_gMember_view.setOnClickListener(openUserProfile);
+            user_fullname_txt.setOnClickListener(openUserProfile);
         }
 
         Glide.with(context).load(imgPath + feedsProPic).centerCrop().placeholder(defaultPic).into(feeds_title_img);
@@ -1751,6 +1803,7 @@ public class FeedsMaster {
                     @Override
                     public void onClick(View v) {
                         //send report data
+                        userMaster.openReportDialog("Post", "feed_master", feedsRow.feedMasterId, context);
                         feedsOptionDialog.dismiss();
                     }
                 });
@@ -2083,7 +2136,8 @@ public class FeedsMaster {
 
         String[] jobType = context.getResources().getStringArray(R.array.job_type),
                 jobTime = context.getResources().getStringArray(R.array.job_time),
-                payRoll = context.getResources().getStringArray(R.array.job_payroll);
+                payRoll = context.getResources().getStringArray(R.array.job_payroll),
+                currencySort = context.getResources().getStringArray(R.array.currency_sort);
 
         TextView title = dialog.findViewById(R.id.title);
         title.setText("Create a job");
@@ -2091,7 +2145,7 @@ public class FeedsMaster {
         Spinner job_type_sp = dialog.findViewById(R.id.job_type_sp);
         Spinner job_time_sp = dialog.findViewById(R.id.job_time_sp);
         EditText location_et = dialog.findViewById(R.id.location_et);
-        EditText currency_et = dialog.findViewById(R.id.currency_et);
+        Spinner currency_sp = dialog.findViewById(R.id.currency_sp);
         Spinner payroll_sp = dialog.findViewById(R.id.payroll_sp);
         EditText job_salary_et = dialog.findViewById(R.id.job_salary_et);
         EditText experience_et = dialog.findViewById(R.id.experience_et);
@@ -2226,7 +2280,7 @@ public class FeedsMaster {
                                     location_et.setText(ourJobPostRow.dt.jobLocation);
 
                                 if (ourJobPostRow.dt.salaryCurrency != null)
-                                    currency_et.setText(ourJobPostRow.dt.salaryCurrency);
+                                    currency_sp.setSelection(Arrays.asList(payRoll).indexOf(ourJobPostRow.dt.salaryCurrency));
 
                                 if (ourJobPostRow.dt.salaryPayroll != null)
                                     payroll_sp.setSelection(Arrays.asList(payRoll).indexOf(ourJobPostRow.dt.salaryPayroll));
@@ -2311,7 +2365,7 @@ public class FeedsMaster {
             hashMap.put("job_type", Arrays.asList(jobType).get(job_type_sp.getSelectedItemPosition()));
             hashMap.put("job_time", Arrays.asList(jobTime).get(job_time_sp.getSelectedItemPosition()));
             hashMap.put("job_location", location_et.getText().toString());
-            hashMap.put("salary_currency", currency_et.getText().toString());
+            hashMap.put("salary_currency", Arrays.asList(payRoll).get(currency_sp.getSelectedItemPosition()));
             hashMap.put("salary_payroll", Arrays.asList(payRoll).get(payroll_sp.getSelectedItemPosition()));
             hashMap.put("salary", job_salary_et.getText().toString());
             hashMap.put("requirements", experience_et.getText().toString());//experience
@@ -2377,6 +2431,208 @@ public class FeedsMaster {
     /**
      * common function for feeds
      **/
+
+    public void feedForwardDialog(String feedMasterId) {
+        Dialog dialog = new Dialog(activity, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.feed_frwd_dialog);
+        EditProfileActivity.setDialogFullScreenSetting(dialog);
+        LayoutInflater inflater = LayoutInflater.from(context);
+
+        dialog.show();
+
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        LinearLayout own_profile_ll = dialog.findViewById(R.id.own_profile_ll);
+        UserRowResponse.Dt userRowResponse = sessionPref.getUserMasterRowInObject();
+        View ownProfile = inflater.inflate(R.layout.user_pic_two_btn_list_item, null);
+
+        ImageView member_profile_pic = ownProfile.findViewById(R.id.member_profile_pic);
+        Glide.with(context).load(imgPath + userRowResponse.profilePic).placeholder(R.drawable.default_user_pic).into(member_profile_pic);
+
+        TextView member_tv = ownProfile.findViewById(R.id.member_tv);
+        member_tv.setText(userRowResponse.name);
+
+        MaterialButton first_mbtn = ownProfile.findViewById(R.id.first_mbtn);
+        first_mbtn.setVisibility(View.GONE);
+
+        MaterialButton second_mbtn = ownProfile.findViewById(R.id.second_mbtn);
+        second_mbtn.setText("Forward");
+        second_mbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CommonFunction.PleaseWaitShow(context);
+                HashMap hashMap = new HashMap();
+                hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                hashMap.put("apiKey", sessionPref.getApiKey());
+                hashMap.put("feed_master_id", feedMasterId);
+                hashMap.put("feed_for", "USER");
+                hashMap.put("feed_for_id", userRowResponse.userMasterId);
+                apiInterface.FEEDS_SHARE_FORWARD(hashMap).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status) {
+                                    //reload activity page OR add forwarded feed on top of the list
+                                    reloadOrAddTopFeeds();
+                                } else
+                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        own_profile_ll.addView(ownProfile);
+
+        CommonFunction.PleaseWaitShow(context);
+        LinearLayout business_main_ll = dialog.findViewById(R.id.business_main_ll);
+        LinearLayout business_ll = dialog.findViewById(R.id.business_ll);
+
+        LinearLayout groups_main_ll = dialog.findViewById(R.id.groups_main_ll);
+        LinearLayout groups_ll = dialog.findViewById(R.id.groups_main_ll);
+
+        HashMap hashMap = new HashMap();
+        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+        hashMap.put("apiKey", sessionPref.getApiKey());
+        hashMap.put("device", "ANDROID");
+
+        apiInterface.GET_MY_PAGES_LIST(hashMap).enqueue(new MyApiCallback(progressBar) {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                //set group
+                CommonFunction.PleaseWaitShow(context);
+                HashMap hashMap = new HashMap();
+                hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                hashMap.put("apiKey", sessionPref.getApiKey());
+                hashMap.put("device", "ANDROID");
+                //connectReqUsersMaster / connectUsers / followReqUsers / followerUsers / followingUsers / userCommunitys / userBusinessPages / userEvents /
+                //suggestedCityUser / suggestedIndustryUser / suggestedGroup / suggestedBusPages
+                hashMap.put("fnName", NetworkActivity.SeeAllFnName.userCommunitys.getVal());
+                apiInterface.NETWORK_SEE_ALL_LIST(hashMap).enqueue(new MyApiCallback(progressBar) {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        CommonFunction.dismissDialog();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NetworkSeeAllCommonResponse.CommunitysListResponse communitysListResponse = new Gson().fromJson(new Gson().toJson(response.body()), NetworkSeeAllCommonResponse.CommunitysListResponse.class);
+                                if (communitysListResponse.status) {
+                                    if (communitysListResponse.dt.size() > 0) {
+                                        for (NetworkSeeAllCommonResponse.CommunitysListResponse.Dt dt : communitysListResponse.dt) {
+                                            View groupList = inflater.inflate(R.layout.user_pic_two_btn_list_item, null);
+                                            ImageView member_profile_pic = groupList.findViewById(R.id.member_profile_pic);
+                                            Glide.with(context).load(imgPath + dt.logo).placeholder(R.drawable.default_groups_pic).into(member_profile_pic);
+
+                                            TextView member_tv = groupList.findViewById(R.id.member_tv);
+                                            member_tv.setText(dt.name);
+
+                                            MaterialButton first_mbtn = groupList.findViewById(R.id.first_mbtn);
+                                            first_mbtn.setVisibility(View.GONE);
+
+                                            MaterialButton second_mbtn = groupList.findViewById(R.id.second_mbtn);
+                                            second_mbtn.setText("Forward");
+                                            second_mbtn.setOnClickListener(v -> {
+                                                CommonFunction.PleaseWaitShow(context);
+                                                HashMap hashMap2 = new HashMap();
+                                                hashMap2.put("user_master_id", sessionPref.getUserMasterId());
+                                                hashMap2.put("apiKey", sessionPref.getApiKey());
+                                                hashMap2.put("feed_master_id", feedMasterId);
+                                                hashMap2.put("feed_for", "COMMUNITY");
+                                                hashMap2.put("feed_for_id", dt.communityMasterId);
+                                                apiInterface.FEEDS_SHARE_FORWARD(hashMap2).enqueue(new MyApiCallback() {
+                                                    @Override
+                                                    public void onResponse(Call call, Response response) {
+                                                        super.onResponse(call, response);
+                                                        if (response.isSuccessful()) {
+                                                            if (response.body() != null) {
+                                                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                                                if (normalCommonResponse.status) {
+                                                                    //reload activity page OR add forwarded feed on top of the list
+                                                                    reloadOrAddTopFeeds();
+                                                                } else
+                                                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    }
+                                                });
+                                            });
+
+                                            groups_ll.addView(groupList);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+
+                //set business
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        MyPagesListResponse myPagesListResponse = (MyPagesListResponse) response.body();
+                        if (myPagesListResponse.status) {
+                            if (myPagesListResponse.dt.size() > 0) {
+                                business_main_ll.setVisibility(View.VISIBLE);
+                                for (MyPagesListResponse.Dt dt : myPagesListResponse.dt) {
+                                    View ownBusinessPages = inflater.inflate(R.layout.user_pic_two_btn_list_item, null);
+
+                                    ImageView member_profile_pic = ownBusinessPages.findViewById(R.id.member_profile_pic);
+                                    Glide.with(context).load(imgPath + dt.logo).placeholder(R.drawable.default_business_pic).into(member_profile_pic);
+
+                                    TextView member_tv = ownBusinessPages.findViewById(R.id.member_tv);
+                                    member_tv.setText(dt.busName);
+
+                                    MaterialButton first_mbtn = ownBusinessPages.findViewById(R.id.first_mbtn);
+                                    first_mbtn.setVisibility(View.GONE);
+
+                                    MaterialButton second_mbtn = ownBusinessPages.findViewById(R.id.second_mbtn);
+                                    second_mbtn.setText("Forward");
+                                    second_mbtn.setOnClickListener(v -> {
+                                        CommonFunction.PleaseWaitShow(context);
+                                        HashMap hashMap2 = new HashMap();
+                                        hashMap2.put("user_master_id", sessionPref.getUserMasterId());
+                                        hashMap2.put("apiKey", sessionPref.getApiKey());
+                                        hashMap2.put("feed_master_id", feedMasterId);
+                                        hashMap2.put("feed_for", "BUSINESS");
+                                        hashMap2.put("feed_for_id", dt.businessPageId);
+                                        apiInterface.FEEDS_SHARE_FORWARD(hashMap2).enqueue(new MyApiCallback() {
+                                            @Override
+                                            public void onResponse(Call call, Response response) {
+                                                super.onResponse(call, response);
+                                                if (response.isSuccessful()) {
+                                                    if (response.body() != null) {
+                                                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                                        if (normalCommonResponse.status) {
+                                                            //reload activity page OR add forwarded feed on top of the list
+                                                            reloadOrAddTopFeeds();
+                                                        } else
+                                                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    });
+
+                                    business_ll.addView(ownBusinessPages);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    }
+
     private void reloadOrAddTopFeeds() {
         reloadOrAddTopFeeds(null);
     }
@@ -2443,18 +2699,26 @@ public class FeedsMaster {
     }
 
     public static String feedTimeCount(String createDate) {
-        return feedTimeCount(createDate, DateUtils.TODAYDATETIMEforDB());
+        return feedTimeCount(createDate, DateUtils.TODAYDATETIMEforDB(), null);
     }
 
-    public static String feedTimeCount(String createDate, String nowDate) {
+    public static String feedTimeCount(String createDate, String nowDate, String type) {
         long year = DateUtils.dateDiff("Y", createDate, nowDate);
         long month = DateUtils.dateDiff("m", createDate, nowDate);
         long days = DateUtils.dateDiff("d", createDate, nowDate);
         long hour = DateUtils.dateDiff("h", createDate, nowDate);
         long minute = DateUtils.dateDiff("n", createDate, nowDate);
         if (year > 0) {
+            if (type.equalsIgnoreCase("M-Y")) {
+                return year + " yr " + (year % 12) + " mo ago";
+            }
             return year + " Years ago";
         } else if (month > 0 && days > 28) {
+            if (type.equalsIgnoreCase("M-Y")) {
+                if ((days % 30.417) > 5) {
+                    return month + " mo " + (days % 30.417) + " dy ago";
+                }
+            }
             return month + " Months ago";
         } else if (days > 0) {
             return days + " Days ago";

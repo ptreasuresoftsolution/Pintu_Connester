@@ -36,7 +36,7 @@ public class EventFragment extends Fragment {
 
         sessionPref = new SessionPref(getContext());
         if (sessionPref.getUserMasterRowInObject().saveFeeds != null && !sessionPref.getUserMasterRowInObject().saveFeeds.equalsIgnoreCase("")) {
-            feedsMaster = new FeedsMaster(getContext(), getActivity());
+            feedsMaster = new FeedsMaster(getContext(), getActivity(),getActivity());
             feedsMaster.feedListBy = "SAVED";
             feedsMaster.setProgressBar(progressBar);
             feedsMaster.setFeedsIds(sessionPref.getUserMasterRowInObject().saveFeeds);

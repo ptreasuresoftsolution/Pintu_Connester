@@ -38,7 +38,7 @@ public class BusinessPostsFragment extends Fragment {
 
         main_ll = view.findViewById(R.id.main_ll);
         sessionPref = new SessionPref(getContext());
-        feedsMaster = new FeedsMaster(getContext(), getActivity());
+        feedsMaster = new FeedsMaster(getContext(), getActivity(), getActivity());
         feedsMaster.setProgressBar(progressBar);
         feedsMaster.setFeedForForward("BUSINESS");
         feedsMaster.setFeedForIdForward(business_page_id);

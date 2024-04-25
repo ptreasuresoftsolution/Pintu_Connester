@@ -51,7 +51,7 @@ public class PageJobMangeActivity extends AppCompatActivity {
         scrollView = findViewById(R.id.scrollView);
         progressBar = findViewById(R.id.progressBar);
 
-        feedsMaster = new FeedsMaster(context, activity);
+        feedsMaster = new FeedsMaster(context, activity, PageJobMangeActivity.this);
         feedsMaster.setProgressBar(progressBar);
 
         feedsMaster.setFeedForForward("BUSINESS");

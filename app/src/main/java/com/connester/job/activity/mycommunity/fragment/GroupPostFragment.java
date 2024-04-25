@@ -48,7 +48,7 @@ public class GroupPostFragment extends Fragment {
         });
 
         sessionPref = new SessionPref(getContext());
-        feedsMaster = new FeedsMaster(getContext(), getActivity());
+        feedsMaster = new FeedsMaster(getContext(), getActivity(),getActivity());
         feedsMaster.setProgressBar(progressBar);
         feedsMaster.setFeedForForward("COMMUNITY");
         feedsMaster.setFeedForIdForward(communityMasterId);

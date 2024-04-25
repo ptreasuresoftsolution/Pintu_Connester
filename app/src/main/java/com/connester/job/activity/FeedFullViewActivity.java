@@ -57,7 +57,7 @@ public class FeedFullViewActivity extends AppCompatActivity {
         scrollView = findViewById(R.id.scrollView);
         progressBar = findViewById(R.id.progressBar);
 
-        feedsMaster = new FeedsMaster(context, activity);
+        feedsMaster = new FeedsMaster(context, activity,FeedFullViewActivity.this);
         feedsMaster.setProgressBar(progressBar);
         feedsMaster.setFeedsFullView(true);
         feedsMaster.setChkClose(false);

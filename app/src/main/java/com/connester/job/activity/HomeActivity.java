@@ -58,7 +58,7 @@ public class HomeActivity extends AppCompatActivity {
             context.startActivity(new Intent(context, JobsEvents_Activity.class));
         });
 
-        feedsMaster = new FeedsMaster(context, activity);
+        feedsMaster = new FeedsMaster(context, activity,HomeActivity.this);
         feedsMaster.setChkClose(true);
         feedsMaster.setProgressBar(progressBar);
         feedsMaster.setFeedForForward("USER");

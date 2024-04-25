@@ -486,7 +486,7 @@ public class CommonFunction {
         String suffix = " kmbt";
         String formattedNumber = "";
 
-        NumberFormat formatter = new DecimalFormat("#,###.#");
+        NumberFormat formatter = new DecimalFormat("#,###.00");
         power = (int) StrictMath.log10(value);
         value = (value / (Math.pow(10, (power / 3) * 3)));
         formattedNumber = formatter.format(value);

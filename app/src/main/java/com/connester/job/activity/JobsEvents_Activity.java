@@ -29,6 +29,7 @@ public class JobsEvents_Activity extends AppCompatActivity {
     ScrollView scrollView;
 
     SwipeRefreshLayout swipe_refresh;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +44,7 @@ public class JobsEvents_Activity extends AppCompatActivity {
         main_ll = findViewById(R.id.main_ll);
         progressBar = findViewById(R.id.progressBar);
 
-        feedsMaster = new FeedsMaster(context, activity);
+        feedsMaster = new FeedsMaster(context, activity, JobsEvents_Activity.this);
         feedsMaster.setProgressBar(progressBar);
         feedsMaster.callSuggestedJobsEventsFeeds(main_ll, scrollView);
 

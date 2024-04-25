@@ -36,6 +36,7 @@ public class BusinessAboutFragment extends Fragment {
     TextView about_tv, website_tv, phone_tv, industry_tv, company_size_tv, location_tv, company_type_tv, founded_tv;
     FlexboxLayout skill_tag_fbl;
     SessionPref sessionPref;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -81,6 +82,9 @@ public class BusinessAboutFragment extends Fragment {
 
                             about_tv.setText(businessPageRow.description);
                             website_tv.setText(businessPageRow.website);
+                            website_tv.setOnClickListener(v -> {
+                                CommonFunction._OpenLink(context, businessPageRow.website);
+                            });
                             phone_tv.setText(businessPageRow.phone);
                             industry_tv.setText(businessPageRow.industry);
                             company_size_tv.setText(businessPageRow.orgSize);

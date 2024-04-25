@@ -35,7 +35,7 @@ public class PostsFragment extends Fragment {
 
         sessionPref = new SessionPref(getContext());
         if (sessionPref.getUserMasterRowInObject().saveFeeds != null && !sessionPref.getUserMasterRowInObject().saveFeeds.equalsIgnoreCase("")) {
-            feedsMaster = new FeedsMaster(getContext(), getActivity());
+            feedsMaster = new FeedsMaster(getContext(), getActivity(), getActivity());
             feedsMaster.setProgressBar(progressBar);
             feedsMaster.setChkClose(false);
             feedsMaster.setFeedsIds(sessionPref.getUserMasterRowInObject().saveFeeds);
