@@ -59,7 +59,7 @@ public class CommunityActivity extends AppCompatActivity {
     MaterialButton join_exit_mbtn, more_option_mbtn;
     ScrollView scrollView;
     FrameLayout progressBar;
-    UserMaster userMaster;
+    public static UserMaster userMaster;
     SwipeRefreshLayout swipe_refresh;
 
     @Override

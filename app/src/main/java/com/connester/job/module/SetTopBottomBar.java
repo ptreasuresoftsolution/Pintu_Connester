@@ -22,7 +22,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
@@ -52,6 +51,7 @@ import com.connester.job.module.notification_message.ChatModule;
 import com.connester.job.module.notification_message.TypingOnlineListener;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYouListener;
+import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -151,8 +151,11 @@ public class SetTopBottomBar {
             context.startActivity(new Intent(context, UserMenuActivity.class));
         });
 
-        SearchView search_master_sv = activity.findViewById(R.id.search_master_sv);
-        search_master_sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        MaterialCardView search_master_sv = activity.findViewById(R.id.search_master_sv);
+        search_master_sv.setOnClickListener(v -> {
+            openSearchDialog(null);
+        });
+        /*search_master_sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 openSearchDialog(query);
@@ -163,7 +166,7 @@ public class SetTopBottomBar {
             public boolean onQueryTextChange(String newText) {
                 return false;
             }
-        });
+        });*/
 
         ImageView open_message_iv = activity.findViewById(R.id.open_message_iv);
         message_dot = activity.findViewById(R.id.message_dot);
@@ -205,7 +208,9 @@ public class SetTopBottomBar {
             dialog.dismiss();
         });
         search_et = dialog.findViewById(R.id.search_et);
-        search_et.setText(query);
+        search_et.requestFocus();
+        if (query != null)
+            search_et.setText(query);
         search_et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -225,8 +230,10 @@ public class SetTopBottomBar {
         search_list = dialog.findViewById(R.id.search_list);
         no_item_tv = dialog.findViewById(R.id.no_item_tv);
         dialog.show();
-        CommonFunction.PleaseWaitShow(context);
-        dataLoad(search_list, no_item_tv, query);
+        if (query != null) {
+            CommonFunction.PleaseWaitShow(context);
+            dataLoad(search_list, no_item_tv, query);
+        }
     }
 
     private void dataLoad(ListView searchList, TextView no_item_tv, String query) {

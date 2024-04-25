@@ -115,6 +115,7 @@ public class AddFeedsActivity extends AppCompatActivity {
                                     imgPath = businessPageRowResponse.imgPath;
                                     businessName = businessPageRow.busName;
                                     businessLogo = businessPageRow.logo;
+                                    addTextLinkFeed();
                                 }
 
                             }
@@ -141,6 +142,7 @@ public class AddFeedsActivity extends AppCompatActivity {
                                     imgPath = groupRowResponse.imgPath;
                                     groupName = groupRowResponse.groupRow.name;
                                     groupLogo = groupRowResponse.groupRow.logo;
+                                    addTextLinkFeed();
                                 }
                             }
                         }
@@ -220,10 +222,10 @@ public class AddFeedsActivity extends AppCompatActivity {
         fullname_txt.setText(sessionPref.getUserFullName());
         if (feedFor.equalsIgnoreCase("BUSINESS")) {
             fullname_txt.setText(businessName);
-            Glide.with(context).load(imgPath+businessLogo).placeholder(R.drawable.default_business_pic).into(feeds_title_img);
+            Glide.with(context).load(imgPath + businessLogo).placeholder(R.drawable.default_business_pic).into(feeds_title_img);
         } else if (feedFor.equalsIgnoreCase("COMMUNITY")) {
             fullname_txt.setText(groupName);
-            Glide.with(context).load(imgPath+groupLogo).placeholder(R.drawable.default_groups_pic).into(feeds_title_img);
+            Glide.with(context).load(imgPath + groupLogo).placeholder(R.drawable.default_groups_pic).into(feeds_title_img);
         }
 
         EditText pt_title = view.findViewById(R.id.pt_title);
@@ -373,10 +375,10 @@ public class AddFeedsActivity extends AppCompatActivity {
         fullname_txt.setText(sessionPref.getUserFullName());
         if (feedFor.equalsIgnoreCase("BUSINESS")) {
             fullname_txt.setText(businessName);
-            Glide.with(context).load(imgPath+businessLogo).placeholder(R.drawable.default_business_pic).into(feeds_title_img);
+            Glide.with(context).load(imgPath + businessLogo).placeholder(R.drawable.default_business_pic).into(feeds_title_img);
         } else if (feedFor.equalsIgnoreCase("COMMUNITY")) {
             fullname_txt.setText(groupName);
-            Glide.with(context).load(imgPath+groupLogo).placeholder(R.drawable.default_groups_pic).into(feeds_title_img);
+            Glide.with(context).load(imgPath + groupLogo).placeholder(R.drawable.default_groups_pic).into(feeds_title_img);
         }
         submit_post.setOnClickListener(v -> {
             if (pt_title.getText().toString().trim().equalsIgnoreCase("")) {
@@ -509,10 +511,10 @@ public class AddFeedsActivity extends AppCompatActivity {
         fullname_txt.setText(sessionPref.getUserFullName());
         if (feedFor.equalsIgnoreCase("BUSINESS")) {
             fullname_txt.setText(businessName);
-            Glide.with(context).load(imgPath+businessLogo).placeholder(R.drawable.default_business_pic).into(feeds_title_img);
+            Glide.with(context).load(imgPath + businessLogo).placeholder(R.drawable.default_business_pic).into(feeds_title_img);
         } else if (feedFor.equalsIgnoreCase("COMMUNITY")) {
             fullname_txt.setText(groupName);
-            Glide.with(context).load(imgPath+groupLogo).placeholder(R.drawable.default_groups_pic).into(feeds_title_img);
+            Glide.with(context).load(imgPath + groupLogo).placeholder(R.drawable.default_groups_pic).into(feeds_title_img);
         }
         EditText pt_title = view.findViewById(R.id.pt_title);
         EditText link_et = view.findViewById(R.id.link_et);

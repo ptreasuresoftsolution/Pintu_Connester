@@ -49,6 +49,7 @@ import com.connester.job.function.FilePath;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
+import com.connester.job.module.UserMaster;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -85,7 +86,7 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
     ScrollView scrollView;
     FrameLayout progressBar;
     GroupMembersFragment groupMembersFragment;
-
+    public static UserMaster userMaster;
     SwipeRefreshLayout swipe_refresh;
 
     @Override
@@ -109,6 +110,8 @@ public class ManageMyCommunityActivity extends AppCompatActivity {
         activity = ManageMyCommunityActivity.this;
         sessionPref = new SessionPref(context);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        userMaster = new UserMaster(context, ManageMyCommunityActivity.this);
+        userMaster.initReportAttachmentLauncher();
 
         scrollView = findViewById(R.id.scrollView);
         progressBar = findViewById(R.id.progressBar);

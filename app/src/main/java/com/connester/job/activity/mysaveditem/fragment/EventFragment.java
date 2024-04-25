@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.connester.job.R;
+import com.connester.job.activity.mysaveditem.MySavedItemActivity;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 
@@ -36,7 +37,9 @@ public class EventFragment extends Fragment {
 
         sessionPref = new SessionPref(getContext());
         if (sessionPref.getUserMasterRowInObject().saveFeeds != null && !sessionPref.getUserMasterRowInObject().saveFeeds.equalsIgnoreCase("")) {
-            feedsMaster = new FeedsMaster(getContext(), getActivity(),getActivity());
+
+            feedsMaster = new FeedsMaster(getContext(), getActivity(),null);
+            feedsMaster.setUserMaster(MySavedItemActivity.userMaster);
             feedsMaster.feedListBy = "SAVED";
             feedsMaster.setProgressBar(progressBar);
             feedsMaster.setFeedsIds(sessionPref.getUserMasterRowInObject().saveFeeds);

@@ -34,14 +34,17 @@ public class MySavedItemActivity extends AppCompatActivity {
     TabLayout tab_layout;
     List<Fragment> fragments = new ArrayList<>();
     List<String> fragmentsTitle = new ArrayList<>();
-UserMaster userMaster;
+    public static UserMaster userMaster;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_saved_item);
         context = MySavedItemActivity.this;
         activity = MySavedItemActivity.this;
-        userMaster = new UserMaster(context);
+        userMaster = new UserMaster(context, MySavedItemActivity.this);
+        userMaster.initReportAttachmentLauncher();
+
         sessionPref = new SessionPref(context);
 
         back_iv = findViewById(R.id.back_iv);
@@ -82,6 +85,6 @@ UserMaster userMaster;
                     }
                 });
             }
-        },"*",true);
+        }, "*", true);
     }
 }

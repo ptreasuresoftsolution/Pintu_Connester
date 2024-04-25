@@ -43,6 +43,7 @@ import com.connester.job.function.FilePath;
 import com.connester.job.function.LogTag;
 import com.connester.job.function.MyApiCallback;
 import com.connester.job.function.SessionPref;
+import com.connester.job.module.UserMaster;
 import com.connester.job.plugins.multipleselectedspinner.KeyPairBoolData;
 import com.connester.job.plugins.multipleselectedspinner.MultiSpinnerListener;
 import com.connester.job.plugins.multipleselectedspinner.MultiSpinnerSearch;
@@ -81,7 +82,7 @@ public class ManageMyPageActivity extends AppCompatActivity {
     MaterialButton jobs_mbtn, events_mbtn, setting_open_mbtn;
     ScrollView scrollView;
     FrameLayout progressBar;
-
+    public static UserMaster userMaster;
     SwipeRefreshLayout swipe_refresh;
 
     @Override
@@ -106,6 +107,8 @@ public class ManageMyPageActivity extends AppCompatActivity {
         activity = ManageMyPageActivity.this;
         sessionPref = new SessionPref(context);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        userMaster = new UserMaster(context, ManageMyPageActivity.this);
+        userMaster.initReportAttachmentLauncher();
 
         scrollView = findViewById(R.id.scrollView);
         progressBar = findViewById(R.id.progressBar);

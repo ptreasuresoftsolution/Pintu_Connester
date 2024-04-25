@@ -66,6 +66,30 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/feed_delete"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="26dp"
+            android:layout_marginBottom="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="18dp"
+                android:src="@drawable/delete_trash"
+                app:tint="@color/secondary_3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Delete"
+                android:textColor="@color/secondary_3"
+                android:textSize="@dimen/label" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/feed_share"
             android:visibility="gone"
             android:layout_width="match_parent"

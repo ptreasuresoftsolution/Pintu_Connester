@@ -73,40 +73,45 @@ public class ChangeUsernameActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                checkUserName(username_et.getText().toString());
+                if (dt.userName.equals(username_et.getText().toString())) {
+                    userNameMsg_txt.setText("Username is available");
+                    userNameMsg_txt.setTextColor(getColor(R.color.success));
+                }else
+                    checkUserName(username_et.getText().toString());
             }
         });
         username_et.setText(dt.userName);
-
         save_username_mbtn.setOnClickListener(v -> {
-            CommonFunction.PleaseWaitShow(context);
-            HashMap hashMap = new HashMap();
-            hashMap.put("user_master_id", sessionPref.getUserMasterId());
-            hashMap.put("apiKey", sessionPref.getApiKey());
-            hashMap.put("username", username_et.getText().toString());
-            ApiClient.getClient().create(ApiInterface.class).CHANGE_USERNAME_CALL(hashMap).enqueue(new MyApiCallback() {
-                @Override
-                public void onResponse(Call call, Response response) {
-                    super.onResponse(call, response);
-                    if (response.isSuccessful()) {
-                        if (response.body() != null) {
-                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                            if (normalCommonResponse.status) {
-                                new UserMaster(context).getLoginUserData(new UserMaster.CallBack() {
-                                    @Override
-                                    public void DataCallBack(Response response) {
-                                        UserRowResponse userRowResponse = (UserRowResponse) response.body();
-                                        if (userRowResponse.status) {
-                                            dt = userRowResponse.dt;
+            if (!dt.userName.equals(username_et.getText().toString())) {
+                CommonFunction.PleaseWaitShow(context);
+                HashMap hashMap = new HashMap();
+                hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                hashMap.put("apiKey", sessionPref.getApiKey());
+                hashMap.put("username", username_et.getText().toString());
+                ApiClient.getClient().create(ApiInterface.class).CHANGE_USERNAME_CALL(hashMap).enqueue(new MyApiCallback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                if (normalCommonResponse.status) {
+                                    new UserMaster(context).getLoginUserData(new UserMaster.CallBack() {
+                                        @Override
+                                        public void DataCallBack(Response response) {
+                                            UserRowResponse userRowResponse = (UserRowResponse) response.body();
+                                            if (userRowResponse.status) {
+                                                dt = userRowResponse.dt;
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
+                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                             }
-                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
                         }
                     }
-                }
-            });
+                });
+            } else Toast.makeText(context, "No change user name", Toast.LENGTH_LONG).show();
         });
     }
 

@@ -59,7 +59,7 @@
             android:backgroundTint="@android:color/transparent"
             android:gravity="center_vertical"
             android:hint="Username"
-            android:inputType="textPassword"
+            android:inputType="text"
             android:singleLine="true"
             android:textSize="@dimen/small_lg" />
     </com.google.android.material.card.MaterialCardView>

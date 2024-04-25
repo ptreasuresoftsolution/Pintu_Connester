@@ -3,6 +3,7 @@ package com.connester.job.function;
 import static android.content.Context.CLIPBOARD_SERVICE;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -27,14 +28,20 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -45,6 +52,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.connester.job.R;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -483,7 +492,7 @@ public class CommonFunction {
 
     public static String convertAmountUnitForm(double value) {
         int power;
-        String suffix = " kmbt";
+        String suffix = " KMBT";
         String formattedNumber = "";
 
         NumberFormat formatter = new DecimalFormat("#,###.00");
@@ -492,7 +501,7 @@ public class CommonFunction {
         formattedNumber = formatter.format(value);
         formattedNumber = formattedNumber + suffix.charAt(power / 3);
         String avl = formattedNumber.length() > 4 ? formattedNumber.replaceAll("\\.[0-9]+", "") : formattedNumber;
-        return (avl);
+        return (formattedNumber);
     }
 
     public static String NumberToWord(String number) {
@@ -633,5 +642,42 @@ public class CommonFunction {
             }
         }
         return start + " - " + stop + " years";
+    }
+
+    public static void _OpenLinkInMyWebview(Context context, String titleStr, String link) {
+        Dialog dialog = new Dialog(context, R.style.Base_Theme_Connester);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.link_open_webview_dialog);
+        Window window = dialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.CENTER;
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
+        window.setAttributes(wlp);
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+        ImageView back_iv = dialog.findViewById(R.id.back_iv);
+        back_iv.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        TextView title = dialog.findViewById(R.id.title);
+        title.setText(titleStr);
+        WebView simple_wv = dialog.findViewById(R.id.simple_wv);
+        simple_wv.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                PleaseWaitShow(context);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                dismissDialog();
+            }
+        });
+        simple_wv.loadUrl(link);
+
+        dialog.show();
     }
 }

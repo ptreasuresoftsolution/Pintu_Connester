@@ -13,6 +13,7 @@ import android.widget.ScrollView;
 import androidx.fragment.app.Fragment;
 
 import com.connester.job.R;
+import com.connester.job.activity.business.BusinessActivity;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 
@@ -42,7 +43,8 @@ public class BusinessJobsFragment extends Fragment {
         sessionPref = new SessionPref(context);
         list_ll = view.findViewById(R.id.list_ll);
 
-        feedsMaster = new FeedsMaster(context, activity, getActivity());
+        feedsMaster = new FeedsMaster(context, activity,null);
+        feedsMaster.setUserMaster(BusinessActivity.userMaster);
         feedsMaster.setProgressBar(progressBar);
 
         feedsMaster.setFeedForForward("BUSINESS");

@@ -25,6 +25,7 @@ import com.connester.job.activity.mycommunity.MyCommunityActivity;
 import com.connester.job.activity.mysaveditem.MySavedItemActivity;
 import com.connester.job.activity.settingActivity.Blocking_PersonActivity;
 import com.connester.job.activity.settingActivity.ChangePasswordActivity;
+import com.connester.job.activity.settingActivity.ChangeUsernameActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.MyApiCallback;
@@ -41,7 +42,7 @@ public class UserMenuActivity extends AppCompatActivity {
     SessionPref sessionPref;
     TextView top_userFullName_txt, userFullName_txt;
     ImageView back_iv, top_user_pic, user_pic;
-    LinearLayout edit_profile_ll, save_item_ll, post_activity_ll, pages_ll, groups_ll, change_password_ll, blocking_person_ll, log_out_all_devices_ll, log_out_single_devices_ll, close_account_ll, privacy_ll, user_agreement_ll;
+    LinearLayout edit_profile_ll, save_item_ll, post_activity_ll, pages_ll, groups_ll, change_password_ll, change_username_ll, blocking_person_ll, log_out_all_devices_ll, log_out_single_devices_ll, close_account_ll, privacy_ll, user_agreement_ll;
     ApiInterface apiInterface;
 
     @Override
@@ -90,6 +91,10 @@ public class UserMenuActivity extends AppCompatActivity {
         change_password_ll = findViewById(R.id.change_password_ll);
         change_password_ll.setOnClickListener(v -> {
             startActivity(new Intent(context, ChangePasswordActivity.class));
+        });
+        change_username_ll = findViewById(R.id.change_username_ll);
+        change_username_ll.setOnClickListener(v -> {
+            startActivity(new Intent(context, ChangeUsernameActivity.class));
         });
         blocking_person_ll = findViewById(R.id.blocking_person_ll);
         blocking_person_ll.setOnClickListener(v -> {
@@ -226,13 +231,13 @@ public class UserMenuActivity extends AppCompatActivity {
         privacy_ll = findViewById(R.id.privacy_ll);
         privacy_ll.setOnClickListener(v -> {
             String urlPrivacy = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/" + "Privacy-Policy";
-            CommonFunction._OpenLink(context, urlPrivacy);
+            CommonFunction._OpenLinkInMyWebview(context, "Privacy Policy", urlPrivacy);
         });
 
         user_agreement_ll = findViewById(R.id.user_agreement_ll);
         user_agreement_ll.setOnClickListener(v -> {
             String urlUserAgreement = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/" + "User-Agreement";
-            CommonFunction._OpenLink(context, urlUserAgreement);
+            CommonFunction._OpenLinkInMyWebview(context, "User Agreement", urlUserAgreement);
         });
     }
 }

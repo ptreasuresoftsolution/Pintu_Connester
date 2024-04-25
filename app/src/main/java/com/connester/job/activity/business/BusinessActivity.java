@@ -60,7 +60,7 @@ public class BusinessActivity extends AppCompatActivity {
     ScrollView scrollView;
     FrameLayout progressBar;
     HashMap hashMapMain = new HashMap();
-    UserMaster userMaster;
+   public static UserMaster userMaster;
     SwipeRefreshLayout swipe_refresh;
 
     @Override

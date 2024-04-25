@@ -268,8 +268,19 @@ public class FeedsMaster {
         sessionPref = new SessionPref(context);
         loginUserRow = sessionPref.getUserMasterRowInObject();
         layoutInflater = LayoutInflater.from(context);
+        if (componentActivity != null) {
+            userMaster = new UserMaster(context, componentActivity);
+            userMaster.initReportAttachmentLauncher();
+        }
+    }
+
+    public void initUserMaster(ComponentActivity componentActivity) {
         userMaster = new UserMaster(context, componentActivity);
         userMaster.initReportAttachmentLauncher();
+    }
+
+    public void setUserMaster(UserMaster userMaster) {
+        this.userMaster = userMaster;
     }
 
     VisitMaster visitMaster;
@@ -372,7 +383,7 @@ public class FeedsMaster {
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
-        hashMap.put("tbl_name", "MEDIA,POST");
+//        hashMap.put("tbl_name", "MEDIA,POST,JOBS,EVENT");
         hashMap.put("isChkClose", isChkClose);
         hashMap.put("type", "home");
         hashMap.put("limitGap", limitGap);
@@ -951,6 +962,7 @@ public class FeedsMaster {
                 LinearLayout feed_share = feedsOptionDialog.findViewById(R.id.feed_share);
                 feed_share.setVisibility(View.VISIBLE);
                 feed_share.setOnClickListener(v1 -> {
+                    feedsOptionDialog.dismiss();
                     feedForwardDialog(feedsRow.feedMasterId);
                 });
 
@@ -959,6 +971,7 @@ public class FeedsMaster {
                     @Override
                     public void onClick(View v) {
                         //link copy set (use link)
+                        feedsOptionDialog.dismiss();
                         String link = Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/feeds/" + feedsRow.feedLink;
                         CommonFunction.copyToClipBoard(context, link);
                     }
@@ -983,6 +996,7 @@ public class FeedsMaster {
                     edit_event.setVisibility(View.VISIBLE);
                     edit_event.setOnClickListener(v1 -> {
                         openEditEventDialog(feedsRow.tblJobEvent.jobEventId, view);
+                        feedsOptionDialog.dismiss();
                     });
                 }
 
@@ -1046,12 +1060,12 @@ public class FeedsMaster {
         }
         //interest count
         LinearLayout interested_ll = view.findViewById(R.id.interested_ll);
-        TextView event_ind_txt = view.findViewById(R.id.event_ind_txt);
-        ImageView event_ind_iv = view.findViewById(R.id.event_ind_iv);
+        TextView count_interest_tv = view.findViewById(R.id.count_interest_tv);
+        ImageView interest_iv = view.findViewById(R.id.interest_iv);
         final boolean isLike = Integer.parseInt(feedsRow.isLike) > 0;
-        event_ind_txt.setText(feedsRow.likes);
+        count_interest_tv.setText(feedsRow.likes);
         if (isLike) {
-            event_ind_iv.setImageResource(R.drawable.account_multiple_check);
+            interest_iv.setImageResource(R.drawable.account_multiple_check);
         }
         interested_ll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1068,14 +1082,14 @@ public class FeedsMaster {
                             if (response.body() != null) {
                                 NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                 if (normalCommonResponse.status) {
-                                    int counter = Integer.parseInt(event_ind_txt.getText().toString());
+                                    int counter = Integer.parseInt(count_interest_tv.getText().toString());
                                     if (normalCommonResponse.msg.equalsIgnoreCase("Like!")) {
-                                        event_ind_iv.setImageResource(R.drawable.account_multiple_check);
-                                        event_ind_txt.setText(String.valueOf(counter + 1));
+                                        interest_iv.setImageResource(R.drawable.account_multiple_check);
+                                        count_interest_tv.setText(String.valueOf(counter + 1));
                                     } else {
-                                        event_ind_iv.setImageResource(R.drawable.account_multiple);
+                                        interest_iv.setImageResource(R.drawable.account_multiple);
                                         if (counter > 0)
-                                            event_ind_txt.setText(String.valueOf(counter - 1));
+                                            count_interest_tv.setText(String.valueOf(counter - 1));
                                     }
                                 } else
                                     Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
@@ -1103,12 +1117,15 @@ public class FeedsMaster {
         Date startDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", eventStartDate);
         if (currDate.getTime() > endDate.getTime()) { //end
             event_ind_txt.setText("Event Finished");
+            event_ind_txt.setTextColor(context.getColor(R.color.error));
             event_ind_iv.setImageResource(R.drawable.calendar_check);
         } else if (currDate.getTime() < endDate.getTime() && currDate.getTime() > startDate.getTime()) {//ongoing
             event_ind_txt.setText("Event Ongoing");
+            event_ind_txt.setTextColor(context.getColor(R.color.success));
             event_ind_iv.setImageResource(R.drawable.calendar_ongoing);
         } else {//upcoming
             event_ind_txt.setText("Event Upcoming");
+            event_ind_txt.setTextColor(context.getColor(R.color.info_dark));
             event_ind_iv.setImageResource(R.drawable.calendar_event_upcoming);
         }
         event_finish_ll.setVisibility(View.VISIBLE);
@@ -1673,6 +1690,7 @@ public class FeedsMaster {
                 //feeds option open in bottom sheet dialog
                 BottomSheetDialog feedsOptionDialog = new BottomSheetDialog(context);
                 feedsOptionDialog.setContentView(R.layout.feeds_option_dialog_layout);
+
                 LinearLayout feed_close = feedsOptionDialog.findViewById(R.id.feed_close);
                 feed_close.setVisibility(View.GONE);
                 if (isNeedCloseBtn) {
@@ -1687,6 +1705,38 @@ public class FeedsMaster {
                             hashMap.put("apiKey", sessionPref.getApiKey());
                             hashMap.put("feed_master_id", feedsRow.feedMasterId);
                             apiInterface.FEEDS_OPTION_CLOSE(hashMap).enqueue(new MyApiCallback() {
+                                @Override
+                                public void onResponse(Call call, Response response) {
+                                    super.onResponse(call, response);
+                                    if (response.isSuccessful()) {
+                                        if (response.body() != null) {
+                                            NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                            if (normalCommonResponse.status) {
+                                                removeFeedsInList(view);
+                                                feedsOptionDialog.dismiss();
+                                            } else
+                                                Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+                LinearLayout feed_delete = feedsOptionDialog.findViewById(R.id.feed_delete);
+                feed_delete.setVisibility(View.GONE);
+                if (sessionPref.getUserMasterId().equalsIgnoreCase(feedsRow.userMasterId)) {
+                    feed_delete.setVisibility(View.VISIBLE);
+                    feed_delete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //call close api and remove feeds in list (use feedMasterId)
+                            //CommonFunction.PleaseWaitShow(context);
+                            HashMap hashMap = new HashMap();
+                            hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                            hashMap.put("apiKey", sessionPref.getApiKey());
+                            hashMap.put("feed_master_id", feedsRow.feedMasterId);
+                            apiInterface.FEEDS_OPTION_DELETE(hashMap).enqueue(new MyApiCallback() {
                                 @Override
                                 public void onResponse(Call call, Response response) {
                                     super.onResponse(call, response);
@@ -2280,7 +2330,7 @@ public class FeedsMaster {
                                     location_et.setText(ourJobPostRow.dt.jobLocation);
 
                                 if (ourJobPostRow.dt.salaryCurrency != null)
-                                    currency_sp.setSelection(Arrays.asList(payRoll).indexOf(ourJobPostRow.dt.salaryCurrency));
+                                    currency_sp.setSelection(Arrays.asList(currencySort).indexOf(ourJobPostRow.dt.salaryCurrency));
 
                                 if (ourJobPostRow.dt.salaryPayroll != null)
                                     payroll_sp.setSelection(Arrays.asList(payRoll).indexOf(ourJobPostRow.dt.salaryPayroll));
@@ -2365,7 +2415,7 @@ public class FeedsMaster {
             hashMap.put("job_type", Arrays.asList(jobType).get(job_type_sp.getSelectedItemPosition()));
             hashMap.put("job_time", Arrays.asList(jobTime).get(job_time_sp.getSelectedItemPosition()));
             hashMap.put("job_location", location_et.getText().toString());
-            hashMap.put("salary_currency", Arrays.asList(payRoll).get(currency_sp.getSelectedItemPosition()));
+            hashMap.put("salary_currency", Arrays.asList(currencySort).get(currency_sp.getSelectedItemPosition()));
             hashMap.put("salary_payroll", Arrays.asList(payRoll).get(payroll_sp.getSelectedItemPosition()));
             hashMap.put("salary", job_salary_et.getText().toString());
             hashMap.put("requirements", experience_et.getText().toString());//experience
@@ -2480,6 +2530,7 @@ public class FeedsMaster {
                                 NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                 if (normalCommonResponse.status) {
                                     //reload activity page OR add forwarded feed on top of the list
+                                    dialog.dismiss();
                                     reloadOrAddTopFeeds();
                                 } else
                                     Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
@@ -2526,6 +2577,7 @@ public class FeedsMaster {
                                 NetworkSeeAllCommonResponse.CommunitysListResponse communitysListResponse = new Gson().fromJson(new Gson().toJson(response.body()), NetworkSeeAllCommonResponse.CommunitysListResponse.class);
                                 if (communitysListResponse.status) {
                                     if (communitysListResponse.dt.size() > 0) {
+                                        groups_main_ll.setVisibility(View.VISIBLE);
                                         for (NetworkSeeAllCommonResponse.CommunitysListResponse.Dt dt : communitysListResponse.dt) {
                                             View groupList = inflater.inflate(R.layout.user_pic_two_btn_list_item, null);
                                             ImageView member_profile_pic = groupList.findViewById(R.id.member_profile_pic);
@@ -2556,6 +2608,7 @@ public class FeedsMaster {
                                                                 NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                                                 if (normalCommonResponse.status) {
                                                                     //reload activity page OR add forwarded feed on top of the list
+                                                                    dialog.dismiss();
                                                                     reloadOrAddTopFeeds();
                                                                 } else
                                                                     Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
@@ -2613,6 +2666,7 @@ public class FeedsMaster {
                                                         NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                                         if (normalCommonResponse.status) {
                                                             //reload activity page OR add forwarded feed on top of the list
+                                                            dialog.dismiss();
                                                             reloadOrAddTopFeeds();
                                                         } else
                                                             Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
@@ -2709,14 +2763,14 @@ public class FeedsMaster {
         long hour = DateUtils.dateDiff("h", createDate, nowDate);
         long minute = DateUtils.dateDiff("n", createDate, nowDate);
         if (year > 0) {
-            if (type.equalsIgnoreCase("M-Y")) {
-                return year + " yr " + (year % 12) + " mo ago";
+            if (type != null && type.equalsIgnoreCase("M-Y")) {
+                return year + " yr " + Math.round(year % 12) + " mo ago";
             }
             return year + " Years ago";
         } else if (month > 0 && days > 28) {
-            if (type.equalsIgnoreCase("M-Y")) {
+            if (type != null && type.equalsIgnoreCase("M-Y")) {
                 if ((days % 30.417) > 5) {
-                    return month + " mo " + (days % 30.417) + " dy ago";
+//                    return month + " mo " + Math.round(days % 30.417) + " dy ago";
                 }
             }
             return month + " Months ago";

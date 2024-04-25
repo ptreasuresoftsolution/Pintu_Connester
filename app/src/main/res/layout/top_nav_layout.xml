@@ -26,18 +26,58 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_master_sv"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_weight="0.30"
-        android:background="@drawable/rounded_bg"
-        android:hint="Search"
-        app:iconifiedByDefault="false"
-        app:queryBackground="@android:color/transparent"
-        app:queryHint="Search" />
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/search_master_sv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardBackgroundColor="@color/secondary_6"
+            app:cardCornerRadius="20dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/search"
+                    app:tint="@color/black" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Search"
+                    android:textColor="@color/secondary_4" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
+    <!--
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_master_sv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="0.30"
+            android:background="@drawable/rounded_bg"
+            android:hint="Search"
+            app:iconifiedByDefault="false"
+            app:queryBackground="@android:color/transparent"
+            app:queryHint="Search" />-->
 
     <FrameLayout
         android:layout_width="match_parent"

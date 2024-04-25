@@ -12,6 +12,7 @@ import android.widget.ScrollView;
 import androidx.fragment.app.Fragment;
 
 import com.connester.job.R;
+import com.connester.job.activity.businesspage.ManageMyPageActivity;
 import com.connester.job.activity.nonslug.AddFeedsActivity;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
@@ -47,7 +48,8 @@ public class PagePostFragment extends Fragment {
         });
 
         sessionPref = new SessionPref(getContext());
-        feedsMaster = new FeedsMaster(getContext(), getActivity(),getActivity());
+        feedsMaster = new FeedsMaster(getContext(), getActivity(), null);
+        feedsMaster.setUserMaster(ManageMyPageActivity.userMaster);
         feedsMaster.setProgressBar(progressBar);
         feedsMaster.setFeedForForward("BUSINESS");
         feedsMaster.setFeedForIdForward(business_page_id);

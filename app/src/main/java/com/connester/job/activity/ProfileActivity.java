@@ -150,10 +150,10 @@ public class ProfileActivity extends AppCompatActivity {
                 intent.putExtra("user_master_id", user_master_id);
                 startActivity(intent);
             });
-            LinearLayout blocking_person_ll = profileOptionDialog.findViewById(R.id.blocking_person_ll);
+            LinearLayout block_user_LL = profileOptionDialog.findViewById(R.id.block_user_LL);
             if (!user_master_id.equalsIgnoreCase(sessionPref.getUserMasterId())) {
-                blocking_person_ll.setVisibility(View.VISIBLE);
-                blocking_person_ll.setOnClickListener(v1 -> {
+                block_user_LL.setVisibility(View.VISIBLE);
+                block_user_LL.setOnClickListener(v1 -> {
                     //call block member api
                     CommonFunction.PleaseWaitShow(context);
                     HashMap hashMap = new HashMap();

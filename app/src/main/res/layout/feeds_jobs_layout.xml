@@ -161,7 +161,6 @@
                 app:alignItems="stretch"
                 app:flexWrap="wrap">
 
-                <include layout="@layout/skill_tag_item" />
             </com.google.android.flexbox.FlexboxLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

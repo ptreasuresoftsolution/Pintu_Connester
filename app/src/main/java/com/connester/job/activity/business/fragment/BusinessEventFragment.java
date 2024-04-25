@@ -10,9 +10,11 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.connester.job.R;
+import com.connester.job.activity.business.BusinessActivity;
 import com.connester.job.function.SessionPref;
 import com.connester.job.module.FeedsMaster;
 
@@ -33,6 +35,11 @@ public class BusinessEventFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -42,7 +49,8 @@ public class BusinessEventFragment extends Fragment {
         sessionPref = new SessionPref(context);
         list_ll = view.findViewById(R.id.list_ll);
 
-        feedsMaster = new FeedsMaster(context, activity, getActivity());
+        feedsMaster = new FeedsMaster(context, activity, null);
+        feedsMaster.setUserMaster(BusinessActivity.userMaster);
         feedsMaster.setProgressBar(progressBar);
 
         feedsMaster.setFeedForForward("BUSINESS");
@@ -57,4 +65,5 @@ public class BusinessEventFragment extends Fragment {
 
         return view;
     }
+
 }

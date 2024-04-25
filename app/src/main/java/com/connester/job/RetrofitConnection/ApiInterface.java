@@ -114,6 +114,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedClosed")
     Call<NormalCommonResponse> FEEDS_OPTION_CLOSE(@FieldMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST(PRE_FIX + "Feeds/deleteFeeds")
+    Call<NormalCommonResponse> FEEDS_OPTION_DELETE(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "Feeds/feedsSaveUnsave")
