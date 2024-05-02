@@ -793,6 +793,7 @@ public class FeedsMaster {
 //        \"linkTitle\":\"Bootstrap · The most popular HTML, CSS, and JS library in the world.\"}";
         Type type = new TypeToken<HashMap<String, String>>() {
         }.getType();
+        Log.e(LogTag.EXCEPTION,"json link :"+linkMetaArr);
         HashMap<String, String> hashMap = new Gson().fromJson(linkMetaArr, type);
 
         MaterialCardView link_details_cv = view.findViewById(R.id.link_details_cv);
