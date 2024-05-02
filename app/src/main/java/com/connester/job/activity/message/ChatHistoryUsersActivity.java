@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -112,7 +113,11 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         IntentFilter intentFilterReceived = new IntentFilter(ChatModule.MSG_RECEIVED_FILTER);
-        registerReceiver(msgReceived, intentFilterReceived);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(msgReceived, intentFilterReceived, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(msgReceived, intentFilterReceived);
+        }
     }
 
     @Override

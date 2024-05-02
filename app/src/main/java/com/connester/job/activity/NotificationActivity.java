@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -362,7 +363,11 @@ public class NotificationActivity extends AppCompatActivity {
         intentFilterReadDelivered.addAction(BROADCAST_FOLLOW_REQ);
         intentFilterReadDelivered.addAction(BROADCAST_MESSAGE);
         intentFilterReadDelivered.addAction(BROADCAST_RECOMMENDED_JOB);
-        registerReceiver(allNotificationReceiver, intentFilterReadDelivered);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(allNotificationReceiver, intentFilterReadDelivered,Context.RECEIVER_NOT_EXPORTED);
+        }else {
+            registerReceiver(allNotificationReceiver, intentFilterReadDelivered);
+        }
     }
 
     @Override

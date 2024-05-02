@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.text.Editable;
@@ -543,23 +544,39 @@ public class ChatActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         IntentFilter intentFilterReceived = new IntentFilter(ChatModule.MSG_RECEIVED_FILTER);
-        registerReceiver(msgReceived, intentFilterReceived);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(msgReceived, intentFilterReceived, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(msgReceived, intentFilterReceived);
+        }
         IntentFilter intentFilterReadDelivered = new IntentFilter();
         intentFilterReadDelivered.addAction(ChatModule.MSG_DELIVERED_FILTER);
         intentFilterReadDelivered.addAction(ChatModule.MSG_READ_FILTER);
-        registerReceiver(msgReadDelivered, intentFilterReadDelivered);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(msgReadDelivered, intentFilterReadDelivered, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(msgReadDelivered, intentFilterReadDelivered);
+        }
         IntentFilter statusUpdate = new IntentFilter(ChatModule.CHAT_STATUS_UPDATE_FILTER);
-        registerReceiver(statusChange, statusUpdate);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(statusChange, statusUpdate, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(statusChange, statusUpdate);
+        }
 
         IntentFilter process = new IntentFilter(FileMessageUploadService.UPLOAD_FILE_PROCESS);
-        registerReceiver(fileUploadProcessReceiver, process);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(fileUploadProcessReceiver, process, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(fileUploadProcessReceiver, process);
+        }
 
         IntentFilter complete = new IntentFilter(FileMessageUploadService.UPLOAD_FILE_COMPLETE);
-        registerReceiver(fileCompleteUploadReceiver, complete);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(fileCompleteUploadReceiver, complete, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(fileCompleteUploadReceiver, complete);
+        }
         ViewerProfileDetailsApiCall();
 
     }

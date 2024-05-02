@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -424,18 +425,25 @@ public class SetTopBottomBar {
         intentFilterReadDelivered.addAction(NotificationActivity.BROADCAST_FOLLOW_REQ);
         intentFilterReadDelivered.addAction(NotificationActivity.BROADCAST_MESSAGE);
         intentFilterReadDelivered.addAction(NotificationActivity.BROADCAST_RECOMMENDED_JOB);
-        activity.registerReceiver(allNotificationReceiver, intentFilterReadDelivered);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.registerReceiver(allNotificationReceiver, intentFilterReadDelivered, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            context.registerReceiver(allNotificationReceiver, intentFilterReadDelivered);
+        }
 
         IntentFilter intentFilterReceived = new IntentFilter(ChatModule.MSG_RECEIVED_FILTER);
-        activity.registerReceiver(msgReceived, intentFilterReceived);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.registerReceiver(msgReceived, intentFilterReceived, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            context.registerReceiver(msgReceived, intentFilterReceived);
+        }
         setCountingNewMessageNotification(sessionPref.getUserMasterId(), sessionPref.getApiKey());
     }
 
     public void onPause() {
-        activity.unregisterReceiver(allNotificationReceiver);
+        context.unregisterReceiver(allNotificationReceiver);
 
-        activity.unregisterReceiver(msgReceived);
+        context.unregisterReceiver(msgReceived);
     }
 
     private void setCountingNewMessageNotification(String userMasterId, String apiKey) {
