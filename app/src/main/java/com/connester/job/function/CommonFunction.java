@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -490,18 +491,24 @@ public class CommonFunction {
         return new int[]{width, height};
     }
 
-    public static String convertAmountUnitForm(double value) {
-        int power;
-        String suffix = " KMBT";
-        String formattedNumber = "";
+    public static String convertAmountUnitForm(String valueStr) {
+        ArrayList<String> rt = new ArrayList<>();
+        String sVals[] = valueStr.split("-");
+        for (String val : sVals) {
+            double value = Double.parseDouble(val);
+            int power;
+            String suffix = " KMBT";
+            String formattedNumber = "";
 
-        NumberFormat formatter = new DecimalFormat("#,###.00");
-        power = (int) StrictMath.log10(value);
-        value = (value / (Math.pow(10, (power / 3) * 3)));
-        formattedNumber = formatter.format(value);
-        formattedNumber = formattedNumber + suffix.charAt(power / 3);
-        String avl = formattedNumber.length() > 4 ? formattedNumber.replaceAll("\\.[0-9]+", "") : formattedNumber;
-        return (formattedNumber);
+            NumberFormat formatter = new DecimalFormat("#,###.00");
+            power = (int) StrictMath.log10(value);
+            value = (value / (Math.pow(10, (power / 3) * 3)));
+            formattedNumber = formatter.format(value);
+            formattedNumber = formattedNumber + suffix.charAt(power / 3);
+//            String avl = formattedNumber.length() > 4 ? formattedNumber.replaceAll("\\.[0-9]+", "") : formattedNumber;
+            rt.add(formattedNumber);
+        }
+        return TextUtils.join("-", rt);
     }
 
     public static String NumberToWord(String number) {
@@ -663,7 +670,7 @@ public class CommonFunction {
         TextView title = dialog.findViewById(R.id.title);
         title.setText(titleStr);
         WebView simple_wv = dialog.findViewById(R.id.simple_wv);
-        simple_wv.setWebViewClient(new WebViewClient(){
+        simple_wv.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);

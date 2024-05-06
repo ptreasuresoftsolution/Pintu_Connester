@@ -793,7 +793,7 @@ public class FeedsMaster {
 //        \"linkTitle\":\"Bootstrap · The most popular HTML, CSS, and JS library in the world.\"}";
         Type type = new TypeToken<HashMap<String, String>>() {
         }.getType();
-        Log.e(LogTag.EXCEPTION,"json link :"+linkMetaArr);
+        Log.e(LogTag.EXCEPTION, "json link :" + linkMetaArr);
         HashMap<String, String> hashMap = new Gson().fromJson(linkMetaArr, type);
 
         MaterialCardView link_details_cv = view.findViewById(R.id.link_details_cv);
@@ -875,6 +875,28 @@ public class FeedsMaster {
     public View getFeedsEventView(FeedsRow feedsRow) {
         View view = layoutInflater.inflate(R.layout.feeds_event_layout, null);
         view.setTag(feedsRow.feedMasterId);
+
+        LinearLayout feeds_fwd_shareBy_user_view = view.findViewById(R.id.feeds_fwd_shareBy_user_view);
+        feeds_fwd_shareBy_user_view.setVisibility(View.GONE);
+        ImageView feeds_shareBy_User_pic = view.findViewById(R.id.feeds_shareBy_User_pic);
+        TextView feeds_shareBy_User_name = view.findViewById(R.id.feeds_shareBy_User_name);
+        TextView time_feeds = view.findViewById(R.id.time_feeds);
+        if (feedsRow.shareFrwdPost != null && !feedsRow.shareFrwdPost.equalsIgnoreCase("0")) {
+            feeds_fwd_shareBy_user_view.setVisibility(View.VISIBLE);
+            View.OnClickListener openUserProfile = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(context, ProfileActivity.class);
+                    i.putExtra("user_master_id", feedsRow.userMasterId);
+                    context.startActivity(i);
+                }
+            };
+            Glide.with(context).load(imgPath + feedsRow.profilePic).into(feeds_shareBy_User_pic);
+            feeds_shareBy_User_pic.setOnClickListener(openUserProfile);
+            feeds_shareBy_User_name.setText(feedsRow.name);
+            feeds_shareBy_User_name.setOnClickListener(openUserProfile);
+            time_feeds.setText(feedTimeCount(feedsRow.createDate));
+        }
 
         SimpleDraweeView event_img = view.findViewById(R.id.event_img);
         Glide.with(context).load(feedImgPath + feedsRow.tblJobEvent.eventImg).into(event_img);
@@ -1135,6 +1157,28 @@ public class FeedsMaster {
     public View getFeedsJobsView(FeedsRow feedsRow) {
         View view = layoutInflater.inflate(R.layout.feeds_jobs_layout, null);
         view.setTag(feedsRow.feedMasterId);
+
+        LinearLayout feeds_fwd_shareBy_user_view = view.findViewById(R.id.feeds_fwd_shareBy_user_view);
+        feeds_fwd_shareBy_user_view.setVisibility(View.GONE);
+        ImageView feeds_shareBy_User_pic = view.findViewById(R.id.feeds_shareBy_User_pic);
+        TextView feeds_shareBy_User_name = view.findViewById(R.id.feeds_shareBy_User_name);
+        TextView time_feeds = view.findViewById(R.id.time_feeds);
+        if (feedsRow.shareFrwdPost != null && !feedsRow.shareFrwdPost.equalsIgnoreCase("0")) {
+            feeds_fwd_shareBy_user_view.setVisibility(View.VISIBLE);
+            View.OnClickListener openUserProfile = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(context, ProfileActivity.class);
+                    i.putExtra("user_master_id", feedsRow.userMasterId);
+                    context.startActivity(i);
+                }
+            };
+            Glide.with(context).load(imgPath + feedsRow.profilePic).into(feeds_shareBy_User_pic);
+            feeds_shareBy_User_pic.setOnClickListener(openUserProfile);
+            feeds_shareBy_User_name.setText(feedsRow.name);
+            feeds_shareBy_User_name.setOnClickListener(openUserProfile);
+            time_feeds.setText(feedTimeCount(feedsRow.createDate));
+        }
         View.OnClickListener fullViewFeeds = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1227,7 +1271,7 @@ public class FeedsMaster {
             }
         });
         TextView job_salary = view.findViewById(R.id.job_salary);
-        job_salary.setText(feedsRow.tblJobPost.salaryCurrency + " " + CommonFunction.convertAmountUnitForm(Double.parseDouble(feedsRow.tblJobPost.salary)));
+        job_salary.setText(feedsRow.tblJobPost.salaryCurrency + " " + CommonFunction.convertAmountUnitForm(feedsRow.tblJobPost.salary));
         TextView job_salary_payroll = view.findViewById(R.id.job_salary_payroll);
         job_salary_payroll.setText("/ " + feedsRow.tblJobPost.salaryPayroll);
         MaterialButton job_apply_btn = view.findViewById(R.id.job_apply_btn);
@@ -1334,7 +1378,7 @@ public class FeedsMaster {
         no_of_vacancies_tv.setText(feedsRow.tblJobPost.noOfVacancies);
 
         TextView job_salary = view.findViewById(R.id.job_salary);
-        job_salary.setText(feedsRow.tblJobPost.salaryCurrency + " " + CommonFunction.convertAmountUnitForm(Double.parseDouble(feedsRow.tblJobPost.salary)) + "/ " + feedsRow.tblJobPost.salaryPayroll);
+        job_salary.setText(feedsRow.tblJobPost.salaryCurrency + " " + CommonFunction.convertAmountUnitForm(feedsRow.tblJobPost.salary) + "/ " + feedsRow.tblJobPost.salaryPayroll);
 
         FlexboxLayout job_skill_tag_fbl = view.findViewById(R.id.job_skill_tag_fbl);
         String skills[] = feedsRow.tblJobPost.skills.split(",");
