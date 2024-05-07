@@ -182,7 +182,7 @@ public class JobApplicationListActivity extends AppCompatActivity {
                 TextView job_profile_tv = jobApplicationView.findViewById(R.id.job_profile_tv);
                 job_profile_tv.setText(dt.titlePost);
                 TextView address_tv = jobApplicationView.findViewById(R.id.address_tv);
-                address_tv.setText(dt.jobLocation);
+                address_tv.setText(dt.localityCity + " " + dt.region + " " + dt.jobLocation);
                 main_ll.addView(jobApplicationView);
             }
         }

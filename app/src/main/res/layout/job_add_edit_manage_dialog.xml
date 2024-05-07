@@ -136,7 +136,116 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:layout_marginBottom="4dp"
-                android:text="Location *" />
+                android:text="Street address *" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                app:cardBackgroundColor="@color/secondary_7"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+
+                <EditText
+                    android:id="@+id/location_street_address_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
+                    android:gravity="center_vertical"
+                    android:hint="Ex: Seattle–Tacoma–Bellevue metropolitan area"
+                    android:singleLine="true"
+                    android:textSize="@dimen/small_lg" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="4dp"
+                android:text="Locality/City *" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                app:cardBackgroundColor="@color/secondary_7"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+
+                <EditText
+                    android:id="@+id/location_locality_city_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
+                    android:gravity="center_vertical"
+                    android:hint="Ex: Kent"
+                    android:singleLine="true"
+                    android:textSize="@dimen/small_lg" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="4dp"
+                android:text="Postal code *" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                app:cardBackgroundColor="@color/secondary_7"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+
+                <EditText
+                    android:id="@+id/location_postal_code_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
+                    android:gravity="center_vertical"
+                    android:hint="Ex: 98030"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:textSize="@dimen/small_lg" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="4dp"
+                android:text="Region/State *" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                app:cardBackgroundColor="@color/secondary_7"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+
+                <EditText
+                    android:id="@+id/location_region_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
+                    android:gravity="center_vertical"
+                    android:hint="Ex: Washington"
+                    android:singleLine="true"
+                    android:textSize="@dimen/small_lg" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="4dp"
+                android:text="Country *" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -153,7 +262,7 @@
                     android:layout_height="wrap_content"
                     android:backgroundTint="@android:color/transparent"
                     android:gravity="center_vertical"
-                    android:hint="Ex: Washington, USA"
+                    android:hint="Ex: USA"
                     android:singleLine="true"
                     android:textSize="@dimen/small_lg" />
             </com.google.android.material.card.MaterialCardView>

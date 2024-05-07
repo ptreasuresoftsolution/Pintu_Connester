@@ -1105,11 +1105,11 @@ public class FeedsMaster {
             }.getType();
             HashMap<String, String> hashMap = new Gson().fromJson(feedsRow.tblJobEvent.addressJson, type);
             String location = "";
-            if (hashMap.containsValue("address"))
+            if (hashMap.containsKey("address"))
                 location = hashMap.get("address");
-            if (hashMap.containsValue("city"))
+            if (hashMap.containsKey("city"))
                 location += location.equalsIgnoreCase("") ? hashMap.get("city") : ", " + hashMap.get("city");
-            if (hashMap.containsValue("region_country"))
+            if (hashMap.containsKey("region_country"))
                 location += location.equalsIgnoreCase("") ? hashMap.get("region_country") : ", " + hashMap.get("region_country");
             location_or_broadcast_tv.setText(location);
         }
@@ -1122,44 +1122,49 @@ public class FeedsMaster {
         if (isLike) {
             interest_iv.setImageResource(R.drawable.account_multiple_check);
         }
-        interested_ll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HashMap hashMap = new HashMap();
-                hashMap.put("user_master_id", sessionPref.getUserMasterId());
-                hashMap.put("apiKey", sessionPref.getApiKey());
-                hashMap.put("feed_master_id", feedsRow.feedMasterId);
-                apiInterface.CALL_LIKE_UNLIKE(hashMap).enqueue(new Callback() {
-                    @Override
-                    public void onResponse(Call call, Response response) {
-                        CommonFunction.dismissDialog();
-                        if (response.isSuccessful()) {
-                            if (response.body() != null) {
-                                NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
-                                if (normalCommonResponse.status) {
-                                    int counter = Integer.parseInt(count_interest_tv.getText().toString());
-                                    if (normalCommonResponse.msg.equalsIgnoreCase("Like!")) {
-                                        interest_iv.setImageResource(R.drawable.account_multiple_check);
-                                        count_interest_tv.setText(String.valueOf(counter + 1));
-                                    } else {
-                                        interest_iv.setImageResource(R.drawable.account_multiple);
-                                        if (counter > 0)
-                                            count_interest_tv.setText(String.valueOf(counter - 1));
-                                    }
-                                } else
-                                    Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+
+        Date currDate = new Date();
+        Date endDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", feedsRow.tblJobEvent.endDate);
+        if (!(currDate.getTime() > endDate.getTime())) { //end
+            interested_ll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    HashMap hashMap = new HashMap();
+                    hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                    hashMap.put("apiKey", sessionPref.getApiKey());
+                    hashMap.put("feed_master_id", feedsRow.feedMasterId);
+                    apiInterface.CALL_LIKE_UNLIKE(hashMap).enqueue(new Callback() {
+                        @Override
+                        public void onResponse(Call call, Response response) {
+                            CommonFunction.dismissDialog();
+                            if (response.isSuccessful()) {
+                                if (response.body() != null) {
+                                    NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                    if (normalCommonResponse.status) {
+                                        int counter = Integer.parseInt(count_interest_tv.getText().toString());
+                                        if (normalCommonResponse.msg.equalsIgnoreCase("Like!")) {
+                                            interest_iv.setImageResource(R.drawable.account_multiple_check);
+                                            count_interest_tv.setText(String.valueOf(counter + 1));
+                                        } else {
+                                            interest_iv.setImageResource(R.drawable.account_multiple);
+                                            if (counter > 0)
+                                                count_interest_tv.setText(String.valueOf(counter - 1));
+                                        }
+                                    } else
+                                        Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call call, Throwable t) {
-                        CommonFunction.dismissDialog();
-                        Log.d(LogTag.API_EXCEPTION, "CALL_LIKE_UNLIKE", t);
-                    }
-                });
-            }
-        });
+                        @Override
+                        public void onFailure(Call call, Throwable t) {
+                            CommonFunction.dismissDialog();
+                            Log.d(LogTag.API_EXCEPTION, "CALL_LIKE_UNLIKE", t);
+                        }
+                    });
+                }
+            });
+        }
         return view;
     }
 
@@ -1257,7 +1262,7 @@ public class FeedsMaster {
         TextView job_business_page_nm_txt = view.findViewById(R.id.job_business_page_nm_txt);
         job_business_page_nm_txt.setText(feedsRow.tblBusinessPage.busName);
         TextView job_location = view.findViewById(R.id.job_location);
-        job_location.setText(feedsRow.tblJobPost.jobLocation);
+        job_location.setText(feedsRow.tblJobPost.localityCity + " " + feedsRow.tblJobPost.region + " " + feedsRow.tblJobPost.jobLocation);
         ImageView feed_forward_icon = view.findViewById(R.id.feed_forward_icon);
         feed_forward_icon.setOnClickListener(v -> {
             feedForwardDialog(feedsRow.feedMasterId);
@@ -1423,7 +1428,7 @@ public class FeedsMaster {
         description_tv.setText(feedsRow.tblJobPost.jobDescription);
 
         TextView location_tv = view.findViewById(R.id.location_tv);
-        location_tv.setText(feedsRow.tblJobPost.jobType.equalsIgnoreCase("On-Site") ? feedsRow.tblJobPost.jobLocation : "Remote");
+        location_tv.setText(feedsRow.tblJobPost.jobType.equalsIgnoreCase("On-Site") ? feedsRow.tblJobPost.streetAddress + " " + feedsRow.tblJobPost.localityCity + " " + feedsRow.tblJobPost.region + " " + feedsRow.tblJobPost.jobLocation + "-" + feedsRow.tblJobPost.postalCode : "Remote");
 
         TextView position_tv = view.findViewById(R.id.position_tv);
         position_tv.setText(feedsRow.tblJobPost.titlePost);
@@ -2114,7 +2119,7 @@ public class FeedsMaster {
                             OurEventPostRow ourEventPostRow = (OurEventPostRow) response.body();
                             if (ourEventPostRow.status) {
                                 if (ourEventPostRow.dt.eventImg != null) {
-                                    Glide.with(context).load(ourEventPostRow.imgPath + ourEventPostRow.dt.eventImg).centerCrop().placeholder(R.drawable.user_default_banner).into(event_banner_iv);
+                                    Glide.with(context).load(ourEventPostRow.feedImgPath + ourEventPostRow.dt.eventImg).centerCrop().placeholder(R.drawable.user_default_banner).into(event_banner_iv);
                                     oldEventImage = ourEventPostRow.dt.eventImg;
                                 }
 
@@ -2310,6 +2315,10 @@ public class FeedsMaster {
         EditText job_position_et = dialog.findViewById(R.id.job_position_et);
         Spinner job_type_sp = dialog.findViewById(R.id.job_type_sp);
         Spinner job_time_sp = dialog.findViewById(R.id.job_time_sp);
+        EditText location_street_address_et = dialog.findViewById(R.id.location_street_address_et);
+        EditText location_locality_city_et = dialog.findViewById(R.id.location_locality_city_et);
+        EditText location_postal_code_et = dialog.findViewById(R.id.location_postal_code_et);
+        EditText location_region_et = dialog.findViewById(R.id.location_region_et);
         EditText location_et = dialog.findViewById(R.id.location_et);
         Spinner currency_sp = dialog.findViewById(R.id.currency_sp);
         Spinner payroll_sp = dialog.findViewById(R.id.payroll_sp);
@@ -2442,6 +2451,18 @@ public class FeedsMaster {
                                 if (ourJobPostRow.dt.jobTime != null)
                                     job_time_sp.setSelection(Arrays.asList(jobTime).indexOf(ourJobPostRow.dt.jobTime));
 
+                                if (ourJobPostRow.dt.streetAddress != null)
+                                    location_street_address_et.setText(ourJobPostRow.dt.streetAddress);
+
+                                if (ourJobPostRow.dt.localityCity != null)
+                                    location_locality_city_et.setText(ourJobPostRow.dt.localityCity);
+
+                                if (ourJobPostRow.dt.postalCode != null)
+                                    location_postal_code_et.setText(ourJobPostRow.dt.postalCode);
+
+                                if (ourJobPostRow.dt.region != null)
+                                    location_region_et.setText(ourJobPostRow.dt.region);
+
                                 if (ourJobPostRow.dt.jobLocation != null)
                                     location_et.setText(ourJobPostRow.dt.jobLocation);
 
@@ -2530,6 +2551,10 @@ public class FeedsMaster {
             hashMap.put("title_post", job_position_et.getText().toString());
             hashMap.put("job_type", Arrays.asList(jobType).get(job_type_sp.getSelectedItemPosition()));
             hashMap.put("job_time", Arrays.asList(jobTime).get(job_time_sp.getSelectedItemPosition()));
+            hashMap.put("street_address", location_street_address_et.getText().toString());
+            hashMap.put("locality_city", location_locality_city_et.getText().toString());
+            hashMap.put("postal_code", location_postal_code_et.getText().toString());
+            hashMap.put("region", location_region_et.getText().toString());
             hashMap.put("job_location", location_et.getText().toString());
             hashMap.put("salary_currency", Arrays.asList(currencySort).get(currency_sp.getSelectedItemPosition()));
             hashMap.put("salary_payroll", Arrays.asList(payRoll).get(payroll_sp.getSelectedItemPosition()));

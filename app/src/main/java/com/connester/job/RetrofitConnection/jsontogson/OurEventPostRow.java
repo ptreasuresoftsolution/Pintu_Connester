@@ -13,6 +13,9 @@ public class OurEventPostRow {
     @SerializedName("imgPath")
     @Expose
     public String imgPath;
+    @SerializedName("feedImgPath")
+    @Expose
+    public String feedImgPath;
     @SerializedName("dt")
     @Expose
     public Dt dt;

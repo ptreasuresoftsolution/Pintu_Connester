@@ -49,6 +49,18 @@ public class OurJobPostRow {
         @SerializedName("job_type")
         @Expose
         public String jobType;
+        @SerializedName("street_address")
+        @Expose
+        public String streetAddress;
+        @SerializedName("locality_city")
+        @Expose
+        public String localityCity;
+        @SerializedName("postal_code")
+        @Expose
+        public String postalCode;
+        @SerializedName("region")
+        @Expose
+        public String region;
         @SerializedName("job_location")
         @Expose
         public String jobLocation;
