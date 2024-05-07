@@ -232,14 +232,14 @@
                 app:cardElevation="2dp"
                 app:strokeWidth="0dp">
 
-                <EditText
+                <Spinner
                     android:id="@+id/time_zone_et"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:backgroundTint="@android:color/transparent"
+                    android:drawSelectorOnTop="true"
+                    android:entries="@array/timeZone_label"
                     android:gravity="center_vertical"
-                    android:hint="Ex: (UTC+5:30) Chennai, Kolkata, Mumbai, New Delhi"
-                    android:singleLine="true"
                     android:textSize="@dimen/small_lg" />
             </com.google.android.material.card.MaterialCardView>
 

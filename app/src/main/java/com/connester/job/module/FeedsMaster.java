@@ -876,6 +876,7 @@ public class FeedsMaster {
         View view = layoutInflater.inflate(R.layout.feeds_event_layout, null);
         view.setTag(feedsRow.feedMasterId);
 
+        boolean showDelete = false;
         LinearLayout feeds_fwd_shareBy_user_view = view.findViewById(R.id.feeds_fwd_shareBy_user_view);
         feeds_fwd_shareBy_user_view.setVisibility(View.GONE);
         ImageView feeds_shareBy_User_pic = view.findViewById(R.id.feeds_shareBy_User_pic);
@@ -896,6 +897,10 @@ public class FeedsMaster {
             feeds_shareBy_User_name.setText(feedsRow.name);
             feeds_shareBy_User_name.setOnClickListener(openUserProfile);
             time_feeds.setText(feedTimeCount(feedsRow.createDate));
+
+            if (feedsRow.userMasterId != null && feedsRow.userMasterId.equalsIgnoreCase(sessionPref.getUserMasterId())) {
+                showDelete = true;
+            }
         }
 
         SimpleDraweeView event_img = view.findViewById(R.id.event_img);
@@ -932,6 +937,7 @@ public class FeedsMaster {
         TextView event_desc = view.findViewById(R.id.event_desc);
         event_desc.setText(feedsRow.tblJobEvent.jobDescription);
         ImageView feeds_event_option_iv = view.findViewById(R.id.feeds_event_option_iv);
+        boolean finalShowDelete = showDelete;
         feeds_event_option_iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -989,6 +995,32 @@ public class FeedsMaster {
                     feedForwardDialog(feedsRow.feedMasterId);
                 });
 
+                if (finalShowDelete) {
+                    LinearLayout feed_delete = feedsOptionDialog.findViewById(R.id.feed_delete);
+                    feed_delete.setVisibility(View.VISIBLE);
+                    feed_delete.setOnClickListener(v1 -> {
+                        //CommonFunction.PleaseWaitShow(context);
+                        HashMap hashMap = new HashMap();
+                        hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                        hashMap.put("apiKey", sessionPref.getApiKey());
+                        hashMap.put("feed_master_id", feedsRow.feedMasterId);
+                        apiInterface.FEEDS_OPTION_DELETE(hashMap).enqueue(new MyApiCallback() {
+                            @Override
+                            public void onResponse(Call call, Response response) {
+                                super.onResponse(call, response);
+                                if (response.isSuccessful()) {
+                                    if (response.body() != null) {
+                                        NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                        if (normalCommonResponse.status) {
+                                            removeFeedsInList(view);
+                                        } else
+                                            Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        });
+                    });
+                }
                 LinearLayout feed_link_copy = feedsOptionDialog.findViewById(R.id.feed_link_copy);
                 feed_link_copy.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1160,6 +1192,8 @@ public class FeedsMaster {
 
         LinearLayout feeds_fwd_shareBy_user_view = view.findViewById(R.id.feeds_fwd_shareBy_user_view);
         feeds_fwd_shareBy_user_view.setVisibility(View.GONE);
+        ImageView feed_delete_icon = view.findViewById(R.id.feed_delete_icon);
+        feed_delete_icon.setVisibility(View.GONE);
         ImageView feeds_shareBy_User_pic = view.findViewById(R.id.feeds_shareBy_User_pic);
         TextView feeds_shareBy_User_name = view.findViewById(R.id.feeds_shareBy_User_name);
         TextView time_feeds = view.findViewById(R.id.time_feeds);
@@ -1178,6 +1212,32 @@ public class FeedsMaster {
             feeds_shareBy_User_name.setText(feedsRow.name);
             feeds_shareBy_User_name.setOnClickListener(openUserProfile);
             time_feeds.setText(feedTimeCount(feedsRow.createDate));
+
+            if (feedsRow.userMasterId != null && feedsRow.userMasterId.equalsIgnoreCase(sessionPref.getUserMasterId())) {
+                feed_delete_icon.setVisibility(View.VISIBLE);
+                feed_delete_icon.setOnClickListener(v -> {
+                    //CommonFunction.PleaseWaitShow(context);
+                    HashMap hashMap = new HashMap();
+                    hashMap.put("user_master_id", sessionPref.getUserMasterId());
+                    hashMap.put("apiKey", sessionPref.getApiKey());
+                    hashMap.put("feed_master_id", feedsRow.feedMasterId);
+                    apiInterface.FEEDS_OPTION_DELETE(hashMap).enqueue(new MyApiCallback() {
+                        @Override
+                        public void onResponse(Call call, Response response) {
+                            super.onResponse(call, response);
+                            if (response.isSuccessful()) {
+                                if (response.body() != null) {
+                                    NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
+                                    if (normalCommonResponse.status) {
+                                        removeFeedsInList(view);
+                                    } else
+                                        Toast.makeText(context, normalCommonResponse.msg, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    });
+                });
+            }
         }
         View.OnClickListener fullViewFeeds = new View.OnClickListener() {
             @Override
@@ -1933,7 +1993,11 @@ public class FeedsMaster {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.event_add_edit_manage_dialog);
         EditProfileActivity.setDialogFullScreenSetting(dialog);
+
         String[] eventType = context.getResources().getStringArray(R.array.event_type);
+        String[] timeZone_label = context.getResources().getStringArray(R.array.timeZone_label);
+        String[] timeZone_value = context.getResources().getStringArray(R.array.timeZone_value);
+
         ImageView back_iv = dialog.findViewById(R.id.back_iv);
         back_iv.setOnClickListener(v -> {
             dialog.dismiss();
@@ -1991,7 +2055,7 @@ public class FeedsMaster {
             }, endTimeCalendar.get(Calendar.YEAR), endTimeCalendar.get(Calendar.MONTH), endTimeCalendar.get(Calendar.DAY_OF_MONTH)).show();
         });
 
-        EditText time_zone_et = dialog.findViewById(R.id.time_zone_et);
+        Spinner time_zone_et = dialog.findViewById(R.id.time_zone_et);
 
         LinearLayout broadcast_link_ll = dialog.findViewById(R.id.broadcast_link_ll);
         EditText broadcast_link_et = dialog.findViewById(R.id.broadcast_link_et);
@@ -2081,7 +2145,8 @@ public class FeedsMaster {
                                 }
 
                                 if (ourEventPostRow.dt.timeZone != null)
-                                    time_zone_et.setText(ourEventPostRow.dt.timeZone);
+                                    time_zone_et.setSelection(Arrays.asList(timeZone_value).indexOf(ourEventPostRow.dt.timeZone));
+//                                    time_zone_et.setText(ourEventPostRow.dt.timeZone);
 
                                 if (ourEventPostRow.dt.contactNumber != null)
                                     broadcast_link_et.setText(ourEventPostRow.dt.contactNumber);
@@ -2137,19 +2202,6 @@ public class FeedsMaster {
             CommonFunction.PleaseWaitShow(context);
             CommonFunction.PleaseWaitShowMessage("Files is compressing...");
             try {
-                if (eventBannerFile == null) {
-                    Toast.makeText(context, "Please select logo!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                File imgFileEvent = new Compressor(context)
-                        .setMaxWidth(1080)
-                        .setMaxWidth(800)
-                        .setQuality(50)
-                        .setCompressFormat(Bitmap.CompressFormat.JPEG)
-                        .setDestinationDirectoryPath(context.getFilesDir().getAbsolutePath())
-                        .compressToFile(eventBannerFile);
-
-                CommonFunction.PleaseWaitShowMessage("Files is compressed completed");
 
                 MultipartBody.Builder builder = new MultipartBody.Builder();
                 builder.setType(MultipartBody.FORM)
@@ -2161,25 +2213,41 @@ public class FeedsMaster {
                         .addFormDataPart("event_type", Arrays.asList(eventType).get(event_type_sp.getSelectedItemPosition()))
                         .addFormDataPart("start_date", DateUtils.getStringDate("dd-MMM-yyyy hh:mm a", "yyyy-MM-dd HH:mm:ss", start_time_et.getText().toString()))
                         .addFormDataPart("end_date", DateUtils.getStringDate("dd-MMM-yyyy hh:mm a", "yyyy-MM-dd HH:mm:ss", end_time_et.getText().toString()))
-                        .addFormDataPart("time_zone", time_zone_et.getText().toString())
+                        .addFormDataPart("time_zone", Arrays.asList(timeZone_value).get(time_zone_et.getSelectedItemPosition()))
                         .addFormDataPart("contact_number", broadcast_link_et.getText().toString())
                         .addFormDataPart("address", address_et.getText().toString())
                         .addFormDataPart("city", city_et.getText().toString())
                         .addFormDataPart("region_country", country_region_et.getText().toString())
                         .addFormDataPart("job_description", description_et.getText().toString());
-
-
                 if (jobEventId != null) {
                     builder.addFormDataPart("job_event_id", jobEventId);
-                    if (oldEventImage != null)
-                        builder.addFormDataPart("old_event_img", oldEventImage);
                 }
+                if (eventBannerFile == null && jobEventId == null) {
+                    Toast.makeText(context, "Please select banner!", Toast.LENGTH_SHORT).show();
+                    CommonFunction.dismissDialog();
+                    return;
+                }
+                File imgFileEvent = null;
+                if (eventBannerFile != null) {
+                    imgFileEvent = new Compressor(context)
+                            .setMaxWidth(1080)
+                            .setMaxWidth(800)
+                            .setQuality(50)
+                            .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                            .setDestinationDirectoryPath(context.getFilesDir().getAbsolutePath())
+                            .compressToFile(eventBannerFile);
 
-                builder.addFormDataPart("event_img", imgFileEvent.getName(),
-                        RequestBody.create(MediaType.parse(FilePath.getMimeType(imgFileEvent)), imgFileEvent));
-
+                    CommonFunction.PleaseWaitShowMessage("Files is compressed completed");
+                    if (jobEventId != null) {
+                        if (oldEventImage != null)
+                            builder.addFormDataPart("old_event_img", oldEventImage);
+                    }
+                    builder.addFormDataPart("event_img", imgFileEvent.getName(),
+                            RequestBody.create(MediaType.parse(FilePath.getMimeType(imgFileEvent)), imgFileEvent));
+                }
                 RequestBody body = builder.build();
                 CommonFunction.PleaseWaitShowMessage("Please wait, data upload on server...");
+                File finalImgFileEvent = imgFileEvent;
                 apiInterface.PAGES_MANAGE_OUR_EVENT_POST(body).enqueue(new MyApiCallback() {
                     @Override
                     public void onResponse(Call call, Response response) {
@@ -2188,7 +2256,8 @@ public class FeedsMaster {
                             if (response.body() != null) {
                                 NormalCommonResponse normalCommonResponse = (NormalCommonResponse) response.body();
                                 if (normalCommonResponse.status) {
-                                    imgFileEvent.delete();
+                                    if (finalImgFileEvent != null)
+                                        finalImgFileEvent.delete();
                                     dialog.dismiss();
                                     reloadOrAddTopFeeds();
                                 }

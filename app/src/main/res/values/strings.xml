@@ -200,6 +200,87 @@
         <item>ZWB</item>
     </string-array>
 
+    <string-array name="timeZone_value">
+        <item>UTC-12</item>
+        <item>UTC-11</item>
+        <item>UTC-10</item>
+        <item>UTC-09</item>
+        <item>UTC-08</item>
+        <item>UTC-07</item>
+        <item>UTC-06</item>
+        <item>UTC-05</item>
+        <item>UTC-04</item>
+        <item>UTC-03:30</item>
+        <item>UTC-03</item>
+        <item>UTC-02</item>
+        <item>UTC-01</item>
+        <item>UTC</item>
+        <item>UTC+01</item>
+        <item>UTC+02</item>
+        <item>UTC+03</item>
+        <item>UTC+03:30</item>
+        <item>UTC+04</item>
+        <item>UTC+04:30</item>
+        <item>UTC+05</item>
+        <item>UTC+05:30</item>
+        <item>UTC+05:45</item>
+        <item>UTC+06</item>
+        <item>UTC+06:30</item>
+        <item>UTC+07</item>
+        <item>UTC+08</item>
+        <item>UTC+09</item>
+        <item>UTC+09:30</item>
+        <item>UTC+10</item>
+        <item>UTC+10:30</item>
+        <item>UTC+11</item>
+        <item>UTC+11:30</item>
+        <item>UTC+12</item>
+        <item>UTC+12:45</item>
+        <item>UTC+13</item>
+        <item>UTC+14</item>
+    </string-array>
+
+    <string-array name="timeZone_label">
+        <item>(UTC-12) International Date Line West</item>
+        <item>(UTC-11) American Samoa, Midway Island</item>
+        <item>(UTC-10) Hawaii</item>
+        <item>(UTC-09) Alaska</item>
+        <item>(UTC-08) Pacific Time (US &amp; Canada)</item>
+        <item>(UTC-07) Mountain Time (US &amp; Canada)</item>
+        <item>(UTC-06) Central Time (US &amp; Canada), Mexico City</item>
+        <item>(UTC-05) Eastern Time (US &amp; Canada), Bogota, Lima</item>
+        <item>(UTC-04) Atlantic Time (Canada), Caracas, La Paz</item>
+        <item>(UTC-03:30) Newfoundland</item>
+        <item>(UTC-03) Brasilia, Buenos Aires, Santiago</item>
+        <item>(UTC-02) Mid-Atlantic</item>
+        <item>(UTC-01) Azores, Cape Verde Islands</item>
+        <item>(UTC) Western Europe Time, London, Lisbon, Casablanca</item>
+        <item>(UTC+01) Brussels, Copenhagen, Madrid, Paris</item>
+        <item>(UTC+02) Kaliningrad, South Africa</item>
+        <item>(UTC+03) Baghdad, Riyadh, Moscow, St. Petersburg</item>
+        <item>(UTC+03:30) Tehran</item>
+        <item>(UTC+04) Abu Dhabi, Muscat, Baku, Tbilisi</item>
+        <item>(UTC+04:30) Kabul</item>
+        <item>(UTC+05) Ekaterinburg, Islamabad, Karachi, Tashkent</item>
+        <item>(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi</item>
+        <item>(UTC+05:45) Kathmandu</item>
+        <item>(UTC+06) Astana, Dhaka</item>
+        <item>(UTC+06:30) Yangon (Rangoon)</item>
+        <item>(UTC+07) Bangkok, Hanoi, Jakarta</item>
+        <item>(UTC+08) Beijing, Perth, Singapore, Hong Kong</item>
+        <item>(UTC+09) Tokyo, Seoul, Osaka, Sapporo, Yakutsk</item>
+        <item>(UTC+09:30) Adelaide, Darwin</item>
+        <item>(UTC+10) Eastern Australia, Guam, Vladivostok</item>
+        <item>(UTC+10:30) Lord Howe Island</item>
+        <item>(UTC+11) Magadan, Solomon Islands, New Caledonia</item>
+        <item>(UTC+11:30) Norfolk Island</item>
+        <item>(UTC+12) Auckland, Wellington, Fiji, Kamchatka</item>
+        <item>(UTC+12:45) Chatham Islands</item>
+        <item>(UTC+13) Nuku\'alofa</item>
+        <item>(UTC+14) Kiritimati</item>
+    </string-array>
+
+
     <string name="facebook_app_id">1339961970044280</string>
     <string name="fb_login_protocol_scheme">fb1339961970044280</string>
     <string name="facebook_client_token">0aab2d3760c8dd687ef4eeef569fbee1</string>

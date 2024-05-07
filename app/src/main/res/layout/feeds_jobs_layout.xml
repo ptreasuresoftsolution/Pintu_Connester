@@ -184,6 +184,15 @@
                         android:src="@drawable/feed_save_blank" />
 
                     <ImageView
+                        android:id="@+id/feed_delete_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:layout_gravity="top"
+                        android:layout_marginLeft="8dp"
+                        android:src="@drawable/delete_trash"
+                        android:visibility="gone" />
+
+                    <ImageView
                         android:id="@+id/feed_close_icon"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
