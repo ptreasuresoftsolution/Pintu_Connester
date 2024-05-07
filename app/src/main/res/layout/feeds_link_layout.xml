@@ -56,6 +56,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="7dp"
                     android:paddingLeft="10dp"
+                    android:singleLine="true"
                     android:paddingRight="10dp"
                     android:text="dsfsd.com"
                     android:textColor="@color/secondary_4"
