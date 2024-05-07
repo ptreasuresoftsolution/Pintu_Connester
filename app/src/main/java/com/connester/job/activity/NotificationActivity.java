@@ -272,7 +272,7 @@ public class NotificationActivity extends AppCompatActivity {
                     Date endDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", dt.postExpire);
                     String exipreString = "Job Expire on " + DateUtils.getStringDate("dd MMM", endDate);
                     if (new Date().getTime() > endDate.getTime()) {//is expire
-                        exipreString = "Job is expire";
+                        exipreString = "Job is expired";
                     }
                     subtitle_tv.setText("experience: " + dt.requirements + ", Job at " + dt.busName + " (" + exipreString + ")");
 

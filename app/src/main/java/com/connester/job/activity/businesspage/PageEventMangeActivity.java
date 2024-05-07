@@ -59,7 +59,8 @@ public class PageEventMangeActivity extends AppCompatActivity {
 
         feedsMaster.setFeedForId(business_page_id);
         feedsMaster.setFeedFor("BUSINESS");
-        feedsMaster.setTblName("EVENT");
+        feedsMaster.setTblName("SEVENT");
+//        feedsMaster.setExtraWhr(CommonFunction.base64Encode(" AND ( f.share_frwd_post is NULL OR f.share_frwd_post = 0 )"));
         feedsMaster.setStart(-1);
         feedsMaster.setChkClose(false);
 

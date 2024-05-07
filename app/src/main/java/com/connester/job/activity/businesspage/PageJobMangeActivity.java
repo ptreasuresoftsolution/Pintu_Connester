@@ -59,7 +59,7 @@ public class PageJobMangeActivity extends AppCompatActivity {
 
         feedsMaster.setFeedForId(business_page_id);
         feedsMaster.setFeedFor("BUSINESS");
-        feedsMaster.setTblName("JOB");
+        feedsMaster.setTblName("SJOB");
         feedsMaster.setStart(-1);
         feedsMaster.setChkClose(false);
 

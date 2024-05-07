@@ -1279,7 +1279,7 @@ public class FeedsMaster {
         Date endDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", feedsRow.tblJobPost.postExpire);
         if (currDate.getTime() > endDate.getTime()) {//is expire
             job_apply_btn.setEnabled(false);
-            job_apply_btn.setText("Job is expire");
+            job_apply_btn.setText("Job is expired");
         } else if (Integer.parseInt(feedsRow.tblJobPost.isApplide) > 0) {//is already applied
             job_apply_btn.setEnabled(false);
             job_apply_btn.setText("Applied");
@@ -1394,7 +1394,7 @@ public class FeedsMaster {
         Date endDate = DateUtils.getObjectDate("yyyy-MM-dd HH:mm:ss", feedsRow.tblJobPost.postExpire);
         if (currDate.getTime() > endDate.getTime()) {//is expire
             job_apply_btn.setEnabled(false);
-            job_apply_btn.setText("Job is expire");
+            job_apply_btn.setText("Job is expired");
         } else if (Integer.parseInt(feedsRow.tblJobPost.isApplide) > 0) {//is already applied
             job_apply_btn.setEnabled(false);
             job_apply_btn.setText("Applied");
@@ -1698,7 +1698,9 @@ public class FeedsMaster {
         //group feeds set group extra elements
         title_gMember_view.setVisibility(View.GONE);
         with_user_dt_ll.setVisibility(View.GONE);
+        fullname_txt.setVisibility(View.VISIBLE);
         if (feedsRow.feedFor.equalsIgnoreCase("COMMUNITY")) {
+            fullname_txt.setVisibility(View.GONE);
             title_gMember_view.setVisibility(View.VISIBLE);
             with_user_dt_ll.setVisibility(View.VISIBLE);
             user_fullname_txt.setText(feedsRow.name);

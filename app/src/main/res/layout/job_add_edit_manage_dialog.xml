@@ -377,7 +377,7 @@
                     android:gravity="start"
                     android:hint="About job/description"
                     android:inputType="textMultiLine"
-                    android:lines="6"
+                    android:lines="18"
                     android:textSize="@dimen/small_lg" />
             </com.google.android.material.card.MaterialCardView>
 
