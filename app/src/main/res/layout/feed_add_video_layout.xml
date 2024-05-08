@@ -108,7 +108,7 @@
                     android:paddingTop="6dp"
                     android:paddingRight="8dp"
                     android:paddingBottom="6dp"
-                    android:textSize="@dimen/small_lg" />
+                    android:textSize="@dimen/small" />
             </com.google.android.material.card.MaterialCardView>
 
             <FrameLayout

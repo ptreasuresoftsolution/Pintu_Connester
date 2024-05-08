@@ -734,6 +734,9 @@ public class FeedsMaster {
         feeds_content_txt.setText(feedsRow.tblMediaPost.ptTitle);
         //set player
         ImageView play_btn = view.findViewById(R.id.play_btn);
+        MaterialCardView mute_unmute_cv = view.findViewById(R.id.mute_unmute_cv);
+        mute_unmute_cv.setVisibility(View.GONE);
+        ImageView volume_speaker = view.findViewById(R.id.volume_speaker);
         StyledPlayerView feed_video = view.findViewById(R.id.feed_video);
         feed_video.setTag("stop");
         ExoPlayer player = new ExoPlayer.Builder(context).build();
@@ -752,15 +755,29 @@ public class FeedsMaster {
         MediaItem mediaItem = MediaItem.fromUri(feedImgPath + feedsRow.tblMediaPost.mediaFiles);
         MediaSource mediaSource = new ProgressiveMediaSource.Factory(factoryCache).createMediaSource(mediaItem);
         player.addMediaSource(mediaSource);
+
         player.prepare();
         feed_video.setPlayer(player);
         play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 play_btn.setVisibility(View.GONE);
+                mute_unmute_cv.setVisibility(View.VISIBLE);
                 player.play();
                 feed_video.setUseController(true);
                 feed_video.setTag("play");
+            }
+        });
+        mute_unmute_cv.setOnClickListener(v -> {
+            String tg = (String) volume_speaker.getTag();
+            if (tg != null && !tg.equalsIgnoreCase("mute")){//set mute
+                volume_speaker.setTag("mute");
+                volume_speaker.setImageResource(R.drawable.volume_mute_fill);
+                player.setVolume(0f);
+            }else{//set unmute
+                volume_speaker.setTag("unmute");
+                volume_speaker.setImageResource(R.drawable.volume_down_fill);
+                player.setVolume(1f);
             }
         });
 
