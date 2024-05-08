@@ -644,7 +644,7 @@ public class NetworkActivity extends AppCompatActivity {
                         nt_list_seeall.setVisibility(View.GONE);
                         ListView list_lt = blankGridSt.findViewById(R.id.list_lt);
                         list_lt.setAdapter(getConnectionAdapter(connectionListResponse, list_lt));
-                        CommonFunction.setViewHeightBasedOnChildren(list_lt);
+//                        CommonFunction.setViewHeightBasedOnChildren(list_lt);
                         main_ll.addView(blankGridSt);
                     } else
                         Toast.makeText(context, connectionListResponse.msg, Toast.LENGTH_SHORT).show();
@@ -1265,7 +1265,7 @@ public class NetworkActivity extends AppCompatActivity {
             private void removeItem(int position) {
                 connectionListResponse.dt.remove(position);
                 notifyDataSetChanged();
-                CommonFunction.setViewHeightBasedOnChildren(list_lt);
+//                CommonFunction.setViewHeightBasedOnChildren(list_lt);
             }
         };
         return baseAdapter;

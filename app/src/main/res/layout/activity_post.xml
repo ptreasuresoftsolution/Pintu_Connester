@@ -31,6 +31,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="My Posts"
+            android:id="@+id/title_tv"
             android:textColor="@color/secondary_3"
             android:textSize="@dimen/label"
             android:textStyle="bold" />

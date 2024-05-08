@@ -98,6 +98,7 @@ public class ProfileActivity extends AppCompatActivity {
         hashMapDefault.put("user_master_id", sessionPref.getUserMasterId());
         hashMapDefault.put("apiKey", sessionPref.getApiKey());
         hashMapDefault.put("device", "ANDROID");
+        hashMapDefault.put("for_user_master_id", user_master_id);
 
         back_cv = findViewById(R.id.back_cv);
         back_cv.setOnClickListener(v -> {
@@ -148,6 +149,7 @@ public class ProfileActivity extends AppCompatActivity {
                 profileOptionDialog.dismiss();
                 Intent intent = new Intent(context, Activity_Activity.class);
                 intent.putExtra("user_master_id", user_master_id);
+                intent.putExtra("title", (userDt.name != null ? userDt.name + " Post" : "Post"));
                 startActivity(intent);
             });
             LinearLayout block_user_LL = profileOptionDialog.findViewById(R.id.block_user_LL);
@@ -356,7 +358,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 TextView item_duration = profile_project_ed_work_item.findViewById(R.id.item_duration);
                                 String startTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.startDate);
                                 String endTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.endDate);
-                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate,"M-Y").replace("ago", "");
+                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate, "M-Y").replace("ago", "");
                                 item_duration.setText(startTime + " - " + endTime + "(" + gap + ")");
                                 project_ll.addView(profile_project_ed_work_item);
                             }
@@ -390,7 +392,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 TextView item_duration = profile_project_ed_work_item.findViewById(R.id.item_duration);
                                 String startTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.startDate);
                                 String endTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.endDate);
-                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate,"M-Y").replace("ago", "");
+                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate, "M-Y").replace("ago", "");
                                 item_duration.setText(startTime + " - " + endTime + "(" + gap + ")");
                                 education_ll.addView(profile_project_ed_work_item);
                             }
@@ -425,7 +427,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 TextView item_duration = profile_project_ed_work_item.findViewById(R.id.item_duration);
                                 String startTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.startDate);
                                 String endTime = DateUtils.getStringDate("yyyy-MM-dd HH:mm:ss", "dd MMM yyyy", dt.endDate);
-                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate,"M-Y").replace("ago", "");
+                                String gap = FeedsMaster.feedTimeCount(dt.startDate, dt.endDate, "M-Y").replace("ago", "");
                                 item_duration.setText(startTime + " - " + endTime + "(" + gap + ")");
                                 work_experience_ll.addView(profile_project_ed_work_item);
                             }

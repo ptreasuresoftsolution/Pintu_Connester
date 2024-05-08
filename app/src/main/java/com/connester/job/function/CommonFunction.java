@@ -383,6 +383,10 @@ public class CommonFunction {
         int totalHeight = 0;
         int items = gridViewAdapter.getCount();
         int rows = 1;
+        if (items == 0){
+            //no item in gridView
+            return;
+        }
 
         View listItem = gridViewAdapter.getView(0, null, gridView);
         listItem.measure(0, 0);

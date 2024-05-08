@@ -63,6 +63,7 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
     Activity activity;
     ApiInterface apiInterface;
     SearchView search_user;
+    MaterialCardView search_cv;
     RecyclerView chatUserList;
     TextView no_row_found;
     FrameLayout progressBar;
@@ -138,6 +139,7 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
         sessionPref = new SessionPref(context);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
+        search_cv = findViewById(R.id.search_cv);
         search_user = findViewById(R.id.search_user);
         search_user.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
@@ -151,6 +153,9 @@ public class ChatHistoryUsersActivity extends AppCompatActivity {
                     chatUserListAdapter.getFilter().filter(newText);
                 return false;
             }
+        });
+        search_cv.setOnClickListener(v -> {
+            search_user.onActionViewExpanded();
         });
 
         chatUserList = findViewById(R.id.chatUserList);

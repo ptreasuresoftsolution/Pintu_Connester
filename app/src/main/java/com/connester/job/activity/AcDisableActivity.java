@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,6 +88,13 @@ public class AcDisableActivity extends AppCompatActivity {
 
         privacy_policy_txt = findViewById(R.id.privacy_policy_txt);
         privacy_policy_txt.setBackgroundColor(Color.TRANSPARENT);
+        privacy_policy_txt.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                CommonFunction._OpenLinkInMyWebview(context, "", url);
+                return true;
+            }
+        });
         privacy_policy_txt.loadData("<p style='background:transparent'>Check the <a style='color:darkred;text-decoration:none' href='" + Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/" + "User-Agreement'>User Agreement</a>, and <a style='color:darkred;text-decoration:none' href='" + Constant.DOMAIN + ApiInterface.OFFLINE_FOLDER + "/" + "Privacy-Policy'>Privacy Policy</a> you agree to Connester. Check of your violation or closed/Disabled Profile.</p>", "text/html; charset=UTF-8", null);
 
         mail_req_tv = findViewById(R.id.mail_req_tv);

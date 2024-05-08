@@ -3,6 +3,7 @@ package com.connester.job.RetrofitConnection;
 import com.connester.job.RetrofitConnection.jsontogson.AllInOneSearchResponse;
 import com.connester.job.RetrofitConnection.jsontogson.BusinessPageRowResponse;
 import com.connester.job.RetrofitConnection.jsontogson.ChatUserListResponse;
+import com.connester.job.RetrofitConnection.jsontogson.EducationItemResponse;
 import com.connester.job.RetrofitConnection.jsontogson.EducationListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsCommentListResponse;
 import com.connester.job.RetrofitConnection.jsontogson.FeedsMasterResponse;
@@ -271,7 +272,7 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/getEducationItem")
-    Call<ProjectItemResponse> GET_EDUCATION_ITEM(@FieldMap Map<String, String> params);
+    Call<EducationItemResponse> GET_EDUCATION_ITEM(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST(PRE_FIX + "UserMange/manageEducation")

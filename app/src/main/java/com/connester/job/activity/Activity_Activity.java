@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -29,6 +30,7 @@ public class Activity_Activity extends AppCompatActivity {
     ImageView back_iv;
     String user_master_id;
     SwipeRefreshLayout swipe_refresh;
+    TextView title_tv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +41,12 @@ public class Activity_Activity extends AppCompatActivity {
         activity = this;
         sessionPref = new SessionPref(context);
         user_master_id = sessionPref.getUserMasterId();
+        title_tv = findViewById(R.id.title_tv);
         if (getIntent() != null) {
             Intent gIntent = getIntent();
+            if (gIntent.getStringExtra("title") != null && gIntent.getStringExtra("title") != "") {
+                title_tv.setText(gIntent.getStringExtra("title"));
+            }
             if (gIntent.getStringExtra("user_master_id") != null && gIntent.getStringExtra("user_master_id") != "") {
                 user_master_id = gIntent.getStringExtra("user_master_id");
             }
