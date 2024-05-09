@@ -55,6 +55,7 @@ import com.connester.job.activity.NetworkActivity;
 import com.connester.job.activity.ProfileActivity;
 import com.connester.job.activity.business.BusinessActivity;
 import com.connester.job.activity.community.CommunityActivity;
+import com.connester.job.activity.nonslug.ViewJobsWithFilterActivity;
 import com.connester.job.function.CommonFunction;
 import com.connester.job.function.Constant;
 import com.connester.job.function.CustomPager;
@@ -411,20 +412,30 @@ public class FeedsMaster {
     }
 
     public void callSuggestedJobsEventsFeeds(LinearLayout mainLinearLayout, ScrollView scrollView) {
+        callSuggestedJobsEventsFeeds(mainLinearLayout, scrollView, null);
+    }
+
+    public void callSuggestedJobsEventsFeeds(LinearLayout mainLinearLayout, ScrollView scrollView, HashMap addFilter) {
+        mainLinearLayout.removeAllViews();
         this.mainLinearLayout = mainLinearLayout;
         this.scrollView = scrollView;
         feedListBy = "JobsEvent";
         resetList();
-        callSuggestedJobsFeeds(false);
+        callSuggestedJobsFeeds(false, addFilter);
     }
 
-    private void callSuggestedJobsFeeds(boolean seeAll) {
+    private void callSuggestedJobsFeeds(boolean seeAll, HashMap addFilter) {
         progressBar.setVisibility(View.VISIBLE);
         HashMap hashMap = new HashMap();
         hashMap.put("user_master_id", sessionPref.getUserMasterId());
         hashMap.put("apiKey", sessionPref.getApiKey());
         hashMap.put("device", "ANDROID");
-        hashMap.put("seeAll", seeAll);
+        hashMap.put("seeAll", true);
+        if (addFilter != null) {
+            hashMap.putAll(addFilter);
+            seeAll = true;
+        }
+        boolean finalSeeAll = seeAll;
         apiInterface.JOB_SUGGESTED_LIST(hashMap).enqueue(new MyApiCallback(progressBar) {
             @Override
             public void onResponse(Call call, Response response) {
@@ -449,7 +460,7 @@ public class FeedsMaster {
                             nt_list_title.setTypeface(nt_list_title.getTypeface(), Typeface.BOLD);
                             frameLayout.addView(nt_list_title);
 
-                            if (!seeAll) {
+                            if (!finalSeeAll) {
                                 MaterialButton nt_list_seeall = new MaterialButton(context);
                                 FrameLayout.LayoutParams layout_865 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, 50);
                                 layout_865.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
@@ -460,8 +471,9 @@ public class FeedsMaster {
                                 nt_list_seeall.setTextColor(context.getColor(R.color.secondary_3));
                                 frameLayout.addView(nt_list_seeall);
                                 nt_list_seeall.setOnClickListener(v -> {
-                                    resetList();
-                                    callSuggestedJobsFeeds(true);
+//                                    resetList();
+//                                    callSuggestedJobsFeeds(true);
+                                    context.startActivity(new Intent(context, ViewJobsWithFilterActivity.class));
                                 });
                             }
                             FeedStorage feedStorage = new FeedStorage(frameLayout, viewIndex, null);
@@ -471,7 +483,7 @@ public class FeedsMaster {
                                 mainLinearLayoutChange.itemAddEditChange(mainLinearLayout);
                             viewIndex++;
                             listToView(jobsEventMasterResponse.feedsRows);
-                            if (!seeAll) {
+                            if (!finalSeeAll) {
                                 callSuggestedEventsFeeds(false);
                             }
                         } else
@@ -770,11 +782,11 @@ public class FeedsMaster {
         });
         mute_unmute_cv.setOnClickListener(v -> {
             String tg = (String) volume_speaker.getTag();
-            if (tg != null && !tg.equalsIgnoreCase("mute")){//set mute
+            if (tg != null && !tg.equalsIgnoreCase("mute")) {//set mute
                 volume_speaker.setTag("mute");
                 volume_speaker.setImageResource(R.drawable.volume_mute_fill);
                 player.setVolume(0f);
-            }else{//set unmute
+            } else {//set unmute
                 volume_speaker.setTag("unmute");
                 volume_speaker.setImageResource(R.drawable.volume_down_fill);
                 player.setVolume(1f);

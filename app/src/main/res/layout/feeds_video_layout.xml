@@ -45,6 +45,8 @@
                     app:resize_mode="fixed_width"
                     app:show_buffering="when_playing"
                     app:show_shuffle_button="true"
+                    android:minHeight="100dp"
+                    android:background="@color/secondary_2"
                     app:use_controller="false" />
 
                 <ImageView

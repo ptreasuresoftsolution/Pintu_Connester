@@ -56,7 +56,7 @@ public class GroupPostFragment extends Fragment {
         feedsMaster.setFeedForIdForward(communityMasterId);
         feedsMaster.setFeedForId(communityMasterId);
         feedsMaster.setFeedFor("COMMUNITY");
-        feedsMaster.setTblName("MEDIA,POST");
+        feedsMaster.setTblName("MEDIA,POST,JOB,EVENT");
 
         return view;
     }
