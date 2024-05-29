@@ -50,8 +50,8 @@ import retrofit2.http.POST;
  */
 public interface ApiInterface {
 
-    String OFFLINE_FOLDER = "/JobPortal";
-//            String OFFLINE_FOLDER = "";
+//    String OFFLINE_FOLDER = "/JobPortal";
+            String OFFLINE_FOLDER = "";
     String PRE_FIX = OFFLINE_FOLDER + "/api/";
 
     @FormUrlEncoded
